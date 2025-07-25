@@ -1,0 +1,51 @@
+<h2 class="titulo">Auditoría</h2>
+
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>N°</th>
+      <th>Usuario</th>
+      <th>Dispositivo</th>
+      <th>Acción</th>
+      <th>Fecha</th>
+      <th>Observación</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let a of auditorias; let i = index" (click)="seleccionar(a)" [class.seleccionado]="a === auditoriaSeleccionada">
+      <td>{{ i + 1 }}</td>
+      <td>{{ a.usuario }}</td>
+      <td>{{ a.dispositivo }}</td>
+      <td>{{ a.accion }}</td>
+      <td>{{ a.fecha }}</td>
+      <td>{{ a.observacion }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="acciones" *ngIf="auditoriaSeleccionada">
+  <button (click)="abrirModal('editar')">✏️ Modificar</button>
+  <button (click)="eliminar()">🗑️ Eliminar</button>
+</div>
+
+<div class="agregar">
+  <button (click)="abrirModal('agregar')">➕ Agregar Auditoría</button>
+</div>
+
+<!-- Modal -->
+<div class="modal" *ngIf="mostrarModal">
+  <div class="modal-content">
+    <h3>{{ modoModal === 'agregar' ? 'Agregar Auditoría' : 'Editar Auditoría' }}</h3>
+    
+    <input [(ngModel)]="formulario.usuario" placeholder="Usuario">
+    <input [(ngModel)]="formulario.dispositivo" placeholder="Dispositivo">
+    <input [(ngModel)]="formulario.accion" placeholder="Acción">
+    <input [(ngModel)]="formulario.fecha" placeholder="Fecha (YYYY-MM-DD)">
+    <input [(ngModel)]="formulario.observacion" placeholder="Observación">
+    
+    <div class="modal-actions">
+      <button (click)="guardar()">💾 Guardar</button>
+      <button (click)="cerrarModal()">❌ Cancelar</button>
+    </div>
+  </div>
+</div>

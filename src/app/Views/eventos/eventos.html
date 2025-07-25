@@ -1,0 +1,48 @@
+<h2 class="titulo">Eventos</h2>
+
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>N°</th>
+      <th>Dispositivo</th>
+      <th>Impacto</th>
+      <th>Sistema</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let e of eventos; let i = index" (click)="seleccionar(e)" [class.seleccionado]="e === eventoSeleccionado">
+      <td>{{ i + 1 }}</td>
+      <td>{{ e.dispositivo }}</td>
+      <td>{{ e.impacto }}</td>
+      <td>{{ e.sistema }}</td>
+      <td>{{ e.fecha }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="acciones" *ngIf="eventoSeleccionado">
+  <button (click)="abrirModal('editar')">✏️ Modificar</button>
+  <button (click)="eliminar()">🗑️ Eliminar</button>
+</div>
+
+<div class="agregar">
+  <button (click)="abrirModal('agregar')">➕ Agregar Evento</button>
+</div>
+
+<!-- Modal -->
+<div class="modal" *ngIf="mostrarModal">
+  <div class="modal-content">
+    <h3>{{ modoModal === 'agregar' ? 'Agregar Evento' : 'Editar Evento' }}</h3>
+
+    <input [(ngModel)]="formulario.dispositivo" placeholder="Dispositivo">
+    <input [(ngModel)]="formulario.impacto" placeholder="Impacto">
+    <input [(ngModel)]="formulario.sistema" placeholder="Sistema">
+    <input [(ngModel)]="formulario.fecha" placeholder="Fecha (YYYY-MM-DD)">
+
+    <div class="modal-actions">
+      <button (click)="guardar()">💾 Guardar</button>
+      <button (click)="cerrarModal()">❌ Cancelar</button>
+    </div>
+  </div>
+</div>

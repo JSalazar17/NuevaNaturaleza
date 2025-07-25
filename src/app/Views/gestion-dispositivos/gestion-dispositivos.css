@@ -1,0 +1,56 @@
+.titulo {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 28px;
+}
+
+.selector-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.dispositivos-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.dispositivo-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.dispositivo-card:hover {
+  transform: scale(1.05);
+}
+
+.dispositivo-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+button {
+  margin: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:first-child {
+  background-color: #4caf50;
+  color: white;
+}
+
+button:last-child {
+  background-color: #f44336;
+  color: white;
+}

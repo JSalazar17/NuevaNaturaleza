@@ -1,0 +1,26 @@
+<h2 class="titulo">Gestión de Dispositivos</h2>
+
+<div class="selector-container">
+  <label for="tipo">Seleccionar tipo:</label>
+  <select id="tipo" (change)="onTipoChange($event)">
+    <option value="">Seleccione tipo</option>
+    <option value="sensor">Sensores</option>
+    <option value="actuador">Actuadores</option>
+  </select>
+</div>
+
+<div class="dispositivos-container">
+  <div *ngFor="let d of dispositivos" class="dispositivo-card">
+    <img [src]="'/assets/' + d.imagen" [alt]="d.nombre">
+    <h3>{{ d.nombre }}</h3>
+
+    <div *ngIf="tipoSeleccionado === 'sensor'">
+      <p>Datos: {{ d.datos }}</p>
+    </div>
+
+    <div *ngIf="tipoSeleccionado === 'actuador'">
+      <button (click)="activar(d)">ON</button>
+      <button (click)="desactivar(d)">OFF</button>
+    </div>
+  </div>
+</div>

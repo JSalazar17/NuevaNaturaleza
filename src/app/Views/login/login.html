@@ -1,0 +1,18 @@
+<h2 class="titulo">Iniciar Sesión</h2>
+
+<div class="login-container">
+  <input type="text" [(ngModel)]="usuario" placeholder="Usuario">
+  
+  <input [type]="mostrarContrasena ? 'text' : 'password'" [(ngModel)]="contrasena" placeholder="Contraseña">
+  
+  <label class="mostrar-checkbox">
+    <input type="checkbox" [(ngModel)]="mostrarContrasena"> Mostrar contraseña
+  </label>
+
+  <button (click)="ingresar()">Ingresar</button>
+
+  <p class="olvido">
+  <a routerLink="/recuperar" class="enlace-recuperar">¿OLVIDÓ SU CONTRASEÑA?</a>
+</p>
+
+</div>

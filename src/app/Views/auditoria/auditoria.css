@@ -1,0 +1,98 @@
+.titulo {
+  text-align: center;
+  margin: 20px;
+  font-size: 28px;
+}
+
+.tabla {
+  width: 90%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.tabla th, .tabla td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.tabla tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.seleccionado {
+  background-color: #b2ebf2 !important;
+}
+
+.acciones {
+  text-align: center;
+  margin: 20px;
+}
+
+.agregar {
+  text-align: center;
+  margin-top: 30px;
+}
+
+button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:first-child {
+  background-color: #4caf50;
+  color: white;
+}
+
+button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.agregar button {
+  background-color: #2196f3;
+  color: white;
+}
+
+/* Modal estilos */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-content input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-actions button {
+  padding: 5px 10px;
+  cursor: pointer;
+}

@@ -1,0 +1,50 @@
+.titulo {
+  text-align: center;
+  margin: 20px;
+  font-size: 28px;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #a8e063, #56ab2f); /* Fondo verde agrícola */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  width: 300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.mostrar-checkbox {
+  font-size: 14px;
+}
+
+button {
+  padding: 8px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.olvido {
+  text-align: center;
+  color: #2196f3;
+  text-decoration: underline;
+  cursor: pointer;
+}
