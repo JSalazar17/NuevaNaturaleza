@@ -1,58 +1,72 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Usuario } from '../../models/usuario.model';
+import { Rol } from '../../models/rol.model';
+import { UsuarioService } from '../../services/usuario.service';
+import { RolService } from '../../services/rol.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-usuarios',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './usuarios.html',
-  styleUrl: './usuarios.css'
+  styleUrls: ['./usuarios.css'],
+  imports: [FormsModule,CommonModule]
 })
-export class Usuarios {
-  usuarios = [
-    { id: 1, rol: 'Admin', cedula: '123456789', nombre: 'Juan Pérez', correo: 'juan@example.com', clave: '1234' },
-    { id: 2, rol: 'Usuario', cedula: '987654321', nombre: 'María Gómez', correo: 'maria@example.com', clave: 'abcd' }
-  ];
+export class UsuariosComponent implements OnInit {
+  usuarios: Usuario[] = [];
+  roles: Rol[] = [];
+  usuarioForm: Usuario = { idUsuario: '',idRol: '', cedula: '', nombre: '', correo: '', clave: '' };
+  usuarioEditando = false;
 
-  usuarioSeleccionado: any = null;
-  mostrarModal = false;
-  modoModal: 'agregar' | 'editar' = 'agregar';
-  formulario: any = { rol: '', cedula: '', nombre: '', correo: '', clave: '' };
+  constructor(private usuarioService: UsuarioService, private rolService: RolService) {}
 
-  seleccionar(usuario: any) {
-    this.usuarioSeleccionado = usuario;
+  ngOnInit(): void {
+    this.cargarUsuarios();
+    this.cargarRoles();
   }
 
-  abrirModal(modo: 'agregar' | 'editar') {
-    this.modoModal = modo;
-    this.mostrarModal = true;
-    if (modo === 'editar' && this.usuarioSeleccionado) {
-      this.formulario = { ...this.usuarioSeleccionado };
+  cargarUsuarios() {
+    this.usuarioService.getUsuarios().subscribe(data => this.usuarios = data);
+  }
+
+  cargarRoles() {
+    this.rolService.getRoles().subscribe(data => this.roles = data);
+  }
+
+  getRolNombre(id: string): string {
+  const rol = this.roles.find(r => r.idRol === id);
+  return rol ? rol.nombre : 'Sin Rol';
+}
+
+  guardarUsuario() {
+    if (this.usuarioEditando) {
+      this.usuarioService.updateUsuario(this.usuarioForm.idUsuario!, this.usuarioForm)
+        .subscribe(() => {
+          this.cargarUsuarios();
+          this.resetForm();
+        });
     } else {
-      this.formulario = { rol: '', cedula: '', nombre: '', correo: '', clave: '' };
+      this.usuarioService.createUsuario(this.usuarioForm)
+        .subscribe(() => {
+          this.cargarUsuarios();
+          this.resetForm();
+        });
     }
   }
 
-  cerrarModal() {
-    this.mostrarModal = false;
+  editarUsuario(usuario: Usuario) {
+    this.usuarioForm = { ...usuario };
+    this.usuarioEditando = true;
   }
 
-  guardar() {
-    if (this.modoModal === 'agregar') {
-      const nuevo = { ...this.formulario, id: this.usuarios.length + 1 };
-      this.usuarios.push(nuevo);
-    } else if (this.modoModal === 'editar' && this.usuarioSeleccionado) {
-      Object.assign(this.usuarioSeleccionado, this.formulario);
+  eliminarUsuario(id: string) {
+    if (confirm('¿Seguro que deseas eliminar este usuario?')) {
+      this.usuarioService.deleteUsuario(id).subscribe(() => this.cargarUsuarios());
     }
-    this.cerrarModal();
   }
 
-  eliminar() {
-    const confirmar = confirm('¿Seguro que quieres eliminar este usuario?');
-    if (confirmar) {
-      this.usuarios = this.usuarios.filter(u => u !== this.usuarioSeleccionado);
-      this.usuarioSeleccionado = null;
-    }
+  resetForm() {
+    this.usuarioForm = { idUsuario: '', idRol: '', cedula: '', nombre: '', correo: '', clave: '' };
+    this.usuarioEditando = false;
   }
 }

@@ -1,8 +1,10 @@
 export interface Dispositivo {
-  IdSistema: number;
-  IdTipoDispositivo: string;
-  IdMarca: string;
-  Nombre: string;
-  SN: number;
-  descripcion: string;  
+  idDispositivo?: string;
+  nombre: string;
+  sn: string;
+  descripcion?: string;
+  image?: string;
+  idTipoDispositivo?: string;
+  idSistema?: string;
+  idMarca?: string;
 }

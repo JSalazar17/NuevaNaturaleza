@@ -1,51 +1,44 @@
-<h2 class="titulo">Lista de Usuarios</h2>
+<div class="usuarios-container">
+  <h2>Gestión de Usuarios</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Rol</th>
+        <th>Cédula</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Clave</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ getRolNombre(usuario.idRol) }}</td>
+        <td>{{ usuario.cedula }}</td>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.correo }}</td>
+        <td>{{ usuario.clave }}</td>
+        <td>
+          <button (click)="editarUsuario(usuario)">Editar</button>
+          <button (click)="eliminarUsuario(usuario.idUsuario!)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>N°</th>
-      <th>Rol</th>
-      <th>Cédula</th>
-      <th>Nombre</th>
-      <th>Correo</th>
-      <th>Clave</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let u of usuarios; let i = index" (click)="seleccionar(u)" [class.seleccionado]="u === usuarioSeleccionado">
-      <td>{{ i + 1 }}</td>
-      <td>{{ u.rol }}</td>
-      <td>{{ u.cedula }}</td>
-      <td>{{ u.nombre }}</td>
-      <td>{{ u.correo }}</td>
-      <td>{{ u.clave }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="acciones" *ngIf="usuarioSeleccionado">
-  <button (click)="abrirModal('editar')">✏️ Modificar</button>
-  <button (click)="eliminar()">🗑️ Eliminar</button>
-</div>
-
-<div class="agregar">
-  <button (click)="abrirModal('agregar')">➕ Agregar Usuario</button>
-</div>
-
-<!-- Modal -->
-<div class="modal" *ngIf="mostrarModal">
-  <div class="modal-content">
-    <h3>{{ modoModal === 'agregar' ? 'Agregar Usuario' : 'Editar Usuario' }}</h3>
-
-    <input [(ngModel)]="formulario.rol" placeholder="Rol">
-    <input [(ngModel)]="formulario.cedula" placeholder="Cédula">
-    <input [(ngModel)]="formulario.nombre" placeholder="Nombre">
-    <input [(ngModel)]="formulario.correo" placeholder="Correo">
-    <input [(ngModel)]="formulario.clave" placeholder="Clave">
-
-    <div class="modal-actions">
-      <button (click)="guardar()">💾 Guardar</button>
-      <button (click)="cerrarModal()">❌ Cancelar</button>
-    </div>
+  <div class="formulario">
+    <h3>{{ usuarioEditando ? 'Editar Usuario' : 'Agregar Usuario' }}</h3>
+    <form (ngSubmit)="guardarUsuario()">
+      <select [(ngModel)]="usuarioForm.idRol" name="rolId" required>
+        <option *ngFor="let rol of roles" [value]="rol.idRol">{{ rol.nombre }}</option>
+      </select>
+      <input [(ngModel)]="usuarioForm.cedula" name="cedula" placeholder="Cédula" required>
+      <input [(ngModel)]="usuarioForm.nombre" name="nombre" placeholder="Nombre" required>
+      <input [(ngModel)]="usuarioForm.correo" name="correo" placeholder="Correo" required>
+      <input [(ngModel)]="usuarioForm.clave" name="clave" placeholder="Clave" required>
+      <button type="submit">{{ usuarioEditando ? 'Actualizar' : 'Agregar' }}</button>
+    </form>
   </div>
 </div>

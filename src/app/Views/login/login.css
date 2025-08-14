@@ -1,50 +1,99 @@
-.titulo {
-  text-align: center;
-  margin: 20px;
-  font-size: 28px;
-}
-
-body, html {
-  height: 100%;
+body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #a8e063, #56ab2f); /* Fondo verde agrícola */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #eaf7ea;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
 }
 
 .login-container {
+  text-align: center;
+}
+
+.logo-login {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.login-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  text-align: left;
   width: 300px;
-  margin: 0 auto;
+}
+
+.input-group {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.login-container input[type="text"],
-.login-container input[type="password"] {
-  padding: 8px;
+  align-items: center;
+  margin-bottom: 15px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+  padding: 5px 10px;
+  background-color: #f9f9f9;
 }
 
-.mostrar-checkbox {
-  font-size: 14px;
+.input-group .icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="checkbox"] {
+  border: none;
+  outline: none;
+  flex: 1;
+  background-color: transparent;
+  font-size: 1em;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.checkbox-container label {
+  margin-left: 8px;
+  font-size: 0.9em;
 }
 
 button {
-  padding: 8px;
-  background-color: #2196f3;
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
   color: white;
+  font-weight: bold;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.olvido {
-  text-align: center;
-  color: #2196f3;
+button:hover {
+  background-color: #45a049;
+}
+
+a.forgot {
+  display: block;
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: #1d6f42;
+  text-decoration: none;
+}
+
+a.forgot:hover {
   text-decoration: underline;
-  cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  font-size: 0.9em;
+  text-align: center;
 }
