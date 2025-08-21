@@ -1,100 +1,28 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+.eventos-container {
+  padding: 20px;
 }
 
-.contenedor {
-  display: flex;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #009688;
-  color: white;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.logo {
-  width: 130px;
-  margin: 20px 0;
-}
-
-.usuario {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.icono-usuario {
-  font-size: 40px;
-  margin-bottom: 5px;
-}
-
-.menu {
-  list-style: none;
-  padding: 0;
-  width: 100%;
-}
-
-.menu li {
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.menu li.activo {
-  background-color: #00796b;
-}
-
-.contenido {
-  flex-grow: 1;
-  padding: 40px;
-  background-color: #fff;
-}
-
-.contenido h2 {
-  margin-top: 0;
-}
-
-table {
+.tabla-eventos {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
-table, th, td {
+.tabla-eventos th, .tabla-eventos td {
   border: 1px solid #ccc;
-  text-align: left;
   padding: 8px;
+  text-align: center;
 }
 
-thead {
-  background-color: #e0e0e0;
-}
-
-.botones {
-  margin-top: 20px;
-}
-
-button {
-  padding: 10px 20px;
-  margin-right: 15px;
-  border: none;
-  color: white;
-  font-weight: bold;
+.tabla-eventos tr:hover {
+  background-color: #f1f1f1;
   cursor: pointer;
-  border-radius: 4px;
 }
 
-.agregar {
-  background-color: #00bfa5;
-}
-
-.modificar {
-  background-color: #fbc02d;
-}
-
-.eliminar {
-  background-color: #f57c00;
+.detalle {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #009688;
+  background: #e0f2f1;
+  border-radius: 8px;
 }

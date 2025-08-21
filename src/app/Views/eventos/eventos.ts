@@ -1,69 +1,48 @@
-// eventos.ts
-import { EventosService } from '../../services/eventos.service';
-import { Evento } from '../../models/eventos.model';
-import { signal, effect, Component } from '@angular/core';
-import { FormsModule, NgModel } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { EventoService } from '../../services/evento.service';
+import { DispositivoService } from '../../services/dispositivos.service';
+import { Evento } from '../../models/evento.model';
+import { Dispositivo } from '../../models/dispositivo.model';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-eventos',
-  standalone: true,
-  imports: [FormsModule,CommonModule],  // <-- IMPORTANTE: Agrega esto
   templateUrl: './eventos.html',
-  styleUrl: './eventos.css'
+  imports: [CommonModule, DatePipe, FormsModule],
+  styleUrls: ['./eventos.css']
 })
-export class EventosController {
-  listaEventos = signal<Evento[]>([]);
-  eventoSeleccionado = signal<Evento | null>(null);
+export class Eventos implements OnInit {
+  eventos: Evento[] = [];
+  dispositivos: Dispositivo[] = [];
+  eventoSeleccionado: Evento | null = null;
+  dispositivoSeleccionado: Dispositivo | null = null;
 
-  constructor(private servicio: EventosService) {
+  constructor(
+    private eventoService: EventoService,
+    private dispositivoService: DispositivoService
+  ) {}
+
+  ngOnInit(): void {
     this.cargarEventos();
+    this.cargarDispositivos();
   }
 
   cargarEventos() {
-    this.servicio.obtenerEventos().subscribe({
-      next: data => this.listaEventos.set(data),
-      error: err => console.error('Error al cargar eventos:', err)
-    });
+    this.eventoService.getEventos().subscribe(data => {this.eventos = data;console.log(data)});
+  }
+
+  cargarDispositivos() {
+    this.dispositivoService.getDispositivos().subscribe(data => {this.dispositivos = data;console.log(this.dispositivos)});
   }
 
   seleccionarEvento(evento: Evento) {
-    this.eventoSeleccionado.set(evento);
+    this.eventoSeleccionado = evento;
+    this.dispositivoSeleccionado = this.dispositivos.find(d => d.idDispositivo === evento.idDispositivo) || null;
   }
 
-  agregarEvento(nuevo: Evento) {
-    this.servicio.agregarEvento(nuevo).subscribe({
-      next: e => {
-        this.listaEventos.update(lista => [...lista, e]);
-        this.eventoSeleccionado.set(null);
-      },
-      error: err => console.error('Error al agregar evento:', err)
-    });
-  }
-
-  modificarEvento(actualizado: Evento) {
-    if (!actualizado.IdEvento) return;
-
-    this.servicio.modificarEvento(actualizado.IdEvento, actualizado).subscribe({
-      next: e => {
-        this.listaEventos.update(lista =>
-          lista.map(ev => ev.IdEvento === e.idEvento ? e : ev)
-        );
-        this.eventoSeleccionado.set(null);
-      },
-      error: err => console.error('Error al modificar evento:', err)
-    });
-  }
-
-  eliminarEvento(id: string) {
-    this.servicio.eliminarEvento(id).subscribe({
-      next: () => {
-        this.listaEventos.update(lista =>
-          lista.filter(ev => ev.IdEvento !== id)
-        );
-        this.eventoSeleccionado.set(null);
-      },
-      error: err => console.error('Error al eliminar evento:', err)
-    });
+  cerrarDetalle() {
+    this.eventoSeleccionado = null;
+    this.dispositivoSeleccionado = null;
   }
 }

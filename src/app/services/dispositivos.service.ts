@@ -1,29 +1,34 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Dispositivo } from '../models/dispositivo.model';
 import { Observable } from 'rxjs';
+import { Dispositivo } from '../models/dispositivo.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class DispositivoService {
+  // Ajusta si tu API usa otro plural/ruta
   private url = 'https://localhost:44330/api/Dispositivoes';
 
   constructor(private http: HttpClient) {}
 
-  obtenerDispositivos(): Observable<Dispositivo[]> {
+  // Lista de dispositivos (para pre-cargar y resolver nombres en la tabla)
+  getDispositivos(): Observable<Dispositivo[]> {
     return this.http.get<Dispositivo[]>(this.url);
   }
 
-  guardarDispositivo(dispositivo: Dispositivo): Observable<Dispositivo> {
+  // Útil si quieres cargar el detalle de un dispositivo por ID al seleccionar la fila
+  getDispositivoPorId(id: string): Observable<Dispositivo> {
+    return this.http.get<Dispositivo>(`${this.url}/${id}`);
+  }
+
+  createDispositivo(dispositivo: Dispositivo): Observable<Dispositivo> {
     return this.http.post<Dispositivo>(this.url, dispositivo);
   }
 
-  actualizarDispositivo(dispositivo: Dispositivo): Observable<any> {
-    return this.http.put(`${this.url}/${dispositivo.idDispositivo}`, dispositivo);
+  updateDispositivo(dispositivo: Dispositivo): Observable<void> {
+    return this.http.put<void>(`${this.url}/${dispositivo.idDispositivo}`, dispositivo);
   }
 
-  eliminarDispositivo(id: string): Observable<any> {
-    return this.http.delete(`${this.url}/${id}`);
+  deleteDispositivo(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
   }
 }
