@@ -1,4 +1,5 @@
 export interface Rol {
-  idRol?: string;   // Guid (string)
+  idRol: string;
   nombre: string;
 }
+

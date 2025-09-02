@@ -5,11 +5,13 @@ import { AuditoriaService } from '../../services/auditoria.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { InicioComponent } from "../inicio/inicio";
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-auditoria',
   templateUrl: './auditoria.html',
-  imports: [CommonModule, DatePipe, FormsModule],
+  imports: [RouterOutlet, RouterLink,CommonModule, DatePipe, FormsModule, InicioComponent],
   styleUrls: ['./auditoria.css']
 })
 export class AuditoriaComponent implements OnInit {

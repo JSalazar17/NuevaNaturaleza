@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginModel } from '../../models/login.model';
+import { Router } from '@angular/router';   // 👈 Importar Router
 
 @Component({
   selector: 'app-login',
@@ -16,9 +17,12 @@ export class LoginController {
   errorMessage = signal<string>('');
   showPassword = signal<boolean>(false);
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router   
+  ) {}
 
-  togglePasswordVisibility() {
+  togglePassword() {
     this.showPassword.update(v => !v);
   }
 
@@ -32,8 +36,8 @@ export class LoginController {
     this.authService.login(loginData).subscribe({
       next: response => {
         console.log('Login exitoso:', response);
-        // Redireccionar o guardar token si es necesario
         this.errorMessage.set('');
+        this.router.navigate(['/eventos']);   
       },
       error: err => {
         console.error('Error de login:', err);

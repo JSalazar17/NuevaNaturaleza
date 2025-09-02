@@ -7,4 +7,6 @@ export interface Dispositivo {
   idTipoDispositivo?: string;
   idSistema?: string;
   idMarca?: string;
+  idTipoMedicion?: string;
+  idEstadoDispositivo?: string;
 }

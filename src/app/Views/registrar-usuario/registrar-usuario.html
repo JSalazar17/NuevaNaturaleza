@@ -1,0 +1,28 @@
+<div class="registro-container">
+  <h2>Registrar Usuario</h2>
+
+  <form (ngSubmit)="registrar()" class="registro-form">
+    <label>Cédula:</label>
+    <input type="text" [(ngModel)]="usuario.cedula" name="cedula" required />
+
+    <label>Nombre:</label>
+    <input type="text" [(ngModel)]="usuario.nombre" name="nombre" required />
+
+    <label>Correo:</label>
+    <input type="email" [(ngModel)]="usuario.correo" name="correo" required />
+
+    <label>Contraseña:</label>
+    <input type="password" [(ngModel)]="usuario.clave" name="clave" required />
+
+    <label>Rol:</label>
+    <select [(ngModel)]="usuario.idRol" name="idRol" required>
+      <option *ngFor="let rol of roles" [value]="rol.idRol">
+        {{ rol.nombre }}
+      </option>
+    </select>
+
+    <button type="submit">Registrar</button>
+  </form>
+
+  <p class="mensaje" *ngIf="mensaje">{{ mensaje }}</p>
+</div>
