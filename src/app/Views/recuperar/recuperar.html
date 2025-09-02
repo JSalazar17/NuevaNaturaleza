@@ -1,9 +1,28 @@
-<h2 class="titulo">Recuperar Contraseña</h2>
+<div class="container">
+  <div class="card">
+    <h2>Recuperar Contraseña</h2>
 
-<div class="recuperar-container">
-  <p>Ingrese su correo para recibir instrucciones:</p>
-  
-  <input type="email" [(ngModel)]="correo" placeholder="Correo electrónico">
-  
-  <button (click)="enviarRecuperacion()">Enviar</button>
+    <form (ngSubmit)="recuperar()">
+      <div class="input-group">
+        <label for="correo">Ingrese el Correo</label>
+        <input 
+          type="email" 
+          id="correo" 
+          [(ngModel)]="correo" 
+          name="correo" 
+          required>
+      </div>
+
+      <button type="submit">Enviar enlace</button>
+
+      <!-- Mensaje de error -->
+      <p class="error" *ngIf="error">{{ error }}</p>
+
+      <!-- Mensaje de éxito -->
+      <div *ngIf="success">
+        <p class="success">{{ success }}</p>
+        <button type="button" (click)="volverLogin()">Volver al login ahora</button>
+      </div>
+    </form>
+  </div>
 </div>

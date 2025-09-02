@@ -1,99 +1,56 @@
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #eaf7ea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
 .login-container {
+  width: 320px;
+  margin: auto;
   text-align: center;
 }
 
-.logo-login {
-  width: 150px;
+.logo {
+  width: 160px; /* Logo más grande */
   margin-bottom: 20px;
-}
-
-.login-box {
-  background-color: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: inline-block;
-  text-align: left;
-  width: 300px;
 }
 
 .input-group {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px 10px;
-  background-color: #f9f9f9;
 }
 
 .input-group .icon {
   margin-right: 8px;
-  font-size: 1.2em;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="checkbox"] {
-  border: none;
-  outline: none;
+input[type="text"], input[type="password"] {
   flex: 1;
-  background-color: transparent;
-  font-size: 1em;
+  padding: 8px;
 }
 
-.checkbox-container {
+.show-password {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 
-.checkbox-container label {
-  margin-left: 8px;
-  font-size: 0.9em;
+.show-password label {
+  margin-left: 5px;
 }
 
 button {
   width: 100%;
   padding: 10px;
-  background-color: #4CAF50;
+  background-color: teal;
   color: white;
-  font-weight: bold;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
 }
 
-button:hover {
-  background-color: #45a049;
-}
-
-a.forgot {
+.forgot-password {
   display: block;
-  margin-top: 15px;
-  font-size: 0.9em;
-  color: #1d6f42;
+  margin-top: 10px;
+  color: #0077cc;
   text-decoration: none;
 }
-
-a.forgot:hover {
+.forgot-password:hover {
   text-decoration: underline;
-}
-
-.error {
-  color: red;
-  margin-top: 10px;
-  font-size: 0.9em;
-  text-align: center;
 }

@@ -1,8 +1,8 @@
 export interface Usuario {
-  idUsuario?: string;  // Guid
+  idUsuario: string;
+  cedula: string;
   nombre: string;
   correo: string;
   clave: string;
-  cedula: string;
-  idRol: string; // Guid de Rol (igual que en backend)
+  idRol: string; // 👈 relación con Rol
 }

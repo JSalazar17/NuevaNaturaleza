@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #e0f2f1; /* fondo verde claro tipo agricultura */
+  background-color: #e0f2f1; /* color acorde con agricultura */
 }
 
 .card {
@@ -57,21 +57,3 @@ button:hover {
   color: green;
   margin-top: 10px;
 }
-
-.message {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 6px;
-  text-align: center;
-}
-
-.success {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.error {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-

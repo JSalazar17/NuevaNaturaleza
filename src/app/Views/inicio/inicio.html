@@ -1,0 +1,27 @@
+<div class="sidebar">
+  <div class="logo">
+    <img src="assets/logolestoma.jpg" alt="Logo">
+    <h3>NUEVA NATURALEZA S.A.S</h3>
+    <p>Acuaponía</p>
+  </div>
+
+  <div class="user-info">
+    <i class="fa fa-user-circle"></i>
+    <p>Pedro Suarez</p>
+    <span>PedroS32@gmail.com</span>
+  </div>
+
+  <ul class="menu">
+    <li><a routerLink="/inicio">Inicio</a></li>
+    <li><a routerLink="/gestion-dispositivos">Gestión de Dispositivos</a></li>
+    <li><a routerLink="/usuarios">Usuarios</a></li>
+    <li><a routerLink="/eventos">Eventos</a></li>
+    <li><a routerLink="/auditoria">Auditorías</a></li>
+  </ul>
+
+  <button class="logout" (click)="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<div class="content">
+  <router-outlet></router-outlet>
+</div>

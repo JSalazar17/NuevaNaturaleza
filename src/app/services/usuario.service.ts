@@ -9,7 +9,7 @@ import { Usuario } from '../models/usuario.model';
 })
 export class UsuarioService {
   // Ajusta la URL base a la que use tu API
-  private apiUrl = 'https://localhost:44330/api/Usuario';
+  private apiUrl = 'https://localhost:44330/api/Usuarios';
 
   constructor(private http: HttpClient) {}
 

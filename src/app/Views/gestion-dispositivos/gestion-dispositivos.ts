@@ -1,52 +1,80 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Dispositivo } from '../../models/dispositivo.model';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration } from 'chart.js';
+
+interface Dispositivo {
+  nombre: string;
+  tipo: 'Sensor' | 'Actuador';
+  imagen: string;
+  valor?: number; // solo sensores
+  datos?: number[]; // para la gráfica
+}
 
 @Component({
   selector: 'app-gestion-dispositivos',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './gestion-dispositivos.html',
-  styleUrl: './gestion-dispositivos.css'
+  imports: [CommonModule, FormsModule, BaseChartDirective],
+  styleUrls: ['./gestion-dispositivos.css']
 })
-export class GestionDispositivos {
-  sensores: Dispositivo[] = [];
-  tipoSeleccionado = '';
-  dispositivos: any[] = [];
+export class GestionDispositivos implements OnInit {
+  tipoSeleccionado: string = 'Todos';
 
-  seleccionarTipo(tipo: string) {
-    this.tipoSeleccionado = tipo;
-    this.cargarDispositivos();
+  dispositivos: Dispositivo[] = [
+    { nombre: 'Bomba de Agua', tipo: 'Actuador', imagen: 'assets/actuador_bomba.png' },
+    { nombre: 'Luz LED', tipo: 'Actuador', imagen: 'assets/actuador_luz.png' },
+    { nombre: 'Ventilador', tipo: 'Actuador', imagen: 'assets/actuador_ventilador.png' },
+    { nombre: 'Sensor de Temperatura', tipo: 'Sensor', imagen: 'assets/sensor_temp.png', valor: 25, datos: [25] },
+    { nombre: 'Sensor de Humedad', tipo: 'Sensor', imagen: 'assets/sensor_humedad.png', valor: 60, datos: [60] }
+  ];
+
+  dispositivosFiltrados: Dispositivo[] = [];
+
+  constructor() {
+    this.filtrar();
   }
 
-  onTipoChange(event: Event) {
-  const selectElement = event.target as HTMLSelectElement;
-  this.seleccionarTipo(selectElement.value);
-}
+  ngOnInit(): void {
+    setInterval(() => {
+      this.actualizarSensores();
+    }, 2000);
+  }
 
-
-  cargarDispositivos() {
-    if (this.tipoSeleccionado === 'sensor') {
-      this.dispositivos = [
-        { nombre: 'Sensor de pH', imagen: 'ph.png', datos: [6.8, 7.0, 7.1] },
-        { nombre: 'Sensor de Temperatura', imagen: 'temp.png', datos: [24, 25, 26] }
-      ];
-    } else if (this.tipoSeleccionado === 'actuador') {
-      this.dispositivos = [
-        { nombre: 'Bomba de Agua', imagen: 'bomba.png' },
-        { nombre: 'Aireador', imagen: 'aireador.png' }
-      ];
+  filtrar() {
+    if (this.tipoSeleccionado === 'Todos') {
+      this.dispositivosFiltrados = [...this.dispositivos];
     } else {
-      this.dispositivos = [];
+      this.dispositivosFiltrados = this.dispositivos.filter(
+        d => d.tipo === this.tipoSeleccionado
+      );
     }
   }
 
-  activar(d: any) {
-    console.log('Activar', d.nombre);
+  actualizarSensores() {
+    this.dispositivos.forEach(d => {
+      if (d.tipo === 'Sensor') {
+        d.valor = Math.floor(Math.random() * 100);
+
+        if (d.datos) {
+          d.datos.push(d.valor);
+          if (d.datos.length > 10) d.datos.shift();
+        }
+      }
+    });
   }
 
-  desactivar(d: any) {
-    console.log('Desactivar', d.nombre);
+  obtenerChartData(dispositivo: Dispositivo): ChartConfiguration<'line'>['data'] {
+    return {
+      labels: Array(dispositivo.datos?.length).fill(''),
+      datasets: [
+        {
+          data: dispositivo.datos || [],
+          borderColor: 'blue',
+          fill: false,
+          tension: 0.3
+        }
+      ]
+    };
   }
 }
-

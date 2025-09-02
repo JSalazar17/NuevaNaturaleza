@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="card">
+    <h2>Cambiar Contraseña</h2>
+    <form (submit)="cambiarPassword()">
+      <div class="input-group">
+        <label for="nueva">Nueva Contraseña</label>
+        <input type="password" id="nueva" [(ngModel)]="nueva" name="nueva" required>
+      </div>
+      <div class="input-group">
+        <label for="confirmar">Confirmar Contraseña</label>
+        <input type="password" id="confirmar" [(ngModel)]="confirmar" name="confirmar" required>
+      </div>
+      <button type="submit">Aceptar</button>
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <p class="success" *ngIf="success">{{ success }}</p>
+    </form>
+  </div>
+</div>
