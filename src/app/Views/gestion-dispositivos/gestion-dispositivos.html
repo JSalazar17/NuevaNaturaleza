@@ -56,8 +56,8 @@
           </div>
           <div class="sensor-chart">
             <canvas baseChart
-              [data]="obtenerChartData(dispositivo)"
-              [options]="{responsive: true, plugins: {legend: {display: false}}}"
+              [data]="dispositivo.chartData"
+              [options]="chartOptions"
               chartType="line">
             </canvas>
           </div>

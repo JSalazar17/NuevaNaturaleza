@@ -1,27 +1,41 @@
-<div class="sidebar">
-  <div class="logo">
-    <img src="assets/logolestoma.jpg" alt="Logo">
-    <h3>NUEVA NATURALEZA S.A.S</h3>
-    <p>Acuaponía</p>
+<div class="container">
+  <div class="sidebar" [class.collapsed]="isCollapsed">
+    
+    <!-- Header con botón hamburguesa -->
+    <div class="sidebar-header">
+      <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+      <div class="logo" *ngIf="!isCollapsed">
+        <img src="assets/logo_3_.png" alt="Logo">
+        <h3>NUEVA NATURALEZA S.A.S</h3>
+        <p>Acuaponía</p>
+      </div>
+    </div>
+
+    <!-- Usuario -->
+    <div class="user-info" *ngIf="!isCollapsed">
+      <i class="fa fa-user-circle"></i>
+      <p>Pedro Suarez</p>
+      <span>PedroS32@gmail.com</span>
+    </div>
+
+    <!-- Navegación -->
+    <ul class="menu">
+      <li><a routerLink="/inicio"><span class="icon">🏠</span><span class="text" *ngIf="!isCollapsed"> Inicio</span></a></li>
+      <li><a routerLink="/gestion-dispositivos"><span class="icon">🧰</span><span class="text" *ngIf="!isCollapsed"> Gestión de Dispositivos</span></a></li>
+      <li><a routerLink="/usuarios"><span class="icon">👥</span><span class="text" *ngIf="!isCollapsed"> Usuarios</span></a></li>
+      <li><a routerLink="/eventos"><span class="icon">📋</span><span class="text" *ngIf="!isCollapsed"> Eventos</span></a></li>
+      <li><a routerLink="/auditoria"><span class="icon">🔍</span><span class="text" *ngIf="!isCollapsed"> Auditorías</span></a></li>
+      <li><a routerLink="/notificaciones"><span class="icon">🔔</span><span class="text" *ngIf="!isCollapsed"> Notificaciones</span></a></li>
+    </ul>
+
+    <!-- Cerrar sesión -->
+    <button class="logout" (click)="cerrarSesion()">
+      <span class="icon">🚪</span><span class="text" *ngIf="!isCollapsed"> Cerrar sesión</span>
+    </button>
   </div>
 
-  <div class="user-info">
-    <i class="fa fa-user-circle"></i>
-    <p>Pedro Suarez</p>
-    <span>PedroS32@gmail.com</span>
+  <!-- Contenido -->
+  <div class="content">
+    <router-outlet></router-outlet>
   </div>
-
-  <ul class="menu">
-    <li><a routerLink="/inicio">Inicio</a></li>
-    <li><a routerLink="/gestion-dispositivos">Gestión de Dispositivos</a></li>
-    <li><a routerLink="/usuarios">Usuarios</a></li>
-    <li><a routerLink="/eventos">Eventos</a></li>
-    <li><a routerLink="/auditoria">Auditorías</a></li>
-  </ul>
-
-  <button class="logout" (click)="cerrarSesion()">Cerrar sesión</button>
-</div>
-
-<div class="content">
-  <router-outlet></router-outlet>
 </div>

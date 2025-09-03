@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
   { path: 'usuarios', component: UsuariosComponent},
-  { path: '**', redirectTo: 'login' }
+  //{ path: '**', redirectTo: 'login' }
 ];
 
 

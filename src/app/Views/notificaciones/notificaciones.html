@@ -9,32 +9,30 @@
 
   @if (!(cargando$ | async) && (notificaciones$ | async)) {
     <table border="1" cellspacing="0" cellpadding="5">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Título</th>
-          <th>Tipo Notificación</th>
-          <th>Mensaje</th>
-          <th>Enlace</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (notificacion of (notificaciones$ | async); track notificacion.idNotificacion) {
-          <tr>
-            <td>{{ notificacion.idNotificacion }}</td>
-            <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
-            <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
-            <td>{{ notificacion.mensaje || '-' }}</td>
-            <td>
-              @if (notificacion.enlace) {
-                <a [href]="notificacion.enlace" target="_blank">Abrir</a>
-              } @else {
-                <span>-</span>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Títuloe</th>
+        <th>Tipo Notificación</th>
+        <th>Mensaje</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (notificacion of (notificaciones$ | async); track notificacion.idNotificacion) {
+      <tr 
+         
+        (click)="abrirEnlace(notificacion)" 
+        [class.no-leida]="!notificacion.leido"
+        [class.leida]="notificacion.leido">
+        
+        <td>{{ notificacion.idNotificacion }}</td>
+        <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
+        <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
+        <td>{{ notificacion.mensaje || '-' }}</td>
+      </tr>
+      }
+    </tbody>
+      
     </table>
   } @else {
     <div class="no-data">

@@ -49,6 +49,21 @@ export class NotificacionesComponent implements OnInit {
     //this.cargarTodo();
   }
 
+  abrirEnlace(notificacion: Notificacion) {
+    if (notificacion.enlace) {
+      window.open(notificacion.enlace, '_blank');
+    }
+
+    // Marcar como leída en el frontend
+    notificacion.leido = true;
+
+    // Si quieres guardar en backend
+    this.notificacionService.marcarComoLeida(notificacion.idNotificacion).subscribe({
+      next: () => console.log("Notificación marcada como leída"),
+      error: (err) => console.error("Error al actualizar notificación", err)
+    });
+  }
+
   cargarTitulos(): void {
     this.tituloService.getTitulos().subscribe({
       next: (data) => this.titulos = data,

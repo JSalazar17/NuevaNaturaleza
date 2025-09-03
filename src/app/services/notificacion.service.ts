@@ -31,4 +31,10 @@ export class NotificacionService {
   deleteNotificacion(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // 🔹 Nuevo método: marcar como leída
+  marcarComoLeida(id: string): Observable<Notificacion> {
+    return this.http.patch<Notificacion>(`${this.apiUrl}/${id}`, { leido: true });
+  }
+  //envie toda la notificacion 
 }

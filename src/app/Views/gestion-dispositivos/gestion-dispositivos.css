@@ -119,7 +119,13 @@
 
 .sensor-chart {
   flex: 1;
-  max-width: 180px;
+  max-width: 250px;        /* 🔹 espacio máximo que puede usar la gráfica */
+  aspect-ratio: 1 / 1;     /* 🔹 cuadrado flexible (se ajusta con el ancho) */
+}
+
+.sensor-chart canvas {
+  width: 100% !important;
+  height: 100% !important; /* 🔹 fuerza al canvas a ocupar el div */
 }
 
 .acciones-finales {
