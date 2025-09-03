@@ -1,0 +1,1 @@
+export const environment:string="http://localhost:5018";

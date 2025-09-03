@@ -7,7 +7,7 @@ import { TipoNotificacion } from '../../models/tiponotificacion';
 import { TipoNotificacionService } from '../../services/tiponotificacion.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-notificaciones',
@@ -16,6 +16,18 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./notificaciones.css']
 })
 export class NotificacionesComponent implements OnInit {
+  
+  private notificacionesSubject = new BehaviorSubject<Notificacion[]>([]);
+  notificaciones$: Observable<Notificacion[]>=this.notificacionesSubject.asObservable();
+
+
+  private cargandoSubject = new BehaviorSubject<boolean>(true);
+  cargando$ = this.cargandoSubject.asObservable();
+
+
+
+
+
 
   notificaciones: Notificacion[] = [];
   titulos: Titulo[] = [];
@@ -27,14 +39,14 @@ export class NotificacionesComponent implements OnInit {
     private tituloService: TituloService,
     private tipoNotificacionService: TipoNotificacionService,
     private cd: ChangeDetectorRef
+    
   ) {}
-
   ngOnInit(): void {
     // Cargar primero títulos y tipos
     this.cargarTitulos();
     this.cargarTipos();
-    this.cargarNotificaciones();
-    this.cargarTodo();
+    this.cargarNotificaciones1();
+    //this.cargarTodo();
   }
 
   cargarTitulos(): void {
@@ -50,7 +62,6 @@ export class NotificacionesComponent implements OnInit {
       error: (err) => console.error('Error cargando tipos', err)
     });
   }
-
   cargando: boolean = true;
 
   cargarTodo(): void {
@@ -72,7 +83,26 @@ export class NotificacionesComponent implements OnInit {
     error: (err) => console.error('Error cargando datos', err)
   });
 }
-
+  cargarNotificaciones1(): void {
+    this.cargandoSubject.next(true); // activa loading
+    this.notificacionService.getNotificaciones().subscribe({
+      next: (data: Notificacion[]) => {
+        const notificaciones = data.map(n => ({
+          ...n,
+          idTituloNavigation: this.titulos.find(t => t.idTitulo === n.idTitulo),
+          idTipoNotificacionNavigation: this.tiposNotificacion.find(
+            t => t.idTipoNotificacion === n.idTipoNotificacion
+          )
+        }));
+        this.notificacionesSubject.next(notificaciones); // ✅ actualiza observable
+        this.cargandoSubject.next(false); // ✅ desactiva loading
+      },
+      error: (err) => {
+        console.error('Error cargando notificaciones', err);
+        this.cargandoSubject.next(false); // incluso si falla
+      }
+    });
+  }
   cargarNotificaciones(): void {
     this.notificacionService.getNotificaciones().subscribe({
       next: (data: Notificacion[]) => {

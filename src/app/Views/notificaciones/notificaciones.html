@@ -1,35 +1,44 @@
 <div class="container">
   <h2>Notificaciones</h2>
 
-  <div *ngIf="cargando" class="loading">
-    Cargando datos...
-  </div>
+  @if (cargando$ | async) {
+    <div class="loading">
+      Cargando datos...
+    </div>
+  }
 
-  <table *ngIf="!cargando && notificaciones.length > 0" border="1" cellspacing="0" cellpadding="5">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Título</th>
-        <th>Tipo Notificación</th>
-        <th>Mensaje</th>
-        <th>Enlace</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let notificacion of notificaciones">
-        <td>{{ notificacion.idNotificacion }}</td>
-        <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
-        <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
-        <td>{{ notificacion.mensaje || '-' }}</td>
-        <td>
-          <a *ngIf="notificacion.enlace" [href]="notificacion.enlace" target="_blank">Abrir</a>
-          <span *ngIf="!notificacion.enlace">-</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="!cargando && notificaciones.length === 0" class="no-data">
-    No hay notificaciones disponibles.
-  </div>
+  @if (!(cargando$ | async) && (notificaciones$ | async)) {
+    <table border="1" cellspacing="0" cellpadding="5">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Tipo Notificación</th>
+          <th>Mensaje</th>
+          <th>Enlace</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (notificacion of (notificaciones$ | async); track notificacion.idNotificacion) {
+          <tr>
+            <td>{{ notificacion.idNotificacion }}</td>
+            <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
+            <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
+            <td>{{ notificacion.mensaje || '-' }}</td>
+            <td>
+              @if (notificacion.enlace) {
+                <a [href]="notificacion.enlace" target="_blank">Abrir</a>
+              } @else {
+                <span>-</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="no-data">
+      No hay notificaciones disponibles.
+    </div>
+  }
 </div>

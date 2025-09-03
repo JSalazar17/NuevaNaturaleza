@@ -1,18 +1,24 @@
-import { bootstrapApplication } from '@angular/platform-browser';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Dispositivo } from '../../models/dispositivo.model';
 import { Marca } from '../../models/marca.model';
 import { Sistema } from '../../models/sistema.model';
 import { TipoDispositivo } from '../../models/tipodispositivo.model';
-import { CommonModule } from '@angular/common';
 import { TipoMedicion } from '../../models/tipomedicion.model';
+import { CommonModule } from '@angular/common';
+import { BehaviorSubject } from 'rxjs';
+import { MarcaService } from '../../services/marcas.service';
+import { SistemaService } from '../../services/sistemas.service';
+import { TipoDispositivoService } from '../../services/tipodispositivos.service';
+import { TipoMedicionService } from '../../services/tipomedicion.service';
+import { DispositivoService } from '../../services/dispositivos.service';
+import { Actuador } from '../../models/actuador.model';
+import { Sensor } from '../../models/sensor.model';
 
 @Component({
   selector: 'app-agregar-dispositivo',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './agregar-dispositivo.html',
   styleUrl: './agregar-dispositivo.css'
 })
@@ -28,12 +34,13 @@ export class AgregarDispositivo {
     idTipoDispositivo: '',
   };
 
-  marcas: Marca[] = [];
-  sistemas: Sistema[] = [];
-  tiposDispositivo: TipoDispositivo[] = [];
-  tiposMedicion: TipoMedicion[] = [];
+  
+  marcas$ = new BehaviorSubject<Marca[]>([]);
+  sistemas$ = new BehaviorSubject<Sistema[]>([]);
+  tiposDispositivo$ = new BehaviorSubject<TipoDispositivo[]>([]);
+  tiposMedicion$ = new BehaviorSubject<TipoMedicion[]>([]);
 
-  // 🔹 Campos adicionales
+
   mediciones: any[] = [];
   tipoSeleccionadoNombre: string = '';
   numeroMediciones: number = 1;
@@ -42,48 +49,96 @@ export class AgregarDispositivo {
   letraOff: string = '';
   numSensores: number = 0;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private marcaService:MarcaService,
+    private sistemaService:SistemaService,
+    private tiposDispositivoService:TipoDispositivoService,
+    private tipoMedicionService:TipoMedicionService,
+    private dispositivoService:DispositivoService
+  ) {
     this.cargarDatos();
   }
 
   cargarDatos() {
-    this.http.get<Marca[]>('https://localhost:44330/api/Marcas')
-      .subscribe(data => this.marcas = data);
+    this.marcaService.obtenerMarcas()
+      .subscribe(data => this.marcas$.next(data));
 
-    this.http.get<Sistema[]>('https://localhost:44330/api/Sistemas')
-      .subscribe(data => this.sistemas = data);
+    this.sistemaService.obtenerSistemas()
+      .subscribe(data => this.sistemas$.next(data));
 
-    this.http.get<TipoDispositivo[]>('https://localhost:44330/api/TipoDispositivoes')
-      .subscribe(data => this.tiposDispositivo = data);
+    this.tiposDispositivoService.obtenerTiposDispositivo()
+      .subscribe(data => this.tiposDispositivo$.next(data));
 
-    this.http.get<TipoMedicion[]>('https://localhost:44330/api/TipoMedicion')
-      .subscribe(data => this.tiposMedicion = data);
+    this.tipoMedicionService.getTipoMediciones()
+      .subscribe(data => this.tiposMedicion$.next(data));
   }
 
-  
-   onTipoDispositivoChange() {
-    const tipoSeleccionado = this.tiposDispositivo.find(t => t.idTipoDispositivo === this.dispositivo.idTipoDispositivo);
+  onTipoDispositivoChange() {
+    const tipoSeleccionado = this.tiposDispositivo$.value.find(
+      t => t.idTipoDispositivo === this.dispositivo.idTipoDispositivo
+    );
     this.tipoSeleccionadoNombre = tipoSeleccionado ? tipoSeleccionado.nombre.toLowerCase() : '';
   }
-
 
   onNumeroMedicionesChange() {
     this.mediciones = Array(this.numeroMediciones).fill(null);
   }
 
-  guardarDispositivo() {
-    const payload = {
-      ...this.dispositivo,
-      numeroMediciones: this.tipoSeleccionadoNombre === 'sensor' ? this.numeroMediciones : null,
-      tipoMedicion: this.tipoSeleccionadoNombre === 'sensor' ? this.medicionSeleccionada : null,
-      on: this.tipoSeleccionadoNombre === 'actuador' ? this.letraOn : null,
-      off: this.tipoSeleccionadoNombre === 'actuador' ? this.letraOff : null,
-    };
+  private buildPayload(): any {
+  const payload: any = { ...this.dispositivo };
 
-    this.http.post('https://localhost:44330/api/Dispositivoes', payload)
+  if (this.tipoSeleccionadoNombre === 'sensor') {
+    payload.numeroMediciones = this.numeroMediciones;
+    payload.tipoMedicion = this.medicionSeleccionada;
+  }
+
+  if (this.tipoSeleccionadoNombre === 'actuador') {
+    payload.on = this.letraOn;
+    payload.off = this.letraOff;
+  }
+
+  return payload;
+}
+
+private buildPayloadTipoDispo():  Sensor | Actuador|null {
+
+  // Si es sensor → valido que tenga datos de sensor
+  if (this.numeroMediciones && this.mediciones.length > 0) {
+    return {
+      idDispositivo: this.dispositivo.idDispositivo,
+      IdTipoMedicion: this.dispositivo.idTipoMedicion,
+      IdUnidadMedida: ""
+    } as Sensor;
+  }
+
+  // Si es actuador → valido que tenga datos de actuador
+  if (this.letraOn && this.letraOff) {
+    return {
+      idDispositivo: this.dispositivo.idDispositivo,
+      on: this.letraOn,
+      off: this.letraOff
+    } as Actuador;
+  }
+  return null
+}
+
+
+
+
+
+
+
+
+
+
+  guardarDispositivo() {
+    const payload = this.buildPayload();
+
+    this.dispositivoService.createDispositivo(payload)
       .subscribe({
         next: () => alert('Dispositivo guardado correctamente.'),
         error: err => alert('Error al guardar: ' + err.message)
       });
   }
+
 }
