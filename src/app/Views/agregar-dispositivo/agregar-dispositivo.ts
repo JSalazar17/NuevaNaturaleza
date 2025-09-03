@@ -34,13 +34,13 @@ export class AgregarDispositivo {
     idTipoDispositivo: '',
   };
 
-  // 🔹 Ahora como observables
+  
   marcas$ = new BehaviorSubject<Marca[]>([]);
   sistemas$ = new BehaviorSubject<Sistema[]>([]);
   tiposDispositivo$ = new BehaviorSubject<TipoDispositivo[]>([]);
   tiposMedicion$ = new BehaviorSubject<TipoMedicion[]>([]);
 
-  // 🔹 Campos adicionales
+
   mediciones: any[] = [];
   tipoSeleccionadoNombre: string = '';
   numeroMediciones: number = 1;
