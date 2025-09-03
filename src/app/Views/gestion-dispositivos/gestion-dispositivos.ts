@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
@@ -8,8 +8,9 @@ interface Dispositivo {
   nombre: string;
   tipo: 'Sensor' | 'Actuador';
   imagen: string;
-  valor?: number; // solo sensores
-  datos?: number[]; // para la gráfica
+  valor?: number;
+  datos?: number[];
+  chartData?: ChartConfiguration<'line'>['data'];
 }
 
 @Component({
@@ -31,11 +32,42 @@ export class GestionDispositivos implements OnInit {
 
   dispositivosFiltrados: Dispositivo[] = [];
 
-  constructor() {
+  @ViewChildren(BaseChartDirective) charts!: QueryList<BaseChartDirective>;
+
+  chartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: { display: false },
+      y: { display: true }
+    }
+  };
+
+  constructor(private cd: ChangeDetectorRef) {
     this.filtrar();
   }
 
   ngOnInit(): void {
+    // inicializar chartData
+    this.dispositivos.forEach(d => {
+      if (d.tipo === 'Sensor') {
+        d.chartData = {
+          labels: d.datos?.map((_, i) => i.toString()) || [],
+          datasets: [
+            {
+              data: d.datos || [],
+              borderColor: 'blue',
+              fill: false,
+              tension: 0.3
+            }
+          ]
+        };
+      }
+    });
+
     setInterval(() => {
       this.actualizarSensores();
     }, 2000);
@@ -60,21 +92,15 @@ export class GestionDispositivos implements OnInit {
           d.datos.push(d.valor);
           if (d.datos.length > 10) d.datos.shift();
         }
+
+        if (d.chartData) {
+          d.chartData.labels = d.datos?.map((_, i) => i.toString());
+          d.chartData.datasets[0].data = d.datos || [];
+        }
       }
     });
-  }
 
-  obtenerChartData(dispositivo: Dispositivo): ChartConfiguration<'line'>['data'] {
-    return {
-      labels: Array(dispositivo.datos?.length).fill(''),
-      datasets: [
-        {
-          data: dispositivo.datos || [],
-          borderColor: 'blue',
-          fill: false,
-          tension: 0.3
-        }
-      ]
-    };
+    this.charts.forEach(chart => chart.update());
+    this.cd.detectChanges();
   }
 }

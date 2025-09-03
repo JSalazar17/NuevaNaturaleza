@@ -9,22 +9,22 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Título</th>
+        <th>Títuloe</th>
         <th>Tipo Notificación</th>
         <th>Mensaje</th>
-        <th>Enlace</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let notificacion of notificaciones">
+      <tr 
+        *ngFor="let notificacion of notificaciones" 
+        (click)="abrirEnlace(notificacion)" 
+        [class.no-leida]="!notificacion.leido"
+        [class.leida]="notificacion.leido">
+        
         <td>{{ notificacion.idNotificacion }}</td>
         <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
         <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
         <td>{{ notificacion.mensaje || '-' }}</td>
-        <td>
-          <a *ngIf="notificacion.enlace" [href]="notificacion.enlace" target="_blank">Abrir</a>
-          <span *ngIf="!notificacion.enlace">-</span>
-        </td>
       </tr>
     </tbody>
   </table>
