@@ -7,15 +7,16 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InicioComponent } from "../inicio/inicio";
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-auditoria',
   templateUrl: './auditoria.html',
-  imports: [RouterOutlet, RouterLink,CommonModule, DatePipe, FormsModule, InicioComponent],
+  imports: [RouterOutlet, RouterLink, CommonModule, DatePipe, FormsModule, InicioComponent],
   styleUrls: ['./auditoria.css']
 })
 export class AuditoriaComponent implements OnInit {
-  auditorias: Auditoria[] = [];
+  auditorias$ = new BehaviorSubject<Auditoria[]>([]);
   auditoriaSeleccionada?: Auditoria;
   usuarioInfo?: Usuario;
   mostrarModal = false;
@@ -31,7 +32,7 @@ export class AuditoriaComponent implements OnInit {
 
   cargarAuditorias(): void {
     this.auditoriaService.getAuditorias().subscribe((data: Auditoria[]) => {
-      this.auditorias = data;
+      this.auditorias$.next(data);
     });
   }
 

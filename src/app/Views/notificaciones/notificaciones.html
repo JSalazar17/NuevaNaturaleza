@@ -1,11 +1,14 @@
 <div class="container">
   <h2>Notificaciones</h2>
 
-  <div *ngIf="cargando" class="loading">
-    Cargando datos...
-  </div>
+  @if (cargando$ | async) {
+    <div class="loading">
+      Cargando datos...
+    </div>
+  }
 
-  <table *ngIf="!cargando && notificaciones.length > 0" border="1" cellspacing="0" cellpadding="5">
+  @if (!(cargando$ | async) && (notificaciones$ | async)) {
+    <table border="1" cellspacing="0" cellpadding="5">
     <thead>
       <tr>
         <th>ID</th>
@@ -15,8 +18,9 @@
       </tr>
     </thead>
     <tbody>
+      @for (notificacion of (notificaciones$ | async); track notificacion.idNotificacion) {
       <tr 
-        *ngFor="let notificacion of notificaciones" 
+         
         (click)="abrirEnlace(notificacion)" 
         [class.no-leida]="!notificacion.leido"
         [class.leida]="notificacion.leido">
@@ -26,10 +30,13 @@
         <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
         <td>{{ notificacion.mensaje || '-' }}</td>
       </tr>
+      }
     </tbody>
-  </table>
-
-  <div *ngIf="!cargando && notificaciones.length === 0" class="no-data">
-    No hay notificaciones disponibles.
-  </div>
+      
+    </table>
+  } @else {
+    <div class="no-data">
+      No hay notificaciones disponibles.
+    </div>
+  }
 </div>

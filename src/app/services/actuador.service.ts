@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Actuador } from '../models/actuador.model';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActuadorService {
-  private apiUrl = 'https://localhost:44330/api/Actuador'; // ⚠️ Ajusta según tu ruta en .NET
+  private apiUrl = environment+'/api/Actuador'; // ⚠️ Ajusta según tu ruta en .NET
 
   constructor(private http: HttpClient) {}
 

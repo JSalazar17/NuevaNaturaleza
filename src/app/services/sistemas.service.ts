@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Sistema } from '../models/sistema.model';
 import { Observable } from 'rxjs';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SistemaService {
-  private url = 'https://localhost:44330/api/Sistemas';
+  private url = environment+'/api/Sistemas';
 
   constructor(private http: HttpClient) {}
 

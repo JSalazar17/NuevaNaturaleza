@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TipoNotificacion } from '../models/tiponotificacion';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TipoNotificacionService {
-  private apiUrl = 'https://localhost:44330/api/TipoNotificacion';
+  private apiUrl = environment+'/api/TipoNotificacion';
 
   constructor(private http: HttpClient) { }
 
