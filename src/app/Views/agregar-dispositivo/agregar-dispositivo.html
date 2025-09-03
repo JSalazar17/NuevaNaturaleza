@@ -21,65 +21,65 @@
     <h1>Agregar Dispositivo</h1>
     <form (ngSubmit)="guardarDispositivo()" #formDispositivo="ngForm">
       <label>Nombre:</label>
-      <input type="text" [(ngModel)]="dispositivo.nombre" name="nombre" required>
+      <input type="text" [(ngModel)]="dispositivo.nombre" name="nombre" required />
 
       <label>Serial:</label>
-      <input type="text" [(ngModel)]="dispositivo.sn" name="sn" required>
+      <input type="text" [(ngModel)]="dispositivo.sn" name="sn" required />
 
       <label>Descripción:</label>
       <textarea [(ngModel)]="dispositivo.descripcion" name="descripcion"></textarea>
 
       <label>Imagen (URL):</label>
-      <input type="text" [(ngModel)]="dispositivo.image" name="image">
+      <input type="text" [(ngModel)]="dispositivo.image" name="image" />
 
       <label>Marca:</label>
       <select [(ngModel)]="dispositivo.idMarca" name="marca" required>
-        <option *ngFor="let marca of marcas" [value]="marca.idMarca">
-          {{ marca.nombre }}
-        </option>
+        @for (marca of (marcas$ | async); track marca.idMarca) {
+          <option [value]="marca.idMarca">{{ marca.nombre }}</option>
+        }
       </select>
 
       <label>Sistema:</label>
       <select [(ngModel)]="dispositivo.idSistema" name="sistema" required>
-        <option *ngFor="let sistema of sistemas" [value]="sistema.idSistema">
-          {{ sistema.nombre }}
-        </option>
+        @for (sistema of (sistemas$ | async); track sistema.idSistema) {
+          <option [value]="sistema.idSistema">{{ sistema.nombre }}</option>
+        }
       </select>
 
       <label>Tipo de Dispositivo:</label>
       <select [(ngModel)]="dispositivo.idTipoDispositivo" name="tipoDispositivo" required (change)="onTipoDispositivoChange()">
-        <option *ngFor="let tipo of tiposDispositivo" [value]="tipo.idTipoDispositivo">
-          {{ tipo.nombre }}
-        </option>
+        @for (tipo of (tiposDispositivo$ | async); track tipo.idTipoDispositivo) {
+          <option [value]="tipo.idTipoDispositivo">{{ tipo.nombre }}</option>
+        }
       </select>
 
       <!-- 🔹 Si es Sensor -->
-      <div *ngIf="tipoSeleccionadoNombre === 'sensor'">
+      @if (tipoSeleccionadoNombre === 'sensor') {
         <label>Número de Mediciones:</label>
-        <select [(ngModel)]="numeroMediciones" name="numeroMediciones">
+        <select [(ngModel)]="numeroMediciones" name="numeroMediciones" (change)="onNumeroMedicionesChange()">
           <option [value]="1">1</option>
           <option [value]="2">2</option>
         </select>
 
         <!-- Render dinámico según número seleccionado -->
-        <div *ngFor="let i of [].constructor(numeroMediciones); let idx = index">
+        @for (i of [].constructor(numeroMediciones); let idx = $index; track idx) {
           <label>Tipo de Medición {{ idx + 1 }}:</label>
           <select [(ngModel)]="mediciones[idx]" [name]="'medicion' + idx">
-            <option *ngFor="let tm of tiposMedicion" [value]="tm.idTipoMedicion">
-              {{ tm.nombre }}
-            </option>
+            @for (tm of (tiposMedicion$ | async); track tm.idTipoMedicion) {
+              <option [value]="tm.idTipoMedicion">{{ tm.nombre }}</option>
+            }
           </select>
-        </div>
-      </div>
+        }
+      }
 
       <!-- 🔹 Si es Actuador -->
-      <div *ngIf="tipoSeleccionadoNombre === 'actuador'">
+      @if (tipoSeleccionadoNombre === 'actuador') {
         <label>Letra para ON:</label>
-        <input type="text" [(ngModel)]="letraOn" name="letraOn" maxlength="1">
+        <input type="text" [(ngModel)]="letraOn" name="letraOn" maxlength="1" />
 
         <label>Letra para OFF:</label>
-        <input type="text" [(ngModel)]="letraOff" name="letraOff" maxlength="1">
-      </div>
+        <input type="text" [(ngModel)]="letraOff" name="letraOff" maxlength="1" />
+      }
 
       <button type="submit">Guardar</button>
     </form>

@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Rol } from '../models/rol.model';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RolService {
-  private apiUrl = 'https://localhost:44330/api/Rol'; // ajusta si tu endpoint es distinto
+  private apiUrl = `${environment}/api/Rol`; // ajusta si tu endpoint es distinto
 
   constructor(private http: HttpClient) {}
 

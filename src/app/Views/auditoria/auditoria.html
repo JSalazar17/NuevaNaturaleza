@@ -14,27 +14,31 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of auditorias; let i = index"
-          (click)="seleccionarAuditoria(item)"
+      @for (item of (auditorias$ | async); let i = $index; track item.idAuditoria) {
+        <tr 
+          (click)="seleccionarAuditoria(item)" 
           [class.selected]="item === auditoriaSeleccionada">
-        <td>{{ i + 1 }}</td>
-        <td>{{ item.usuarioNombre }}</td>
-        <td>{{ item.dispositivoNombre }}</td>
-        <td>{{ item.accion }}</td>
-        <td>{{ item.fecha | date: 'short' }}</td>
-        <td>{{ item.observacion }}</td>
-      </tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.usuarioNombre }}</td>
+          <td>{{ item.dispositivoNombre }}</td>
+          <td>{{ item.accion }}</td>
+          <td>{{ item.fecha | date: 'short' }}</td>
+          <td>{{ item.observacion }}</td>
+        </tr>
+      }
     </tbody>
   </table>
 
   <!-- Modal -->
-  <div class="modal" *ngIf="mostrarModal">
-    <div class="modal-content">
-      <span class="close" (click)="cerrarModal()">&times;</span>
-      <h3>Información del Usuario</h3>
-      <p><strong>Nombre:</strong> {{ usuarioInfo?.nombre }}</p>
-      <p><strong>Correo:</strong> {{ usuarioInfo?.correo }}</p>
-      <p><strong>Rol:</strong> {{ usuarioInfo?.idRol }}</p>
+  @if (mostrarModal) {
+    <div class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="cerrarModal()">&times;</span>
+        <h3>Información del Usuario</h3>
+        <p><strong>Nombre:</strong> {{ usuarioInfo?.nombre }}</p>
+        <p><strong>Correo:</strong> {{ usuarioInfo?.correo }}</p>
+        <p><strong>Rol:</strong> {{ usuarioInfo?.idRol }}</p>
+      </div>
     </div>
-  </div>
+  }
 </div>

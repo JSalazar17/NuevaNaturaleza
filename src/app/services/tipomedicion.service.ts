@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TipoMedicion } from '../models/tipomedicion.model';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TipoMedicionService {
-  private apiUrl = 'https://localhost:44330/api/TipoMedicion'; // 👈 ajusta al endpoint real
+  private apiUrl = environment+'/api/TipoMedicion'; // 👈 ajusta al endpoint real
 
   constructor(private http: HttpClient) {}
 

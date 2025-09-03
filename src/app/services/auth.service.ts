@@ -4,12 +4,13 @@ import { LoginModel } from '../models/login.model';
 import { Observable } from 'rxjs';
 import { CambiarContrasenaRequest } from '../models/cambiarcontraseña.model';
 import { RecuperarRequest } from '../models/recuperar.model';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:44330/api/Auth'; // Ajusta tu endpoint real
+  private apiUrl = environment+'/api/Auth'; // Ajusta tu endpoint real
 
   constructor(private http: HttpClient) {}
 

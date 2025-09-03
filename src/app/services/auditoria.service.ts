@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Auditoria } from '../models/auditoria.model';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuditoriaService {
-  private apiUrl = 'https://localhost:44330/api/Auditoriums'; // ajusta a tu endpoint real
+  private apiUrl = environment+'/api/Auditoriums'; // ajusta a tu endpoint real
 
   constructor(private http: HttpClient) {}
 

@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Dispositivo } from '../models/dispositivo.model';
+import { environment } from '../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DispositivoService {
   // Ajusta si tu API usa otro plural/ruta
-  private url = 'https://localhost:44330/api/Dispositivoes';
+  private url = environment+'/api/Dispositivoes';
 
   constructor(private http: HttpClient) {}
 
