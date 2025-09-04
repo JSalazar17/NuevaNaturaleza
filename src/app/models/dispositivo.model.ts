@@ -1,4 +1,7 @@
+import { Sensor } from "./sensor.model";
+
 export interface Dispositivo {
+
   idDispositivo?: string;
   nombre: string;
   sn: string;
@@ -9,4 +12,5 @@ export interface Dispositivo {
   idMarca?: string;
   idTipoMedicion?: string;
   idEstadoDispositivo?: string;
+  Sensors?:Sensor[]
 }

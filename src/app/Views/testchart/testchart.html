@@ -1,0 +1,13 @@
+<!-- el *ngIf evita que el canvas se cree en SSR/domino -->
+<div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
+  <canvas
+    baseChart
+    [data]="chartData()"
+    [options]="chartOptions"
+    [type]="lineChartType">
+  </canvas>
+
+  <button (click)="addPoint()" style="margin-top:16px">
+    Añadir punto manualmente
+  </button>
+</div>

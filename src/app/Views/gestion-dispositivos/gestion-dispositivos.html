@@ -1,75 +1,12 @@
-<div class="dashboard">
-  <!-- Panel lateral -->
-  <aside class="sidebar">
-    <div class="logo">
-      <img src="assets/logolestoma.jpg" alt="Logo" />
-    </div>
-    <div class="user-info">
-      <i class="fa fa-user-circle"></i>
-      <p>Pedro Suarez</p>
-      <span>pedrosuarez@gmail.com</span>
-    </div>
-    <nav class="menu">
-      <a routerLink="/inicio">Inicio</a>
-      <a routerLink="/gestion-dispositivos" class="active">Gestión de Dispositivos</a>
-      <a routerLink="/usuarios">Usuarios</a>
-      <a routerLink="/eventos">Eventos</a>
-      <a routerLink="/auditoria">Auditorías</a>
-      <a routerLink="/notificaciones">Notificaciones</a>
-    </nav>
-    <button class="logout">Cerrar sesión</button>
-  </aside>
 
-  <!-- Contenido principal -->
-  <main class="content">
-    <h2>Gestión de dispositivos</h2>
+    <div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
+  <canvas
+    baseChart
+    [data]="chartsData()"
+    [options]="chartOptions"
+    [type]="lineChartType">
+  </canvas>
 
-    <div class="filter">
-      <label for="tipo">Seleccione Tipo:</label>
-      <select id="tipo" [(ngModel)]="tipoSeleccionado" (change)="filtrar()">
-        <option value="Todos">Todos</option>
-        <option value="Actuador">Actuadores</option>
-        <option value="Sensor">Sensores</option>
-      </select>
-    </div>
 
-    <!-- Lista de dispositivos -->
-    <div class="devices">
-      <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados">
-        
-        <!-- Actuadores -->
-        <div *ngIf="dispositivo.tipo === 'Actuador'">
-          <h3>{{ dispositivo.nombre }}</h3>
-          <img [src]="dispositivo.imagen" alt="{{ dispositivo.nombre }}" />
-          <div class="acciones">
-            <button class="on">ON</button>
-            <button class="off">OFF</button>
-          </div>
-        </div>
-
-        <!-- Sensores -->
-        <div *ngIf="dispositivo.tipo === 'Sensor'" class="sensor-card">
-          <div class="sensor-info">
-            <h3>{{ dispositivo.nombre }}</h3>
-            <img [src]="dispositivo.imagen" alt="{{ dispositivo.nombre }}" />
-            <p><strong>Valor:</strong> {{ dispositivo.valor }}</p>
-          </div>
-          <div class="sensor-chart">
-            <canvas baseChart
-              [data]="dispositivo.chartData"
-              [options]="chartOptions"
-              chartType="line">
-            </canvas>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Botones agregar/editar -->
-    <div class="acciones-finales">
-      <button class="agregar">Agregar</button>
-      <button class="editar">Editar</button>
-    </div>
-  </main>
 </div>
+
