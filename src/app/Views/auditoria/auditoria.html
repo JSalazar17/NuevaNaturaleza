@@ -1,8 +1,7 @@
-<app-inicio></app-inicio>
 <div class="auditoria-container">
   <h2>Auditoría</h2>
 
-  <table>
+  <table class="tabla-auditorias" >
     <thead>
       <tr>
         <th>N°</th>
@@ -21,7 +20,7 @@
           <td>{{ i + 1 }}</td>
           <td>{{ item.usuarioNombre }}</td>
           <td>{{ item.dispositivoNombre }}</td>
-          <td>{{ item.accion }}</td>
+          <td>{{ item.accionNombre }}</td>
           <td>{{ item.fecha | date: 'short' }}</td>
           <td>{{ item.observacion }}</td>
         </tr>

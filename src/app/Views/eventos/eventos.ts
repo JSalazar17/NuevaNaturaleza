@@ -5,6 +5,7 @@ import { Evento } from '../../models/evento.model';
 import { Dispositivo } from '../../models/dispositivo.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-eventos',
@@ -18,6 +19,9 @@ export class Eventos implements OnInit {
   eventoSeleccionado: Evento | null = null;
   dispositivoSeleccionado: Dispositivo | null = null;
 
+  private eventosSubject = new BehaviorSubject<Evento[]>([]);
+  eventos$: Observable<Evento[]>=this.eventosSubject.asObservable();
+
   constructor(
     private eventoService: EventoService,
     private dispositivoService: DispositivoService
@@ -29,7 +33,7 @@ export class Eventos implements OnInit {
   }
 
   cargarEventos() {
-    this.eventoService.getEventos().subscribe(data => {this.eventos = data;console.log(data)});
+    this.eventoService.getEventos().subscribe(data => {this.eventosSubject.next(data);console.log(data)});
   }
 
   cargarDispositivos() {

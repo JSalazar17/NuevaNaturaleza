@@ -19,16 +19,8 @@ export class NotificacionesComponent implements OnInit {
   
   private notificacionesSubject = new BehaviorSubject<Notificacion[]>([]);
   notificaciones$: Observable<Notificacion[]>=this.notificacionesSubject.asObservable();
-
-
   private cargandoSubject = new BehaviorSubject<boolean>(true);
   cargando$ = this.cargandoSubject.asObservable();
-
-
-
-
-
-
   notificaciones: Notificacion[] = [];
   titulos: Titulo[] = [];
   tiposNotificacion: TipoNotificacion[] = [];
@@ -98,6 +90,7 @@ export class NotificacionesComponent implements OnInit {
     error: (err) => console.error('Error cargando datos', err)
   });
 }
+
   cargarNotificaciones1(): void {
     this.cargandoSubject.next(true); // activa loading
     this.notificacionService.getNotificaciones().subscribe({
@@ -118,6 +111,7 @@ export class NotificacionesComponent implements OnInit {
       }
     });
   }
+  
   cargarNotificaciones(): void {
     this.notificacionService.getNotificaciones().subscribe({
       next: (data: Notificacion[]) => {

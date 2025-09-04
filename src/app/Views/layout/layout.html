@@ -1,0 +1,28 @@
+<div class="container">
+  <!-- Barra lateral -->
+  <div class="sidebar" [class.collapsed]="isCollapsed">
+    <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+
+    <div class="logo" *ngIf="!isCollapsed">
+      <img src="assets/logo_3_.png" alt="Logo" />
+      <h3>NUEVA NATURALEZA S.A.S</h3>
+      <p>Acuaponía</p>
+    </div>
+
+    <ul class="menu">
+      <li><a routerLink="/inicio">🏠 <span *ngIf="!isCollapsed">Inicio</span></a></li>
+      <li><a routerLink="/gestion-dispositivos">🧰 <span *ngIf="!isCollapsed">Gestión de Dispositivos</span></a></li>
+      <li><a routerLink="/usuarios">👥 <span *ngIf="!isCollapsed">Usuarios</span></a></li>
+      <li><a routerLink="/eventos">📋 <span *ngIf="!isCollapsed">Eventos</span></a></li>
+      <li><a routerLink="/auditoria">🔍 <span *ngIf="!isCollapsed">Auditorías</span></a></li>
+      <li><a routerLink="/notificaciones">🔔 <span *ngIf="!isCollapsed">Notificaciones</span></a></li>
+    </ul>
+
+    <button class="logout">🚪 <span *ngIf="!isCollapsed">Cerrar sesión</span></button>
+  </div>
+
+  <!-- Contenido dinámico -->
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
