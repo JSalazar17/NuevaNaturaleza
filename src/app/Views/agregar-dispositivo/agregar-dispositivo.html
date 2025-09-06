@@ -1,21 +1,4 @@
 <div class="container">
-  <div class="sidebar">
-    <img src="assets/logolestoma.jpg" alt="Logo" class="logo" />
-    <div class="user-info">
-      <span class="icon">👤</span>
-      <p>Pedro Suarez</p>
-      <p>Pedro543gmail.com</p>
-    </div>
-    <nav class="nav">
-      <a routerLink="/inicio">🏠 Inicio</a>
-      <a routerLink="/gestion-dispositivos">🧰 Gestión de Dispositivos</a>
-      <a routerLink="/usuarios">👥 Usuarios</a>
-      <a routerLink="/eventos">📋 Eventos</a>
-      <a routerLink="/auditorias">🔍 Auditorías</a>
-      <a routerLink="/notificaciones">🔔 Notificaciones</a>
-    </nav>
-    <a class="logout" routerLink="/login">🚪 Cerrar sesión</a>
-  </div>
 
   <div class="form-container">
     <h1>Agregar Dispositivo</h1>
@@ -55,7 +38,7 @@
 
       <!-- 🔹 Si es Sensor -->
       @if (tipoSeleccionadoNombre === 'sensor') {
-        <label>Número de Mediciones:</label>
+        <label>Número de Sensores:</label>
         <select [(ngModel)]="numeroMediciones" name="numeroMediciones" (change)="onNumeroMedicionesChange()">
           <option [value]="1">1</option>
           <option [value]="2">2</option>

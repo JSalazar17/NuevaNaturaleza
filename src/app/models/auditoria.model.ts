@@ -5,7 +5,8 @@ export interface Auditoria {
   idAccion: string;
   fecha: string; 
   observacion: string;
-  dispositivoNombre: any;
-  usuarioNombre: any;
-  accion: string;
+  usuarioNombre?: string;
+  dispositivoNombre?: string;
+  accionNombre?: string;
 }
+

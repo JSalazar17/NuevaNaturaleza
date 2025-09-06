@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LayoutComponent } from './Views/layout/layout';
 import { GestionDispositivos } from './Views/gestion-dispositivos/gestion-dispositivos';
 import { RegistrarUsuario } from './Views/registrar-usuario/registrar-usuario';
 import { AuditoriaComponent } from './Views/auditoria/auditoria'; 
@@ -14,18 +15,24 @@ import { Testchart } from './Views/testchart/testchart';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'gestion-dispositivos', component: GestionDispositivos },
-  { path: 'notificaciones', component: NotificacionesComponent },
   { path: 'registrar-usuario', component: RegistrarUsuario},
-  { path: 'agregar-dispositivo' , component: AgregarDispositivo},
-  { path: 'auditoria', component: AuditoriaComponent }, 
-  { path: 'eventos', component: Eventos },     
   { path: 'login', component: LoginController },
-  { path: 'inicio', component: InicioComponent },
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
-  { path: 'usuarios', component: UsuariosComponent},
   { path: 'testchart', component: Testchart}
+  {
+    path: '',
+    component: LayoutComponent,
+    children:[
+      { path: 'gestion-dispositivos', component: GestionDispositivos },
+      { path: 'notificaciones', component: NotificacionesComponent },
+      { path: 'agregar-dispositivo' , component: AgregarDispositivo},
+      { path: 'auditoria', component: AuditoriaComponent }, 
+      { path: 'eventos', component: Eventos },     
+      { path: 'inicio', component: InicioComponent },
+      { path: 'usuarios', component: UsuariosComponent},
+    ]
+  }
 ];
 
 
