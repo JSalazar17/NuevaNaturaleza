@@ -1,7 +1,7 @@
 export interface Medicion {
-    IdMedicion?: string,
-    IdSensor: string,
-    IdFechaMedicion: string,
-    IdUnidadMedida?: string,
-    Valor: number;
+    idMedicion?: string,
+    idSensor: string,
+    idFechaMedicion: string,
+    idUnidadMedida?: string,
+    valor: number;
 }

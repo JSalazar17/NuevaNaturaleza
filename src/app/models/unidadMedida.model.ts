@@ -1,4 +1,4 @@
 export interface UnidadMedida{
-    IdUnidadMedida:string,
-    Nombre:string
+    idUnidadMedida:string,
+    nombre:string
 }

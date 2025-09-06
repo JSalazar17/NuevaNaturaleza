@@ -1,6 +1,12 @@
+import { Medicion } from "./medicion.model";
+import { PuntoOptimo } from "./puntoOptimo.model";
+import { TipoMUnidadM } from "./tipoMUnidadM.model";
+
 export interface Sensor{
-    IdSensor?:String,
+    idSensor?:String,
     idDispositivo:string,
-    IdTipoMedicion:string,
-    IdUnidadMedida:string;
+    idTipoMUnidadM:string;
+    tipoMUnidadM:TipoMUnidadM,
+    medicions:Medicion[]
+    puntoOptimos:PuntoOptimo[]
 }

@@ -1,7 +1,10 @@
+import { TipoMUnidadM } from "./tipoMUnidadM.model";
+
 export interface PuntoOptimo {
-    IdPuntoOptimo?: string,
-    IdUnidadMedida: string,
-    IdSensor: string,
-    ValorMin: number,
-    ValorMax: number
+    idPuntoOptimo?: string,
+    idSensor: string,
+    idTipoMunidadM: string,
+    valorMin: number,
+    valorMax: number,
+    tipoMUnidadM:TipoMUnidadM
 }
