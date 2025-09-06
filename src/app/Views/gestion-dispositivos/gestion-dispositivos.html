@@ -1,55 +1,78 @@
-<div class="dashboard">
 
-  <!-- Contenido principal -->
-  <main class="content">
-    <h2>Gestión de dispositivos</h2>
+<div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
+  <div class="dashboard">
+    <!-- Panel lateral -->
 
-    <div class="filter">
-      <label for="tipo">Seleccione Tipo:</label>
-      <select id="tipo" [(ngModel)]="tipoSeleccionado" (change)="filtrar()">
-        <option value="Todos">Todos</option>
-        <option value="Actuador">Actuadores</option>
-        <option value="Sensor">Sensores</option>
-      </select>
-    </div>
 
-    <!-- Lista de dispositivos -->
-    <div class="devices">
-      <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados">
-        
-        <!-- Actuadores -->
-        <div *ngIf="dispositivo.tipo === 'Actuador'">
-          <h3>{{ dispositivo.nombre }}</h3>
-          <img [src]="dispositivo.imagen" alt="{{ dispositivo.nombre }}" />
-          <div class="acciones">
-            <button class="on">ON</button>
-            <button class="off">OFF</button>
-          </div>
-        </div>
+    <!-- Contenido principal -->
+    <main class="content">
+      <h2>Gestión de dispositivos</h2>
 
-        <!-- Sensores -->
-        <div *ngIf="dispositivo.tipo === 'Sensor'" class="sensor-card">
-          <div class="sensor-info">
-            <h3>{{ dispositivo.nombre }}</h3>
-            <img [src]="dispositivo.imagen" alt="{{ dispositivo.nombre }}" />
-            <p><strong>Valor:</strong> {{ dispositivo.valor }}</p>
-          </div>
-          <div class="sensor-chart">
-            <canvas baseChart
-              [data]="dispositivo.chartData"
-              [options]="chartOptions"
-              chartType="line">
-            </canvas>
-          </div>
-        </div>
-
+      <div class="filter">
+        <label for="tipo">Seleccione Tipo:</label>
+        <select id="tipo" [(ngModel)]="tipoSeleccionado">
+          <option value="Todos">Todos</option>
+          <option value="Actuador">Actuadores</option>
+          <option value="Sensor">Sensores</option>
+        </select>
       </div>
-    </div>
 
-    <!-- Botones agregar/editar -->
-    <div class="acciones-finales">
-      <button class="agregar">Agregar</button>
-      <button class="editar">Editar</button>
-    </div>
-  </main>
-</div>
+      <!-- Lista de dispositivos -->
+      <div class="devices">
+        @if(dispositivosFiltrados()){
+
+        <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados()">
+
+          <!-- Actuadores -->
+          <div *ngIf="dispositivo.idTipoDispositivoNavigation?.nombre === 'Actuador'">
+
+
+            <h3>{{ dispositivo.nombre }}</h3>
+            <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
+            <div *ngFor="let actu of dispositivo.actuadores">
+              <div class="acciones">
+                <button class="on">ON</button>
+                <button class="off">OFF</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sensores -->
+          <div *ngIf="dispositivo.idTipoDispositivoNavigation?.nombre === 'Sensor'" class="sensor-card">
+            <div class="sensor-info">
+
+              <h3>{{ dispositivo.nombre }}</h3>
+              <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
+
+
+            </div>
+
+            <div *ngFor="let sen of dispositivo.sensors">
+
+              <p><strong>Valor:</strong> {{ sen.medicions[(sen.medicions.length-1)].valor }}</p>
+              <div class="sensor-chart">
+
+                <div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
+
+                  <canvas baseChart [data]="getChartData(sen)" [options]="chartOptions" [type]="lineChartType">
+                  </canvas>
+
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        }
+      </div>
+
+      <!-- Botones agregar/editar -->
+      <div class="acciones-finales">
+        <button class="agregar">Agregar</button>
+        <button class="editar">Editar</button>
+      </div>
+    </main>
+  </div>

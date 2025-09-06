@@ -11,6 +11,7 @@ import { AgregarDispositivo } from './Views/agregar-dispositivo/agregar-disposit
 import { CambiarContrasena } from './Views/cambiar-contraseña/cambiar-contraseña';
 import { NotificacionesComponent } from './Views/notificaciones/notificaciones';
 import { InicioComponent } from './Views/inicio/inicio';
+import { Testchart } from './Views/testchart/testchart';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginController },
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
+  { path: 'testchart', component: Testchart}
   {
     path: '',
     component: LayoutComponent,
@@ -31,7 +33,6 @@ export const routes: Routes = [
       { path: 'usuarios', component: UsuariosComponent},
     ]
   }
-  //{ path: '**', redirectTo: 'login' }
 ];
 
 

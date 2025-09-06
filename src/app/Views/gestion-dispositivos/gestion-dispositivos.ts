@@ -1,41 +1,63 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, DestroyRef, ViewChildren, QueryList, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration } from 'chart.js';
-
-interface Dispositivo {
-  nombre: string;
-  tipo: 'Sensor' | 'Actuador';
-  imagen: string;
-  valor?: number;
-  datos?: number[];
-  chartData?: ChartConfiguration<'line'>['data'];
-}
+import { ChartConfiguration, ChartType } from 'chart.js';
+import { Dispositivo } from '../../models/dispositivo.model';
+import { ActuadorService } from '../../services/actuador.service';
+import { SensorService } from '../../services/sensor.service';
+import { DispositivoService } from '../../services/dispositivos.service';
+import { TipoMedicionService } from '../../services/tipomedicion.service';
+import { MedicionService } from '../../services/medicion.service';
+import { PuntoOptimoService } from '../../services/puntoOptimo.service';
+import { UnidadMedidaService } from '../../services/unidadMedida.service';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { Sensor } from '../../models/sensor.model';
+import { Medicion } from '../../models/medicion.model';
 
 @Component({
   selector: 'app-gestion-dispositivos',
+  standalone: true,
   templateUrl: './gestion-dispositivos.html',
-  imports: [CommonModule, FormsModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, FormsModule],
   styleUrls: ['./gestion-dispositivos.css']
 })
-export class GestionDispositivos implements OnInit {
-  tipoSeleccionado: string = 'Todos';
+export class GestionDispositivos {
+  @ViewChildren(BaseChartDirective) chart: BaseChartDirective;
 
-  dispositivos: Dispositivo[] = [
-    { nombre: 'Bomba de Agua', tipo: 'Actuador', imagen: 'assets/actuador_bomba.png' },
-    { nombre: 'Luz LED', tipo: 'Actuador', imagen: 'assets/actuador_luz.png' },
-    { nombre: 'Ventilador', tipo: 'Actuador', imagen: 'assets/actuador_ventilador.png' },
-    { nombre: 'Sensor de Temperatura', tipo: 'Sensor', imagen: 'assets/sensor_temp.png', valor: 25, datos: [25] },
-    { nombre: 'Sensor de Humedad', tipo: 'Sensor', imagen: 'assets/sensor_humedad.png', valor: 60, datos: [60] }
-  ];
 
-  dispositivosFiltrados: Dispositivo[] = [];
+  
+  labels = signal<string[]>(['Ene', 'Feb', 'Mar', 'Abr']);
+  points = signal<number[]>([10, 20, 30, 40]);
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  @ViewChildren(BaseChartDirective) charts!: QueryList<BaseChartDirective>;
+  private dispositivosSubject = new BehaviorSubject<Dispositivo[]>([]);
+  dispositivo$ = this.dispositivosSubject.asObservable();
 
-  chartOptions: ChartConfiguration<'line'>['options'] = {
+  // filtro como signal
+  tipoSeleccionado = signal<string>('Todos');
+
+  // signal auxiliar para mantener dispositivos actualizados
+  dispositivos = signal<Dispositivo[]>([]);
+
+  // filtrados con computed
+  dispositivosFiltrados = computed(() => {
+    const filtro = this.tipoSeleccionado();
+    console.log(this.dispositivos());
+    return filtro === 'Todos'
+      ? this.dispositivos()
+      : this.dispositivos().filter(d => d.idTipoDispositivoNavigation?.nombre === filtro);
+  });
+
+
+
+
+  lineChartType: ChartType = 'line';
+
+
+  chartOptions: ChartConfiguration['options'] = {
     responsive: true,
+    animation: false,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false }
@@ -46,61 +68,81 @@ export class GestionDispositivos implements OnInit {
     }
   };
 
-  constructor(private cd: ChangeDetectorRef) {
-    this.filtrar();
-  }
 
-  ngOnInit(): void {
-    // inicializar chartData
-    this.dispositivos.forEach(d => {
-      if (d.tipo === 'Sensor') {
-        d.chartData = {
-          labels: d.datos?.map((_, i) => i.toString()) || [],
-          datasets: [
-            {
-              data: d.datos || [],
-              borderColor: 'blue',
-              fill: false,
-              tension: 0.3
-            }
-          ]
-        };
+  /*chartsData = computed<ChartConfiguration['data']>(() =>
+  ({
+    labels:this.labels()
+    ,
+    datasets: [
+      {
+        data: this.points(),
+        label: 'Ventas',
+        fill: true,
+        tension: 0.25
       }
+    ]
+  })
+  );*/
+
+/*getChartData(sen: Sensor): ChartConfiguration['data'] {
+  let l:number[]=
+  return {
+    labels: sen.medicions.map((_, i) => 'M' + (i + 1)),
+    datasets: [
+      {
+        data: signal<number[]>([sen.medicions])(),
+        label:  'Sensor',
+        fill: true,
+        tension: 0.25
+      }
+    ]
+  };
+}*/
+
+getChartData(sen: Sensor): ChartConfiguration['data'] {
+  return {
+    labels: sen.medicions.map((m, i) => m.idFechaMedicion || 'M' + (i + 1)),
+    datasets: [
+      {
+        data: sen.medicions.map(m => m.valor) ,
+        label:  'Sensor',
+        fill: true,
+        tension: 0.25
+      }
+    ]
+  };
+}
+
+  private destroyRef = inject(DestroyRef);
+
+  constructor(
+    private dispositivoService: DispositivoService,
+
+  ) {
+    this.dispositivoService.getDispositivos().subscribe(data => {
+
+      this.dispositivos.set(data);
+      this.dispositivosSubject.next(data);
+
     });
-
-    setInterval(() => {
-      this.actualizarSensores();
-    }, 2000);
-  }
-
-  filtrar() {
-    if (this.tipoSeleccionado === 'Todos') {
-      this.dispositivosFiltrados = [...this.dispositivos];
-    } else {
-      this.dispositivosFiltrados = this.dispositivos.filter(
-        d => d.tipo === this.tipoSeleccionado
-      );
+    this.dispositivo$.subscribe(_d => {
+    })
+    // generar datos solo en navegador
+    if (this.isBrowser) {
+      //const id = setInterval(() => this.actualizarSensores(), 2000);
+      //this.destroyRef.onDestroy(() => clearInterval(id));
     }
+
   }
 
-  actualizarSensores() {
-    this.dispositivos.forEach(d => {
-      if (d.tipo === 'Sensor') {
-        d.valor = Math.floor(Math.random() * 100);
+  private actualizarSensores() {
 
-        if (d.datos) {
-          d.datos.push(d.valor);
-          if (d.datos.length > 10) d.datos.shift();
-        }
 
-        if (d.chartData) {
-          d.chartData.labels = d.datos?.map((_, i) => i.toString());
-          d.chartData.datasets[0].data = d.datos || [];
-        }
-      }
-    });
+    const nuevo = Math.floor(Math.random() * 100);
+    const tag = `N${this.labels().length + 1}`;
+    this.labels.update(ls => [...ls.slice(1), tag]);
+    this.points.update(ds =>[...ds.slice(1), nuevo]);
 
-    this.charts.forEach(chart => chart.update());
-    this.cd.detectChanges();
+
   }
 }

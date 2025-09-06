@@ -1,4 +1,9 @@
+import { Actuador } from "./actuador.model";
+import { Sensor } from "./sensor.model";
+import { TipoDispositivo } from "./tipodispositivo.model";
+
 export interface Dispositivo {
+
   idDispositivo?: string;
   nombre: string;
   sn: string;
@@ -7,6 +12,9 @@ export interface Dispositivo {
   idTipoDispositivo?: string;
   idSistema?: string;
   idMarca?: string;
-  idTipoMedicion?: string;
   idEstadoDispositivo?: string;
+  sensors?:Sensor[],
+  actuadores?:Actuador[]
+  idTipoDispositivoNavigation?:TipoDispositivo
+  
 }

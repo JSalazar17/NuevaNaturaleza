@@ -101,13 +101,14 @@ export class AgregarDispositivo {
 }
 
 private buildPayloadTipoDispo():  Sensor | Actuador|null {
-
+/*
   // Si es sensor → valido que tenga datos de sensor
   if (this.numeroMediciones && this.mediciones.length > 0) {
     return {
       idDispositivo: this.dispositivo.idDispositivo,
       IdTipoMedicion: this.dispositivo.idTipoMedicion,
-      IdUnidadMedida: ""
+      IdUnidadMedida: "",
+
     } as Sensor;
   }
 
@@ -118,7 +119,7 @@ private buildPayloadTipoDispo():  Sensor | Actuador|null {
       on: this.letraOn,
       off: this.letraOff
     } as Actuador;
-  }
+  }*/
   return null
 }
 
