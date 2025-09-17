@@ -11,8 +11,7 @@
     <table border="1" cellspacing="0" cellpadding="5">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Títuloe</th>
+        <th>Título</th>
         <th>Tipo Notificación</th>
         <th>Mensaje</th>
       </tr>
@@ -25,7 +24,6 @@
         [class.no-leida]="!notificacion.leido"
         [class.leida]="notificacion.leido">
         
-        <td>{{ notificacion.idNotificacion }}</td>
         <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
         <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
         <td>{{ notificacion.mensaje || '-' }}</td>

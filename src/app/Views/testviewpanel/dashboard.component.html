@@ -1,0 +1,10 @@
+<div class="filter-button">
+  <button mat-icon-button (click)="openFilters()">
+    <mat-icon>filter_list</mat-icon>
+  </button>
+</div>
+<div class="data-list">
+  <div *ngFor="let item of filteredData">
+    {{ item.deviceType }} - {{ item.measurementType }} : {{ item.value }}
+  </div>
+</div>

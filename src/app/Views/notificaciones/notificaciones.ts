@@ -35,10 +35,7 @@ export class NotificacionesComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     // Cargar primero títulos y tipos
-    this.cargarTitulos();
-    this.cargarTipos();
-    this.cargarNotificaciones1();
-    //this.cargarTodo();
+    this.cargarNotificaciones();
   }
 
   abrirEnlace(notificacion: Notificacion) {
@@ -50,59 +47,23 @@ export class NotificacionesComponent implements OnInit {
     notificacion.leido = true;
 
     // Si quieres guardar en backend
-    this.notificacionService.marcarComoLeida(notificacion.idNotificacion).subscribe({
+    this.notificacionService.updateNotificacion(notificacion.idNotificacion as string,notificacion).subscribe({
       next: () => console.log("Notificación marcada como leída"),
       error: (err) => console.error("Error al actualizar notificación", err)
     });
   }
 
-  cargarTitulos(): void {
-    this.tituloService.getTitulos().subscribe({
-      next: (data) => this.titulos = data,
-      error: (err) => console.error('Error cargando títulos', err)
-    });
-  }
 
-  cargarTipos(): void {
-    this.tipoNotificacionService.getTipos().subscribe({
-      next: (data) => this.tiposNotificacion = data,
-      error: (err) => console.error('Error cargando tipos', err)
-    });
-  }
+
+
   cargando: boolean = true;
 
-  cargarTodo(): void {
-  forkJoin({
-    titulos: this.tituloService.getTitulos(),
-    tipos: this.tipoNotificacionService.getTipos(),
-    notificaciones: this.notificacionService.getNotificaciones()
-  }).subscribe({
-    next: ({ titulos, tipos, notificaciones }) => {
-      this.titulos = titulos;
-      this.tiposNotificacion = tipos;
-      this.notificaciones = notificaciones.map(n => ({
-        ...n,
-        idTituloNavigation: titulos.find(t => t.idTitulo === n.idTitulo),
-        idTipoNotificacionNavigation: tipos.find(t => t.idTipoNotificacion === n.idTipoNotificacion)
-      }));
-      console.log('Datos cargados:', this.notificaciones);
-    },
-    error: (err) => console.error('Error cargando datos', err)
-  });
-}
 
-  cargarNotificaciones1(): void {
+  cargarNotificaciones(): void {
     this.cargandoSubject.next(true); // activa loading
     this.notificacionService.getNotificaciones().subscribe({
       next: (data: Notificacion[]) => {
-        const notificaciones = data.map(n => ({
-          ...n,
-          idTituloNavigation: this.titulos.find(t => t.idTitulo === n.idTitulo),
-          idTipoNotificacionNavigation: this.tiposNotificacion.find(
-            t => t.idTipoNotificacion === n.idTipoNotificacion
-          )
-        }));
-        this.notificacionesSubject.next(notificaciones); // ✅ actualiza observable
+        this.notificacionesSubject.next(data); // ✅ actualiza observable
         this.cargandoSubject.next(false); // ✅ desactiva loading
       },
       error: (err) => {
@@ -111,22 +72,6 @@ export class NotificacionesComponent implements OnInit {
       }
     });
   }
-  
-  cargarNotificaciones(): void {
-    this.notificacionService.getNotificaciones().subscribe({
-      next: (data: Notificacion[]) => {
-        this.notificaciones = data.map(n => ({
-          ...n,
-          idTituloNavigation: this.titulos.find(t => t.idTitulo === n.idTitulo),
-          idTipoNotificacionNavigation: this.tiposNotificacion.find(t => t.idTipoNotificacion === n.idTipoNotificacion)
-        }));
-        this.cargando = false; // 👉 se desactiva cuando termina
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error cargando notificaciones', err);
-        this.cargando = false; // 👉 igual se desactiva aunque falle
-      }
-    });
-  }
 }
+  
+

@@ -1,4 +1,5 @@
 import { Actuador } from "./actuador.model";
+import { Marca } from "./marca.model";
 import { Sensor } from "./sensor.model";
 import { TipoDispositivo } from "./tipodispositivo.model";
 
@@ -16,5 +17,5 @@ export interface Dispositivo {
   sensors?:Sensor[],
   actuadores?:Actuador[]
   idTipoDispositivoNavigation?:TipoDispositivo
-  
+  idMarcaNavigation?:Marca|null
 }

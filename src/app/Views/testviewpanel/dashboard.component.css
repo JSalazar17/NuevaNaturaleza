@@ -1,0 +1,24 @@
+.filters-dialog-panel .mat-dialog-container {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  padding: 0; 
+}
+.filter-button {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 2000;
+}
+.custom-filters-dialog {
+  position: fixed !important;
+  top: 60px !important;
+  right: 0 !important;
+  margin: 0;
+  height: auto;
+  z-index: 5000 !important;
+}
+
+.filters-backdrop {
+  background: transparent;
+}
+

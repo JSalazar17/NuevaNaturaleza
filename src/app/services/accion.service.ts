@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Accion } from '../models/accion.model';
+import { environment } from '../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccionService {
-  private apiUrl = 'https://localhost:44330/api/AccionActs'; 
+  private apiUrl = environment+'/api/AccionActs'; 
 
   constructor(private http: HttpClient) {}
 

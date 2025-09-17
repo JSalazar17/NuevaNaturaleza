@@ -1,70 +1,184 @@
-<div class="container">
-
-  <div class="form-container">
-    <h1>Agregar Dispositivo</h1>
-    <form (ngSubmit)="guardarDispositivo()" #formDispositivo="ngForm">
-      <label>Nombre:</label>
-      <input type="text" [(ngModel)]="dispositivo.nombre" name="nombre" required />
-
-      <label>Serial:</label>
-      <input type="text" [(ngModel)]="dispositivo.sn" name="sn" required />
-
-      <label>Descripción:</label>
-      <textarea [(ngModel)]="dispositivo.descripcion" name="descripcion"></textarea>
-
-      <label>Imagen (URL):</label>
-      <input type="text" [(ngModel)]="dispositivo.image" name="image" />
-
-      <label>Marca:</label>
-      <select [(ngModel)]="dispositivo.idMarca" name="marca" required>
-        @for (marca of (marcas$ | async); track marca.idMarca) {
-          <option [value]="marca.idMarca">{{ marca.nombre }}</option>
-        }
-      </select>
-
-      <label>Sistema:</label>
-      <select [(ngModel)]="dispositivo.idSistema" name="sistema" required>
-        @for (sistema of (sistemas$ | async); track sistema.idSistema) {
-          <option [value]="sistema.idSistema">{{ sistema.nombre }}</option>
-        }
-      </select>
-
-      <label>Tipo de Dispositivo:</label>
-      <select [(ngModel)]="dispositivo.idTipoDispositivo" name="tipoDispositivo" required (change)="onTipoDispositivoChange()">
-        @for (tipo of (tiposDispositivo$ | async); track tipo.idTipoDispositivo) {
-          <option [value]="tipo.idTipoDispositivo">{{ tipo.nombre }}</option>
-        }
-      </select>
-
-      <!-- 🔹 Si es Sensor -->
-      @if (tipoSeleccionadoNombre === 'sensor') {
-        <label>Número de Sensores:</label>
-        <select [(ngModel)]="numeroMediciones" name="numeroMediciones" (change)="onNumeroMedicionesChange()">
-          <option [value]="1">1</option>
-          <option [value]="2">2</option>
-        </select>
-
-        <!-- Render dinámico según número seleccionado -->
-        @for (i of [].constructor(numeroMediciones); let idx = $index; track idx) {
-          <label>Tipo de Medición {{ idx + 1 }}:</label>
-          <select [(ngModel)]="mediciones[idx]" [name]="'medicion' + idx">
-            @for (tm of (tiposMedicion$ | async); track tm.idTipoMedicion) {
-              <option [value]="tm.idTipoMedicion">{{ tm.nombre }}</option>
-            }
-          </select>
-        }
-      }
-
-      <!-- 🔹 Si es Actuador -->
-      @if (tipoSeleccionadoNombre === 'actuador') {
-        <label>Letra para ON:</label>
-        <input type="text" [(ngModel)]="letraOn" name="letraOn" maxlength="1" />
-
-        <label>Letra para OFF:</label>
-        <input type="text" [(ngModel)]="letraOff" name="letraOff" maxlength="1" />
-      }
-
-      <button type="submit">Guardar</button>
-    </form>
+<mat-card class="card-root dialog-container" style="min-width: 200px;min-height: 100%;">
+  <div class="card-header">
+    @if(data){
+      <h2>Editar dispositivo</h2>
+    }@else{
+      <h2>Agregar dispositivo</h2>
+    }
+    
+    <button *ngIf="isEditMode" mat-icon-button (click)="close()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
-</div>
+
+  <form [formGroup]="form" class="form-root" (ngSubmit)="save()">
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>SN</mat-label>
+      <input matInput formControlName="sn" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>Imagen (URL)</mat-label>
+      <input matInput formControlName="image" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>Marca</mat-label>
+      <input type="text" matInput [matAutocomplete]="auto" placeholder="Marca" [formControlName]="'idMarca'" />
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMarcaFn.bind(this)">
+        @for (m of marcasFiltered$ | async; track m.idMarca) {
+        <mat-option [value]="m">{{ m.nombre }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>Sistema</mat-label>
+      <mat-select formControlName="idSistema">
+        <mat-option value="">-- Seleccionar --</mat-option>
+        @for (sis of (sistemas$ | async); track sis.idSistema) {
+        <mat-option [value]="sis.idSistema">{{ sis.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>Estado del dispositivo</mat-label>
+      <mat-select formControlName="idEstadoDispositivo">
+        <mat-option value="">-- Seleccionar --</mat-option>
+        @for (est of (estados$ | async); track est.idEstadoDispositivo) {
+        <mat-option [value]="est.idEstadoDispositivo">{{ est.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="third w100">
+      <mat-label>Tipo dispositivo</mat-label>
+      <mat-select formControlName="idTipoDispositivo">
+        <mat-option value="">-- Seleccionar --</mat-option>
+        @for (tipo of (tipos$ | async);track tipo.idTipoDispositivo) {
+        <mat-option [value]="tipo.idTipoDispositivo">{{ tipo.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+
+
+    <mat-divider></mat-divider>
+
+    <!-- Sección Sensores -->
+    @if ( (tipos$ | async); as tiposList ){
+    @if( isSensorMode(tiposList) ) {
+    <div class="section">
+      <div class="section-header">
+        <h3>Sensores</h3>
+        <button mat-raised-button color="primary" type="button" (click)="addSensor()">Agregar sensor</button>
+      </div>
+
+      <div formArrayName="sensors" class="array-container sensors-container">
+        @for (sensor of sensors.controls; track sensor; let i = $index) {
+        <div [formGroupName]="i" class="card-item sensor-item">
+          <div class="row">
+            <mat-form-field appearance="outline" class="third w30">
+              <mat-label>Tipo medición</mat-label>
+              <mat-select formControlName="idTipoMedicion">
+                <mat-option value="">--</mat-option>
+                @for (tm of (tipoMUnidades$ | async) ;track tm ) {
+                <!-- Nota: uniqueTipoMedicion es una pipe hipotética, si no la tienes usa tu lista de tipoMediciones -->
+                <mat-option [value]="tm.idTipoMedicion">{{ tm.idTipoMedicionNavigation?.nombre || tm.idTipoMedicion
+                  }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="third w30">
+              <mat-label>Unidad</mat-label>
+              <mat-select formControlName="idTipoMUnidadM">
+                <mat-option value="">--</mat-option>
+                @for (opt of getUnidadOptionsForSensorIndex(i);track opt) {
+                <mat-option [value]="opt.idTipoMUnidadM">{{ opt.idUnidadMedidaNavigation?.nombre || opt.idUnidadMedida
+                  }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="sixth w30">
+              <mat-label>Valor mínimo</mat-label>
+              <input matInput type="number" formControlName="valorMin" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="sixth w30">
+              <mat-label>Valor máximo</mat-label>
+              <input matInput type="number" formControlName="valorMax" />
+            </mat-form-field>
+          </div>
+
+          <div class="item-actions"><button mat-icon-button color="warn" type="button" (click)="removeSensor(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }}
+
+    <!-- Sección Actuadores -->
+    @if ( (tipos$ | async); as tiposList2){
+    @if(isActuatorMode(tiposList2) ) {
+    <div class="section">
+      <div class="section-header">
+        <h3>Actuadores</h3>
+        <button mat-raised-button color="primary" type="button" (click)="addActuador()">Agregar actuador</button>
+      </div>
+
+      <div formArrayName="actuadores" class="array-container actuadores-container">
+        @for (act of actuadores.controls; track act; let i = $index) {
+        <div [formGroupName]="i" class="card-item actuador-item">
+          <div class="row">
+            <mat-form-field appearance="outline" class="third half w30">
+              <mat-label>Acción</mat-label>
+              <mat-select formControlName="idAccionAct">
+                <mat-option value="">--</mat-option>
+                @for (ac of acciones$ | async; track ac; let i = $index) {
+                <mat-option [value]="ac.idAccionAct">{{ ac.accion }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="third w30">
+              <mat-label>ON</mat-label>
+              <input matInput formControlName="on" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="third w30">
+              <mat-label>OFF</mat-label>
+              <input matInput formControlName="off" />
+            </mat-form-field>
+          </div>
+
+
+          <div class="item-actions"><button mat-icon-button color="warn" type="button" (click)="removeActuador(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }}
+
+    <mat-divider></mat-divider>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading">Guardar</button>
+      <button mat-button type="button" (click)="close()">Cancelar</button>
+    </div>
+
+    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+  </form>
+</mat-card>

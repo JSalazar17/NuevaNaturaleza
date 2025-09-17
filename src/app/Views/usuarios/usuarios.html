@@ -3,42 +3,27 @@
   <table>
     <thead>
       <tr>
-        <th>N°</th>
         <th>Rol</th>
         <th>Cédula</th>
         <th>Nombre</th>
         <th>Correo</th>
-        <th>Clave</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let usuario of usuarios; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ getRolNombre(usuario.idRol) }}</td>
-        <td>{{ usuario.cedula }}</td>
-        <td>{{ usuario.nombre }}</td>
-        <td>{{ usuario.correo }}</td>
-        <td>{{ usuario.clave }}</td>
+      @for(u of usuarios$|async;track u){
+      <tr >
+        <td>{{ getRolNombre(u.idRol) }}</td>
+        <td>{{ u.cedula }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.correo }}</td>
         <td>
-          <button (click)="editarUsuario(usuario)">Editar</button>
-          <button (click)="eliminarUsuario(usuario.idUsuario!)">Eliminar</button>
+          <button (click)="editarUsuario(u)">Editar</button>
+          <button (click)="eliminarUsuario(u.idUsuario!)">Eliminar</button>
         </td>
-      </tr>
+      </tr>}
     </tbody>
   </table>
 
-  <div class="formulario">
-    <h3>{{ usuarioEditando ? 'Editar Usuario' : 'Agregar Usuario' }}</h3>
-    <form (ngSubmit)="guardarUsuario()">
-      <select [(ngModel)]="usuarioForm.idRol" name="rolId" required>
-        <option *ngFor="let rol of roles" [value]="rol.idRol">{{ rol.nombre }}</option>
-      </select>
-      <input [(ngModel)]="usuarioForm.cedula" name="cedula" placeholder="Cédula" required>
-      <input [(ngModel)]="usuarioForm.nombre" name="nombre" placeholder="Nombre" required>
-      <input [(ngModel)]="usuarioForm.correo" name="correo" placeholder="Correo" required>
-      <input [(ngModel)]="usuarioForm.clave" name="clave" placeholder="Clave" required>
-      <button type="submit">{{ usuarioEditando ? 'Actualizar' : 'Agregar' }}</button>
-    </form>
-  </div>
+
 </div>
