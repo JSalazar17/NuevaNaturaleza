@@ -5,111 +5,6 @@
 }
 
 /* Sidebar */
-/* Panel lateral (sidebar) */
-/*.sidebar {
-  width: 220px;
-  background: #2e3a46;
-  color: #fff;
-  min-height: 100vh;
-  padding: 10px;
-  position: relative;
-}*/
-*.sidebar {
-  width: 250px;
-  background-color: #009688;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15px;
-  transition: width 0.3s ease;
-  overflow: hidden;
-}
-.sidebar .menu {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar .menu li {
-  padding: 10px;
-  cursor: pointer;
-  position: relative;
-  transition: background 0.3s;
-}
-
-.sidebar .menu li:hover {
-  background: #3f4a55;
-}
-
-.sidebar .menu li.notificaciones.new {
-  animation: blink 1s ease-in-out;
-}
-
-@keyframes blink {
-  0% { background: #2e3a46; }
-  50% { background: #ffffff; color: #000; }
-  100% { background: #2e3a46; }
-}
-
-/* Badge naranja (puntito) */
-.badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 10px;
-  height: 10px;
-  background: orange;
-  border-radius: 50%;
-}
-
-/* Panel flotante de notificaciones */
-.notif-panel {
-  position: absolute;
-  top: 50px; /* debajo del header/sidebar */
-  left: 240px; /* un poquito a la derecha de la sidebar */
-  width: 250px;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 100;
-  animation: fadeIn 0.2s ease-in-out;
-}
-
-.notif-panel h3 {
-  margin: 0 0 10px 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.notif-panel ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.notif-panel ul li {
-  padding: 6px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  color: #444;
-}
-
-.notif-panel ul li:last-child {
-  border-bottom: none;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Content */
-.content {
-  width: 100%;
-  padding: 20px;
-}
 
 
 .sidebar.collapsed {
@@ -200,24 +95,123 @@
 }
 
 /* Íconos centrados en colapsado */
-.sidebar.collapsed .menu a,
+/*.sidebar.collapsed .menu a,
 .sidebar.collapsed .logout {
   justify-content: center;
+}*/
+/*.sidebar {
+  width: 250px;
+  background-color: #009688;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}*/
+
+/* Panel lateral (sidebar) */
+.sidebar {
+  width: 220px;
+  background: #2e3a46;
+  color: #fff;
+  min-height: 100vh;
+  padding: 10px;
+  position: relative;
 }
 
-.notif-panel1 {
-  left: 100px; /* un poquito a la derecha de la sidebar */
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
 }
-@media (max-width:654px) {
+
+.sidebar .menu li {
+  padding: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.sidebar .menu li:hover {
+  background: #3f4a55;
+}
+
+.sidebar .menu li.notificaciones.new {
+  animation: blink 1s ease-in-out;
+}
+
+@keyframes blink {
+  0% { background: #2e3a46; }
+  50% { background: #ffffff; color: #000; }
+  100% { background: #2e3a46; }
+}
+
+/* Badge naranja (puntito) */
+.badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background: orange;
+  border-radius: 50%;
+}
+
+/* Panel flotante de notificaciones */
+.notif-panel {
+  position: absolute;
+  top: 50px; /* debajo del header/sidebar */
+  left: 240px; /* un poquito a la derecha de la sidebar */
+  width: 250px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 100;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.notif-panel h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.notif-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notif-panel ul li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #444;
+}
+
+.notif-panel ul li:last-child {
+  border-bottom: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Content */
+.content {
+  width: 100%;
+  padding: 20px;
+}
+@media (m-width:654px) {
   .isNtCollapse{
   display: none;
 }
 .collapse {
   width: 70px;
   max-height: 700px;
-}
-.notif-panel {
-  left: 100px; /* un poquito a la derecha de la sidebar */
-
 }
 }

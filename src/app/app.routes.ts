@@ -12,6 +12,7 @@ import { CambiarContrasena } from './Views/cambiar-contraseña/cambiar-contrase�
 import { NotificacionesComponent } from './Views/notificaciones/notificaciones';
 import { InicioComponent } from './Views/inicio/inicio';
 import { Testchart } from './Views/testchart/testchart';
+import { ParentComponent } from './Views/testviewpanel/dashboard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -19,7 +20,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginController },
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
-  { path: 'testchart', component: Testchart}
+  { path: 'testchart', component: Testchart},
   {
     path: '',
     component: LayoutComponent,
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: 'eventos', component: Eventos },     
       { path: 'inicio', component: InicioComponent },
       { path: 'usuarios', component: UsuariosComponent},
+      { path: 'dc', component: ParentComponent},
     ]
   }
 ];

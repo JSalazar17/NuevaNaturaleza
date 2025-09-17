@@ -1,21 +1,22 @@
+<div class="filter-button">
+  <button mat-icon-button (click)="openFilters()">
+    <mat-icon>filter_list</mat-icon>
+  </button>
+</div>
+
+
 
 <div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
   <div class="dashboard">
     <!-- Panel lateral -->
 
-
     <!-- Contenido principal -->
-    <main class="content">
+    <main class="content" style="
+    width: 100%;
+">
       <h2>Gestión de dispositivos</h2>
 
-      <div class="filter">
-        <label for="tipo">Seleccione Tipo:</label>
-        <select id="tipo" [(ngModel)]="tipoSeleccionado">
-          <option value="Todos">Todos</option>
-          <option value="Actuador">Actuadores</option>
-          <option value="Sensor">Sensores</option>
-        </select>
-      </div>
+
 
       <!-- Lista de dispositivos -->
       <div class="devices">
@@ -25,7 +26,6 @@
 
           <!-- Actuadores -->
           <div *ngIf="dispositivo.idTipoDispositivoNavigation?.nombre === 'Actuador'">
-
 
             <h3>{{ dispositivo.nombre }}</h3>
             <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
@@ -49,7 +49,10 @@
 
             <div *ngFor="let sen of dispositivo.sensors">
 
-              <p><strong>Valor:</strong> {{ sen.medicions[(sen.medicions.length-1)].valor }}</p>
+              <p><strong>Valor:</strong>
+                @if(sen.medicions.length>0){
+                {{ sen.medicions[(sen.medicions.length-1)].valor}}}
+              </p>
               <div class="sensor-chart">
 
                 <div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
@@ -63,7 +66,12 @@
               </div>
             </div>
           </div>
-
+          <button mat-icon-button color="primary" (click)="editarDispositivo(dispositivo)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="eliminarDispositivo(dispositivo)">
+            <mat-icon>delete</mat-icon>
+          </button>
 
         </div>
         }

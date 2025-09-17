@@ -2,7 +2,7 @@ import { TipoNotificacion } from './tiponotificacion';
 import { Titulo } from './titulo';
 
 export interface Notificacion {
-  idNotificacion: string;
+  idNotificacion?: string;
   idTitulo: string;
   idTipoNotificacion: string;
   mensaje?: string;

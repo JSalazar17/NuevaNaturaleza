@@ -1,72 +1,111 @@
-.container {
+.card-root {
+  max-width: 1000px;
+  margin: 12px auto;
+  padding: 16px;
+}
+
+.card-header {
   display: flex;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.sidebar {
-  width: 250px;
-  background-color: #00A99D;
-  color: white;
-  padding: 20px;
+.form-root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.logo {
-  width: 100%;
-  margin-bottom: 20px;
+/* layout helpers */
+.full { width: 100%; }
+.half { width: 48%; display: inline-block; }
+.third { width: 32%; display: inline-block; }
+.quarter { width: 24%; display: inline-block; }
+.sixth { width: 16%; display: inline-block; }
+
+/* contenedor de items: usamos column-reverse para que el último añadido se muestre arriba visualmente */
+.array-container {
+  display: flex;
+  flex-direction: column-reverse; /* <-- hace que lo nuevo aparezca arriba */
+  gap: 12px;
+  margin-top: 8px;
 }
 
-.user-info {
-  margin-bottom: 30px;
-}
-
-.nav a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  margin: 10px 0;
-}
-
-.logout {
-  display: block;
-  margin-top: 30px;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.form-container {
-  flex: 1;
-  padding: 40px;
-  background-color: #f0f4f8;
-}
-
-form {
-  display: grid;
-  gap: 15px;
-  max-width: 500px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-input, textarea, select {
+/* tarjeta individual */
+.card-item {
+  border: 1px solid #e0e0e0;
   padding: 10px;
-  font-size: 1em;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+}
+.mat-mdc-select-panel {
+  background-color: white !important;
+}
+/* asegurar que inputs on/off no se salgan */
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
 }
 
-button {
-  background-color: #00A99D;
-  color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 4px;
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+::ng-deep .mat-mdc-select-panel,
+::ng-deep .mat-mdc-option {
+  background: #fff !important;   
+  color: #000 !important;    
+}
+.form-root .full {
+  width: 100%;
+}
+.form-root .half {
+  width: 48%;
+  display: inline-block;
+}
+.form-root .third {
+  width: 30%;
+  display: inline-block;
+}
+.form-root .sixth {
+  width: 15%;
+  display: inline-block;
+}
+.w100{
+  width: 100%!important;
+  min-width: 191px;
+  max-width: 300px;
+}
+.w30{
+  width: 100%!important;
+  max-width: 30%;
+  min-width: 80px;
+
+}
+.dialog-container {
+  max-height: 80vh;   /* limite de altura */
+  overflow-y: auto;   /* scroll vertical */
+  padding: 16px;
 }
 
-button:hover {
-  background-color: #00A99D;
+/* container específico para sensores/actuadores para un mejor scroll si hay muchos */
+.sensors-container, .actuadores-container {
+  max-height: 340px;
+  overflow: auto;
+  padding: 6px;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .half, .third, .quarter, .sixth {
+    width: 100%;
+    display: block;
+  }
 }

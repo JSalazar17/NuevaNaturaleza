@@ -4,9 +4,9 @@ import { TipoMUnidadM } from "./tipoMUnidadM.model";
 
 export interface Sensor{
     idSensor?:String,
-    idDispositivo:string,
-    idTipoMUnidadM:string;
-    tipoMUnidadM:TipoMUnidadM,
+    idDispositivo?:string,
+    idTipoMUnidadM?:string;
+    idTipoMUnidadMNavigation?:TipoMUnidadM,
     medicions:Medicion[]
     puntoOptimos:PuntoOptimo[]
 }

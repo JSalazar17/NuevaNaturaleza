@@ -17,9 +17,9 @@
     <tbody>
       <tr *ngFor="let evento of (eventos$ | async) ; track let i = index" (click)="seleccionarEvento(evento)">
         <td>{{ i+1 }}</td>
-        <td>{{ evento.idDispositivo }}</td>
-        <td>{{ evento.idImpacto }}</td>
-        <td>{{ evento.idSistema }}</td>
+        <td>{{ evento.idDispositivoNavigation.nombre }}</td>
+        <td>{{ evento.idImpactoNavigation.nombre }}</td>
+        <td>{{ evento.idSistemaNavigation.nombre }}</td>
         <td>{{ evento.fechaEvento | date:'short' }}</td>
       </tr>
     </tbody>

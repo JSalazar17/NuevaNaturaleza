@@ -1,0 +1,19 @@
+<div class="formulario">
+  <h3>{{ usuarioEditando ? 'Editar Usuario' : 'Agregar Usuario' }}</h3>
+  <form >
+    <select [(ngModel)]="usuario.idRol" name="rolId" required>
+      <option *ngFor="let rol of roles" [value]="rol.idRol">{{ rol.nombre }}</option>
+    </select>
+    <input [(ngModel)]="usuario.cedula" name="cedula" placeholder="Cédula" required>
+    <input [(ngModel)]="usuario.nombre" name="nombre" placeholder="Nombre" required>
+    <input [(ngModel)]="usuario.correo" name="correo" placeholder="Correo" required>
+    <label class="checkbox-container">
+      <input type="checkbox" [(ngModel)]="cambiarClave" name="cambiarClave" (click)="print(cambiarClave)">
+      <span class="checkmark"></span>
+      Cambiar contraseña
+    </label>
+    @if(cambiarClave){
+    <input [(ngModel)]="usuario.clave" name="clave" placeholder="Clave" required>}
+    <button type="submit" (click)="guardarUsuario()">{{ usuarioEditando ? 'Actualizar' : 'Agregar' }}</button>
+  </form>
+</div>

@@ -5,7 +5,7 @@ import { Evento } from '../../models/evento.model';
 import { Dispositivo } from '../../models/dispositivo.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, delay, Observable, of, retryWhen, scan } from 'rxjs';
 
 @Component({
   selector: 'app-eventos',
@@ -29,20 +29,23 @@ export class Eventos implements OnInit {
 
   ngOnInit(): void {
     this.cargarEventos();
-    this.cargarDispositivos();
+    //this.cargarDispositivos();
   }
 
   cargarEventos() {
-    this.eventoService.getEventos().subscribe(data => {this.eventosSubject.next(data);console.log(data)});
+    this.eventoService.getEventos()
+  
+  .subscribe(data => {this.eventosSubject.next(data);console.log(data)});
   }
 
-  cargarDispositivos() {
+  /*cargarDispositivos() {
     this.dispositivoService.getDispositivos().subscribe(data => {this.dispositivos = data;console.log(this.dispositivos)});
-  }
+  }*/
 
   seleccionarEvento(evento: Evento) {
     this.eventoSeleccionado = evento;
-    this.dispositivoSeleccionado = this.dispositivos.find(d => d.idDispositivo === evento.idDispositivo) || null;
+    this.dispositivoSeleccionado = evento.idDispositivoNavigation || null;
+    console.log( this.dispositivoSeleccionado)
   }
 
   cerrarDetalle() {

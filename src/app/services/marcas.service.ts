@@ -15,4 +15,7 @@ export class MarcaService {
   obtenerMarcas(): Observable<Marca[]> {
     return this.http.get<Marca[]>(this.url);
   }
+  obtenerMarcasById(id:string): Observable<Marca[]> {
+    return this.http.get<Marca[]>(`${this.url}/${id}`);
+  }
 }

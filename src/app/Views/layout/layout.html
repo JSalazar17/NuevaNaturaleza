@@ -1,24 +1,40 @@
 <div class="container">
   <!-- Barra lateral -->
-  <div class="sidebar" [class.collapsed]="isCollapsed">
-    <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+  <div class="sidebar collapse" [class.collapsed]="isCollapsed">
+    <button class="toggle-btn isNtCollapse" (click)="toggleSidebar()">☰</button>
 
-    <div class="logo" *ngIf="!isCollapsed">
+    <div class="logo isNtCollapse" *ngIf="!isCollapsed">
       <img src="assets/logo_3_.png" alt="Logo" />
-      <h3>NUEVA NATURALEZA S.A.S</h3>
       <p>Acuaponía</p>
     </div>
 
     <ul class="menu">
-      <li><a routerLink="/inicio">🏠 <span *ngIf="!isCollapsed">Inicio</span></a></li>
-      <li><a routerLink="/gestion-dispositivos">🧰 <span *ngIf="!isCollapsed">Gestión de Dispositivos</span></a></li>
-      <li><a routerLink="/usuarios">👥 <span *ngIf="!isCollapsed">Usuarios</span></a></li>
-      <li><a routerLink="/eventos">📋 <span *ngIf="!isCollapsed">Eventos</span></a></li>
-      <li><a routerLink="/auditoria">🔍 <span *ngIf="!isCollapsed">Auditorías</span></a></li>
-      <li><a routerLink="/notificaciones">🔔 <span *ngIf="!isCollapsed">Notificaciones</span></a></li>
+      <li><a routerLink="/inicio">🏠 <span  class="isNtCollapse" *ngIf="!isCollapsed">Inicio</span></a></li>
+      <li><a routerLink="/gestion-dispositivos">🧰 <span class="isNtCollapse" *ngIf="!isCollapsed">Dispositivos</span></a></li>
+      <li><a routerLink="/usuarios">👥 <span class="isNtCollapse" *ngIf="!isCollapsed">Usuarios</span></a></li>
+      <li><a routerLink="/eventos">📋 <span  class="isNtCollapse" *ngIf="!isCollapsed">Eventos</span></a></li>
+      <li><a routerLink="/auditoria">🔍 <span class="isNtCollapse" *ngIf="!isCollapsed">Auditorías</span></a></li>
+
+      <!-- Notificaciones -->
+      <li 
+        class="notificaciones" 
+        (mouseenter)="mostrarPanel = true" 
+        (mouseleave)="mostrarPanel = false"
+        [class.new]="hayNotificacionNueva">
+        <a routerLink="/notificaciones">🔔 <span class="isNtCollapse" *ngIf="!isCollapsed">Notificaciones</span></a>
+        <span class="badge" *ngIf="hayNotificacionNueva"></span>
+      </li>
     </ul>
 
-    <button class="logout">🚪 <span *ngIf="!isCollapsed">Cerrar sesión</span></button>
+    <button class="logout">🚪 <span  class="isNtCollapse" *ngIf="!isCollapsed">Cerrar sesión</span></button>
+  </div>
+
+  <!-- Panel de notificaciones -->
+  <div class="notif-panel" [class.notif-panel1]="isCollapsed" *ngIf="mostrarPanel">
+    <h3>Notificaciones</h3>
+    <ul>
+      <li *ngFor="let n of notificacionaes$|async">{{ n.mensaje }}</li>
+    </ul>
   </div>
 
   <!-- Contenido dinámico -->
