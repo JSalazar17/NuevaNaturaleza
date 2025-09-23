@@ -1,7 +1,12 @@
+<!-- Agrega en index.html en <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <div class="container">
   <!-- Barra lateral -->
   <div class="sidebar collapse" [class.collapsed]="isCollapsed">
-    <button class="toggle-btn isNtCollapse" (click)="toggleSidebar()">☰</button>
+    <button class="toggle-btn isNtCollapse" (click)="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
 
     <div class="logo isNtCollapse" *ngIf="!isCollapsed">
       <img src="assets/logo_3_.png" alt="Logo" />
@@ -9,27 +14,22 @@
     </div>
 
     <ul class="menu">
-      <li><a routerLink="/inicio">🏠 <span  class="isNtCollapse" *ngIf="!isCollapsed">Inicio</span></a></li>
-      <li><a routerLink="/gestion-dispositivos">🧰 <span class="isNtCollapse" *ngIf="!isCollapsed">Dispositivos</span></a></li>
-      <li><a routerLink="/usuarios">👥 <span class="isNtCollapse" *ngIf="!isCollapsed">Usuarios</span></a></li>
-      <li><a routerLink="/eventos">📋 <span  class="isNtCollapse" *ngIf="!isCollapsed">Eventos</span></a></li>
-      <li><a routerLink="/auditoria">🔍 <span class="isNtCollapse" *ngIf="!isCollapsed">Auditorías</span></a></li>
+      <li><a routerLink="/inicio"><i class="fas fa-home"></i><span *ngIf="!isCollapsed">Inicio</span></a></li>
+      <li><a routerLink="/gestion-dispositivos"><i class="fas fa-microchip"></i><span *ngIf="!isCollapsed">Dispositivos</span></a></li>
+      <li><a routerLink="/usuarios"><i class="fas fa-users"></i><span *ngIf="!isCollapsed">Usuarios</span></a></li>
+      <li><a routerLink="/eventos"><i class="fas fa-clipboard-list"></i><span *ngIf="!isCollapsed">Eventos</span></a></li>
+      <li><a routerLink="/auditoria"><i class="fas fa-search"></i><span *ngIf="!isCollapsed">Auditorías</span></a></li>
 
-      <!-- Notificaciones -->
-      <li 
-        class="notificaciones" 
-        (mouseenter)="mostrarPanel = true" 
-        (mouseleave)="mostrarPanel = false"
-        [class.new]="hayNotificacionNueva">
-        <a routerLink="/notificaciones">🔔 <span class="isNtCollapse" *ngIf="!isCollapsed">Notificaciones</span></a>
+      <li class="notificaciones" (mouseenter)="mostrarPanel = true" (mouseleave)="mostrarPanel = false" [class.new]="hayNotificacionNueva">
+        <a routerLink="/notificaciones"><i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span></a>
         <span class="badge" *ngIf="hayNotificacionNueva"></span>
       </li>
     </ul>
 
-    <button class="logout">🚪 <span  class="isNtCollapse" *ngIf="!isCollapsed">Cerrar sesión</span></button>
+    <button class="logout"><i class="fas fa-sign-out-alt"></i><span *ngIf="!isCollapsed">Cerrar sesión</span></button>
   </div>
 
-  <!-- Panel de notificaciones -->
+  <!-- Panel notificaciones -->
   <div class="notif-panel" [class.notif-panel1]="isCollapsed" *ngIf="mostrarPanel">
     <h3>Notificaciones</h3>
     <ul>
@@ -37,7 +37,7 @@
     </ul>
   </div>
 
-  <!-- Contenido dinámico -->
+  <!-- Contenido -->
   <div class="content">
     <router-outlet></router-outlet>
   </div>

@@ -1,24 +1,74 @@
 .usuarios-container {
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.titulo-usuarios {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
   margin-bottom: 15px;
+  color: #000000;
 }
 
-table th, table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+/* Tabla */
+.tabla-usuarios {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  font-size: 0.95rem;
 }
 
-button {
-  margin-right: 5px;
+.tabla-usuarios thead tr {
+  background: #009688;
+  color: #fff;
+  text-align: left;
+  font-weight: bold;
 }
 
-.formulario {
-  border: 1px solid #ccc;
-  padding: 10px;
-  width: 300px;
+.tabla-usuarios th,
+.tabla-usuarios td {
+  padding: 14px 18px;
+}
+
+.tabla-usuarios tbody tr {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.tabla-usuarios tbody tr:hover {
+  transform: scale(1.01);
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+/* Botones */
+.btn-accion {
+  border: none;
+  padding: 6px 12px;
+  margin: 0 4px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-accion.editar {
+  background: #3498db;
+  color: #fff;
+}
+
+.btn-accion.editar:hover {
+  background: #2980b9;
+}
+
+.btn-accion.eliminar {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.btn-accion.eliminar:hover {
+  background: #c0392b;
 }

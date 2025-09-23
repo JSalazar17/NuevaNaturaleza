@@ -1,28 +1,100 @@
 .eventos-container {
   padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.eventos-container h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #000000;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.filtro {
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: right;
+}
+
+.filtro a {
+  color: #009688;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.filtro a:hover {
+  color: #00796b;
 }
 
 .tabla-eventos {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.tabla-eventos th, .tabla-eventos td {
-  border: 1px solid #ccc;
+.tabla-eventos th {
+  background: #009688;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+.tabla-eventos td {
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
-.tabla-eventos tr:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
+.tabla-eventos tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
+.tabla-eventos tr:hover {
+  background-color: #e0f7fa;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* Cuadro de detalle */
 .detalle {
   margin-top: 20px;
   padding: 15px;
   border: 1px solid #009688;
   background: #e0f2f1;
   border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.detalle h3 {
+  margin-top: 0;
+  color: #00695c;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.btn-cerrar {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #009688;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-cerrar:hover {
+  background: #00796b;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-10px);}
+  to {opacity: 1; transform: translateY(0);}
 }

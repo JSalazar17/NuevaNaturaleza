@@ -1,40 +1,38 @@
-<div class="container">
-  <h2>Notificaciones</h2>
+<div class="notificaciones-container">
+  <h2>Gestión de Notificaciones</h2>
 
   @if (cargando$ | async) {
     <div class="loading">
-      Cargando datos...
+      <p>Cargando notificaciones...</p>
     </div>
   }
 
   @if (!(cargando$ | async) && (notificaciones$ | async)) {
-    <table border="1" cellspacing="0" cellpadding="5">
-    <thead>
-      <tr>
-        <th>Título</th>
-        <th>Tipo Notificación</th>
-        <th>Mensaje</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (notificacion of (notificaciones$ | async); track notificacion.idNotificacion) {
-      <tr 
-         
-        (click)="abrirEnlace(notificacion)" 
-        [class.no-leida]="!notificacion.leido"
-        [class.leida]="notificacion.leido">
-        
-        <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
-        <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
-        <td>{{ notificacion.mensaje || '-' }}</td>
-      </tr>
-      }
-    </tbody>
-      
+    <table class="tabla-notificaciones">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Tipo Notificación</th>
+          <th>Mensaje</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (notificacion of (notificaciones$ | async); track notificacion.idNotificacion) {
+        <tr 
+          (click)="abrirEnlace(notificacion)" 
+          [class.no-leida]="!notificacion.leido"
+          [class.leida]="notificacion.leido">
+          
+          <td>{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
+          <td>{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
+          <td>{{ notificacion.mensaje || '-' }}</td>
+        </tr>
+        }
+      </tbody>
     </table>
   } @else {
     <div class="no-data">
-      No hay notificaciones disponibles.
+      <p>No hay notificaciones disponibles.</p>
     </div>
   }
 </div>
