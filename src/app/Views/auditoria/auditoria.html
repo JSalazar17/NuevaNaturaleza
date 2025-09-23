@@ -1,7 +1,7 @@
 <div class="auditoria-container">
-  <h2>Auditoría</h2>
+  <h2>Gestión de Auditoría</h2>
 
-  <table class="tabla-auditorias" >
+  <table class="tabla-auditorias">
     <thead>
       <tr>
         <th>N°</th>
@@ -21,7 +21,7 @@
           <td>{{ item.usuarioNombre }}</td>
           <td>{{ item.dispositivoNombre }}</td>
           <td>{{ item.accionNombre }}</td>
-          <td>{{ item.fecha | date: 'short' }}</td>
+          <td>{{ item.fecha | date:'short' }}</td>
           <td>{{ item.observacion }}</td>
         </tr>
       }
@@ -36,7 +36,7 @@
         <h3>Información del Usuario</h3>
         <p><strong>Nombre:</strong> {{ usuarioInfo?.nombre }}</p>
         <p><strong>Correo:</strong> {{ usuarioInfo?.correo }}</p>
-        <p><strong>Rol:</strong> {{ usuarioInfo?.idRolNavigation?.nombre}}</p>
+        <p><strong>Rol:</strong> {{ usuarioInfo?.idRolNavigation?.nombre }}</p>
       </div>
     </div>
   }
