@@ -10,7 +10,8 @@ import { queueInterceptor } from './Interceptor/qinterceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withInterceptors([queueInterceptor])),
+    //provideHttpClient(withInterceptors([queueInterceptor])),
+    provideHttpClient(),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes), provideClientHydration(withEventReplay())
