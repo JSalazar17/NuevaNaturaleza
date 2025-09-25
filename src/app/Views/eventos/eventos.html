@@ -1,5 +1,7 @@
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <div class="eventos-container">
-  <h2>Eventos</h2>
+  <h2>Gestión de Eventos</h2>
   <div class="filtro">
     Dispositivos: <a href="#">Todos</a>
   </div>
@@ -8,15 +10,16 @@
     <thead>
       <tr>
         <th>N°</th>
-        <th>Dispositivo (ID)</th>
+        <th>Dispositivo</th>
         <th>Impacto</th>
         <th>Sistema</th>
         <th>Fecha</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let evento of (eventos$ | async) ; track let i = index" (click)="seleccionarEvento(evento)">
-        <td>{{ i+1 }}</td>
+      <tr *ngFor="let evento of (eventos$ | async); let i = index" 
+          (click)="seleccionarEvento(evento)">
+        <td>{{ i + 1 }}</td>
         <td>{{ evento.idDispositivoNavigation.nombre }}</td>
         <td>{{ evento.idImpactoNavigation.nombre }}</td>
         <td>{{ evento.idSistemaNavigation.nombre }}</td>
@@ -25,7 +28,7 @@
     </tbody>
   </table>
 
-  <!-- Cuadro de detalle del dispositivo -->
+  <!-- Cuadro de detalle -->
   <div class="detalle" *ngIf="dispositivoSeleccionado">
     <h3>Información del Dispositivo</h3>
     <p><strong>ID:</strong> {{ dispositivoSeleccionado.idDispositivo }}</p>
@@ -33,6 +36,6 @@
     <p><strong>Marca:</strong> {{ dispositivoSeleccionado.idMarca }}</p>
     <p><strong>Sistema:</strong> {{ dispositivoSeleccionado.idSistema }}</p>
     <p><strong>Tipo:</strong> {{ dispositivoSeleccionado.idTipoDispositivo }}</p>
-    <button (click)="cerrarDetalle()">Cerrar</button>
+    <button class="btn-cerrar" (click)="cerrarDetalle()">Cerrar</button>
   </div>
 </div>

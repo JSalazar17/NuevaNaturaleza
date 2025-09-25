@@ -1,41 +1,64 @@
-.container {
+.notificaciones-container {
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
+/* Título */
+.notificaciones-container h2 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #000000;
+}
+
+/* Tabla */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  font-size: 0.95rem;
 }
 
-th {
-  background-color: #4CAF50;
-  color: white;
-}
-
-td, th {
-  padding: 10px;
+thead tr {
+  background: #009688;
+  color: #fff;
+  font-weight: bold;
   text-align: left;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+th, td {
+  padding: 14px 18px;
 }
 
-.clickable {
+tbody tr {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+tbody tr:hover {
+  transform: scale(1.01);
+  background: #f9f9f9;
   cursor: pointer;
 }
 
-.clickable:hover {
-  background-color: #f0f8ff; /* un azul clarito cuando pasas el mouse */
-}
-
+/* Estados */
 .no-leida {
-  background-color: #e6f7ff; /* azul claro como "nuevo" */
+  background-color: #e6f7ff !important;
   font-weight: bold;
 }
 
 .leida {
-  background-color: #f5f5f5; /* gris clarito */
-  color: #666;
+  background-color: #fafafa;
+  color: #555;
 }
 
+/* Loading y sin datos */
+.loading, .no-data {
+  text-align: center;
+  margin-top: 20px;
+  color: #555;
+  font-style: italic;
+}
