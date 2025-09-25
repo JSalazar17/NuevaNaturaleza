@@ -30,6 +30,8 @@ import { EstadoDispositivoService } from '../../services/estadoDispositio.servic
 import { SistemaService } from '../../services/sistemas.service';
 import { Sistema } from '../../models/sistema.model';
 import { EstadoDispositivo } from '../../models/estadoDispositivo.model';
+import { SensorService } from '../../services/sensor.service';
+import { ActuadorService } from '../../services/actuador.service';
 
 
 @Component({
@@ -70,6 +72,8 @@ export class AgregarDispositivo implements OnInit {
   private accionSvc = inject(AccionService);
   private marcaSvc = inject(MarcaService);
   private dispSvc = inject(DispositivoService);
+  private sensSvc = inject(SensorService);
+  private actSvc = inject(ActuadorService);
   // si se abre como dialog, podemos recibir ref (opcional)
   //dialogRef = inject(MatDialogRef, { optional: true });
 
@@ -97,9 +101,9 @@ export class AgregarDispositivo implements OnInit {
   //esta en modo edicion
   isEditMode = false;
 
-  
+
   form = this.fb.group({
-    idDispositivo:['', Validators.required],
+    idDispositivo: ['', Validators.required],
     nombre: ['', Validators.required],
     sn: ['', Validators.required],
     descripcion: [''],
@@ -113,17 +117,6 @@ export class AgregarDispositivo implements OnInit {
   });
   ngOnInit(): void {
 
-    /*if (this.data?.dispositivo) {
-      this.isEditMode = true;
-      this.form.patchValue(this.data.dispositivo);
-    }*/
-
-
-
-
-
-
-
 
     // cargar listas como observables (sin suscribir en componente)
     this.tipos$ = this.tipoSvc.obtenerTiposDispositivo(); // Observable<TipoDispositivo[]>
@@ -136,11 +129,20 @@ export class AgregarDispositivo implements OnInit {
     this.tipoMUnidades$.subscribe(xs => this.allTipoMUnidades = xs || []);
     this.marcaSvc.obtenerMarcas().subscribe(ms => {
       this.marcasList = ms
-    })  
+      if (this.data) {
+        if (this.data.dispositivo) {
+          console.log(this.marcasList)
+          const l = this.marcasList.find(x => x.idMarca == this.data.dispositivo.idMarca);
+          if(l)
+          this.form.get('idMarca')?.setValue(l)
+          console.log("marca",this.form.get('idMarca')?.value)
+        }
+      }
+    })
     // marcas: autocomplete -> escuchamos valueChanges del control idMarca
     this.marcasFiltered$ = this.form.get('idMarca')!.valueChanges.pipe(
       startWith(''),
-      map((value:null|Marca|string) => {
+      map((value: null | Marca | string) => {
         const term = typeof value === 'string' ? value.toLowerCase() : value?.nombre?.toLowerCase() ?? '';
         return this.marcasList?.filter(m => m.nombre.toLowerCase().includes(term));
       })
@@ -149,11 +151,12 @@ export class AgregarDispositivo implements OnInit {
 
 
 
+
     // cuando cambia el tipo de dispositivo, limpiar arrays
     this.form.get('idTipoDispositivo')!.valueChanges.subscribe((_: any) => {
       this.clearArrays();
     });
-    
+
 
     this.cargarDatos()
   }
@@ -165,8 +168,10 @@ export class AgregarDispositivo implements OnInit {
   // ---------- agregar / eliminar ----------
   addSensor() {
     const g = this.fb.group({ // primer combobox (tipo medición)
-      idTipoMedicion:['', Validators.required],
+      idSensor: [''],
+      idTipoMedicion: [''],
       idTipoMUnidadM: ['', Validators.required],   // segundo combobox (id tipoMUnidadM)
+      idPuntoOptimo: [undefined],
       valorMin: [null, Validators.required],
       valorMax: [null, Validators.required]
     });
@@ -193,9 +198,7 @@ export class AgregarDispositivo implements OnInit {
     return this.allTipoMUnidades.filter(x => x.idTipoMedicion === idTipoMed);
   }
 
-  // ---------- helpers de modo (usa el nombre por defecto; cámbialo si tienes una propiedad en backend) ----------
-  // Dado que trabajas con servicios existentes, en tu API tal vez tengas una propiedad que identifique si es sensor o actuador.
-  // Aquí uso nombre como ejemplo.
+
   isSensorMode(tiposList: TipoDispositivo[] | null): boolean {
     const id = this.form.get('idTipoDispositivo')!.value;
     if (!id || !tiposList) return false;
@@ -225,17 +228,22 @@ export class AgregarDispositivo implements OnInit {
     // Mapear sensores: cada sensor -> Sensor + puntoOptimo[]
     const sensorsPayload: Sensor[] = (val.sensors || []).map((s: any) => {
       const punto: PuntoOptimo = {
-        idTipoMunidadM: s.idTipoMUnidadM,
+        idTipoMunidadM: s.idTipoMUnidadM as string,
         valorMin: +s.valorMin,
-        valorMax: +s.valorMax
+        valorMax: +s.valorMax,
+        idPuntoOptimo: s.idPuntoOptimo,
+        idSensor: s.idSensor
+
       };
       return {
+        idDispositivo: val.idDispositivo,
+        idSensor: s.idSensor,
         idTipoMUnidadM: s.idTipoMUnidadM,
-        medicions: [],
+        medicions: s.medicions,
         puntoOptimos: [punto]
       } as Sensor;
     });
-
+    console.log(sensorsPayload)
     const actuadoresPayload: Actuador[] = (val.actuadores || []).map((a: any) => ({
       idAccionAct: a.idAccionAct,
       on: a.on,
@@ -257,53 +265,55 @@ export class AgregarDispositivo implements OnInit {
     // Manejo idMarca / marca: si el control idMarca tiene un objeto Marca seleccionada,
     // mandamos idMarca. Si no, si el usuario escribió texto (y no existe id), mandamos marca:{idMarca: null, nombre: texto}
     const idMarcaVal = val.idMarca;
-    if (idMarcaVal && typeof idMarcaVal === 'object') {
-      // caso: seleccionó una Marca existente
-      payload['idMarca'] = idMarcaVal.idMarca;
-    } else if (idMarcaVal && typeof idMarcaVal === 'string' && idMarcaVal.trim()) {
+    console.log(idMarcaVal)
+    console.log(typeof idMarcaVal === 'string')
+
+    console.log("fue string")
+    if (typeof idMarcaVal === 'string') {
       // caso: escribió una marca nueva
       payload['idMarcaNavigation'] = { idMarca: undefined, nombre: idMarcaVal.trim() } as Marca;
+    } else if (idMarcaVal && typeof idMarcaVal === 'object') {
+      // caso: seleccionó una Marca existente
+      payload['idMarca'] = idMarcaVal.idMarca;
     }
     console.log(payload)
     // Llamada al servicio (sin suscribir arriba, pero aquí necesitamos ejecutar)
     // usando subscribe porque es la acción final; puedes transformar con lastValueFrom si quieres promesas.
-    if(this.data){
-      if(this.data.dispositivo){
-        payload['idDispositivo'] = this.data.dispositivo.idDispositivo;
-    if(val.sensors?.length as number >this.data.dispositivo.sensors?.length){
-      console.log("nuevos sensors",val.sensors)
-    }else if(val.actuadores?.length as number >this.data.dispositivo.actuadores?.length){
-      
-      console.log("nuevos actuators",val.actuadores)
-    }
-    this.dispSvc.updateDispositivo(payload).subscribe((data)=>{
-        // si estamos en un dialog, cerrarlo con resultado
-        this.dialogRef?.close(true);
-        // si no, limpiar form
-        this.form.reset();
-        this.clearArrays();
-        console.log(data)
+    if (this.data) {
+      if (this.data.dispositivo) {
 
-        this.loading = false;
-      
-    });
+        payload['idDispositivo'] = val.idDispositivo as string
+        this.dispSvc.updateDispositivo(payload).subscribe((data) => {
+          // si estamos en un dialog, cerrarlo con resultado
+          this.dialogRef?.close(true);
+          // si no, limpiar form
+          this.form.reset();
+          this.clearArrays();
+          console.log(data)
 
-      }else{
-        
-    this.dispSvc.createDispositivo(payload).subscribe((data)=>{
-        // si estamos en un dialog, cerrarlo con resultado
-        this.dialogRef?.close(true);
-        // si no, limpiar form
-        this.form.reset();
-        this.clearArrays();
-        console.log(data)
+          this.loading = false;
 
-        this.loading = false;
-      
-    });}
+        });
+
+      } else {
+
+        this.dispSvc.createDispositivo(payload).subscribe((data) => {
+          // si estamos en un dialog, cerrarlo con resultado
+          this.dialogRef?.close(true);
+          // si no, limpiar form
+          this.form.reset();
+          this.clearArrays();
+          console.log(data)
+
+          this.loading = false;
+
+        });
+      }
 
     }
   }
+
+
 
   clearArrays() {
     while (this.sensors.length) this.sensors.removeAt(0);
@@ -312,62 +322,54 @@ export class AgregarDispositivo implements OnInit {
 
 
 
-cargarDatos() {
+  cargarDatos() {
 
-  if (this.data) {
-    const d:Dispositivo=this.data.dispositivo;
-    // primero los simples
-    this.form.patchValue({
-      idDispositivo:d.idDispositivo,
-      nombre: d.nombre,
-      sn: d.sn,
-      descripcion: d.descripcion,
-      image: d.image,
-      idTipoDispositivo: d.idTipoDispositivo,
-      idMarca: d.idMarca,
-      idSistema: d.idSistema,
-      idEstadoDispositivo: d.idEstadoDispositivo
-    });
+    if (this.data) {
+      const d: Dispositivo = this.data.dispositivo;
+      // primero los simples
+      this.form.patchValue({
+        idDispositivo: d.idDispositivo,
+        nombre: d.nombre,
+        sn: d.sn,
+        descripcion: d.descripcion,
+        image: d.image,
+        idTipoDispositivo: d.idTipoDispositivo,
+        idMarca: { idMarca: d.idMarca, nombre: '' },
+        idSistema: d.idSistema,
+        idEstadoDispositivo: d.idEstadoDispositivo
+      });
 
-    // luego arrays
-    if(d.sensors){
-      d.sensors.forEach((sen:Sensor) => {
-        
-        const g = this.fb.group({
-          
-          idTipoMedicion: [sen.idTipoMUnidadMNavigation?.idTipoMedicion],
-          idTipoMUnidadM: [sen.idTipoMUnidadM, Validators.required],
-          valorMin: [sen.puntoOptimos?sen.puntoOptimos.length>0?sen.puntoOptimos[sen.puntoOptimos.length-1].valorMin:0:0],
-          valorMax: [sen.puntoOptimos?sen.puntoOptimos.length>0?sen.puntoOptimos[sen.puntoOptimos.length-1].valorMax:0:0]
+      // luego arrays
+      if (d.sensors) {
+        d.sensors.forEach((sen: Sensor) => {
+
+          const g = this.fb.group({
+            idSensor: [sen.idSensor],
+            idTipoMedicion: [sen.idTipoMUnidadMNavigation?.idTipoMedicion],
+            idTipoMUnidadM: [sen.idTipoMUnidadM, Validators.required],
+            idPuntoOptimo: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].idPuntoOptimo : undefined : undefined],
+            valorMin: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].valorMin : 0 : 0],
+            valorMax: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].valorMax : 0 : 0]
+          });
+          this.sensors.push(g);
         });
-        this.sensors.push(g);
-      });
-    }
-    if(d.actuadores){
-      d.actuadores.forEach((act:Actuador) => {
-        const g = this.fb.group({
-          idAccionAct: [act.idAccionAct, Validators.required],
-          on: [act.on, Validators.required],
-          off: [act.off, Validators.required]
+      }
+      if (d.actuadores) {
+        d.actuadores.forEach((act: Actuador) => {
+          const g = this.fb.group({
+            idActuador: [act.idActuador],
+            idAccionAct: [act.idAccionAct, Validators.required],
+            on: [act.on, Validators.required],
+            off: [act.off, Validators.required]
+          });
+          this.actuadores.push(g);
         });
-        this.actuadores.push(g);
-      });
+      }
     }
-  }
-  
+
     console.log("FORM VALUE::");
     console.log(this.form.value);
-}
-
-
-
-
-
-
-
-
-
-
+  }
 
   // display function para el autocomplete (muestra nombre cuando se selecciona un objeto Marca)
   displayMarcaFn(m?: Marca) {

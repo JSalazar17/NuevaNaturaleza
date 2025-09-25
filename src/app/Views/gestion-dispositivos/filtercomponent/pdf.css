@@ -1,0 +1,8 @@
+.hidden {
+  position: absolute;
+  left: -9999px; /* mejor usar negativo que 10000px */
+  top: -9999px;
+  width: 400px;
+  height: 300px;
+  visibility: hidden; /* opcional, por si alguien usa inspección */
+}

@@ -13,6 +13,7 @@ import { NotificacionesComponent } from './Views/notificaciones/notificaciones';
 import { InicioComponent } from './Views/inicio/inicio';
 import { Testchart } from './Views/testchart/testchart';
 import { ParentComponent } from './Views/testviewpanel/dashboard';
+import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdocument';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -33,6 +34,7 @@ export const routes: Routes = [
       { path: 'inicio', component: InicioComponent },
       { path: 'usuarios', component: UsuariosComponent},
       { path: 'dc', component: ParentComponent},
+      { path: 'tpdf', component: PdfComponent},
     ]
   }
 ];
