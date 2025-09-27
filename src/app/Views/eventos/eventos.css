@@ -12,21 +12,35 @@
   letter-spacing: 0.5px;
 }
 
-.filtro {
+.buscador {
   margin-bottom: 10px;
-  font-size: 14px;
-  text-align: right;
 }
 
-.filtro a {
-  color: #009688;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s;
+.buscador input {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  margin: 0 auto 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
 }
 
-.filtro a:hover {
-  color: #00796b;
+.filtro {
+  margin: 10px 0 20px 0;
+  font-size: 0.95rem;
+}
+
+.filtro label {
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.filtro select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .tabla-eventos {

@@ -30,6 +30,12 @@
         }
       </tbody>
     </table>
+    <!-- 🔹 Controles de paginación -->
+    <div class="paginacion">
+      <button (click)="cambiarPagina(-1)" [disabled]="currentPage === 1">Anterior</button>
+      <span>Página {{currentPage}} de {{totalPages}}</span>
+      <button (click)="cambiarPagina(1)" [disabled]="currentPage === totalPages">Siguiente</button>
+    </div>
   } @else {
     <div class="no-data">
       <p>No hay notificaciones disponibles.</p>

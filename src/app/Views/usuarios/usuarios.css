@@ -11,6 +11,33 @@
   color: #000000;
 }
 
+.filtro-rol {
+  margin: 10px 0 20px 0;
+  font-size: 0.95rem;
+}
+
+.filtro-rol label {
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.filtro-rol select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.buscador {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  margin: 0 auto 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
 /* Tabla */
 .tabla-usuarios {
   width: 100%;

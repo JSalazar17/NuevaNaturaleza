@@ -12,6 +12,35 @@
   color: #000000;
 }
 
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.paginacion button {
+  padding: 6px 12px;
+  border: none;
+  
+  border-radius: 5px;
+  background-color: #009688;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.paginacion button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.paginacion span {
+  font-size: 14px;
+  color: #333;
+}
+
 /* Tabla */
 table {
   width: 100%;

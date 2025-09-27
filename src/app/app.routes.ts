@@ -28,6 +28,7 @@ export const routes: Routes = [
     children:[
       { path: 'gestion-dispositivos', component: GestionDispositivos },
       { path: 'notificaciones', component: NotificacionesComponent },
+      { path: 'registrar-usuario', component: RegistrarUsuario},
       { path: 'agregar-dispositivo' , component: AgregarDispositivo},
       { path: 'auditoria', component: AuditoriaComponent }, 
       { path: 'eventos', component: Eventos },     
