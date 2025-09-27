@@ -89,7 +89,7 @@
                 <mat-option value="">--</mat-option>
                 @for (tm of (tipoMUnidades$ | async) ;track tm ) {
                 <!-- Nota: uniqueTipoMedicion es una pipe hipotética, si no la tienes usa tu lista de tipoMediciones -->
-                <mat-option [value]="tm.idTipoMedicion">{{ tm.idTipoMedicionNavigation?.nombre || tm.idTipoMedicion
+                <mat-option [value]="tm.idTipoMedicion">{{ tm.idTipoMedicionNavigation.nombre || tm.idTipoMedicion
                   }}</mat-option>
                 }
               </mat-select>
@@ -100,7 +100,7 @@
               <mat-select formControlName="idTipoMUnidadM">
                 <mat-option value="">--</mat-option>
                 @for (opt of getUnidadOptionsForSensorIndex(i);track opt) {
-                <mat-option [value]="opt.idTipoMUnidadM">{{ opt.idUnidadMedidaNavigation?.nombre || opt.idUnidadMedida
+                <mat-option [value]="opt.idTipoMUnidadM">{{ opt.idUnidadMedidaNavigation.nombre || opt.idUnidadMedida
                   }}</mat-option>
                 }
               </mat-select>

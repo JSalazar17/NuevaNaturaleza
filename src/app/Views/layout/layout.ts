@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { NotificacionService } from '../../services/notificacion.service';
 import { Notificacion } from '../../models/notificacion';
 import { BehaviorSubject, delay } from 'rxjs';
@@ -21,9 +21,12 @@ export class LayoutComponent {
   mostrarPanel = false;
   hayNotificacionNueva = false;
 
-  constructor(private cdr: ChangeDetectorRef,private zone: NgZone,private notifService: NotificacionService) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private cdr: ChangeDetectorRef,private zone: NgZone,private notifService: NotificacionService) {
+    
+  if (isPlatformBrowser(this.platformId)) {
     this.cargarNotificaciones();
     this.nuevaNotificacion();
+  }
 
   }
 

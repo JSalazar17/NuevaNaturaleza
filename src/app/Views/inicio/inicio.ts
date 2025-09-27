@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common'; // 🔹 Necesario para *ngIf, *n
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule], // 🔹 Aquí se agrega CommonModule
+  imports: [CommonModule], // 🔹 Aquí se agrega CommonModule
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.css']
 })

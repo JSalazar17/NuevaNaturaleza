@@ -1,10 +1,45 @@
-<div class="filter-button">
-  <button mat-icon-button (click)="openFilters()">
+<!-- Botón arriba a la derecha -->
+<button mat-button [matMenuTriggerFor]="filtersMenu">
+  
     <mat-icon>filter_list</mat-icon>
-  </button>
-</div>
+</button>
 
+<!-- Panel de filtros como menú -->
+<mat-menu #filtersMenu="matMenu" class="filters-panel-menu">
+  <div class="filters-panel" (click)="$event.stopPropagation()">
+    <mat-form-field appearance="fill" class="filter-item">
+      <mat-label>Tipo de Dispositivo</mat-label>
+      <mat-select [(value)]="selectedDeviceType" (selectionChange)="onDeviceTypeChange()">
+        <mat-option value="Todos">--</mat-option>
+        @for (dt of deviceTypes; track dt) {
+          <mat-option [value]="dt.idTipoDispositivo">{{ dt.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
+    <mat-form-field appearance="fill" class="filter-item">
+      <mat-label>Tipo de Medición</mat-label>
+      <mat-select [(value)]="selectedMeasurementType" (selectionChange)="onMeasurementTypeChange()">
+        <mat-option value="Todos">--</mat-option>
+        @for (m of measurementTypes; track m) {
+          <mat-option [value]="m.idTipoMedicion">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-slide-toggle
+      [checked]="isDescending"
+      (change)="onOrderChange($event)"
+      aria-label="Orden descendente"
+    >
+      Orden descendente
+    </mat-slide-toggle>
+  </div>
+</mat-menu>
+
+  <div class="hidden"><canvas #chartCanvas0  hidden></canvas></div>
+
+        <button mat-raised-button color="primary" type="button" (click)="generarpdfsensor()" style="right: 10px;position: absolute;top:80px">Generar pdf</button>
 
 <div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
   <div class="dashboard">

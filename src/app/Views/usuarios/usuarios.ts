@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
 import { Rol } from '../../models/rol.model';
 import { UsuarioService } from '../../services/usuario.service';
 import { RolService } from '../../services/rol.service';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,17 +27,18 @@ export class UsuariosComponent implements OnInit {
   usuario:Usuario
   usuarioEditando = false;
 
-  constructor(private usuarioService: UsuarioService, 
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private usuarioService: UsuarioService, 
     private dialog: MatDialog,
     private rolService: RolService) {
     
+  if (isPlatformBrowser(this.platformId)) {
     this.cargarUsuarios();
-    this.cargarRoles();
+    this.cargarRoles();}
   }
 
   ngOnInit(): void {
-    this.cargarUsuarios();
-    this.cargarRoles();
   }
 
   cargarUsuarios() {

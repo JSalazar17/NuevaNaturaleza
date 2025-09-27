@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
 import { Rol } from '../../models/rol.model';
 import { UsuarioService } from '../../services/usuario.service';
 import { RolService } from '../../services/rol.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';   // ✅ importamos Router
 
@@ -26,14 +26,16 @@ export class RegistrarUsuario {
   roles: Rol[] = [];
   mensaje: string = '';
 
-  constructor(
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,
     private usuarioService: UsuarioService,
     private rolService: RolService,
     private router: Router   // ✅ inyectamos Router
   ) {}
 
   ngOnInit() {
-    this.cargarRoles();
+    
+  if (isPlatformBrowser(this.platformId)) {
+    this.cargarRoles();}
   }
 
   cargarRoles() {

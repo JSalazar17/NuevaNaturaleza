@@ -29,8 +29,8 @@ export class PdfComponent {
     private auSvc:AuditoriaService
   ) {
     
-        this.cargarDatos();
     if (isPlatformBrowser(this.platformId)) {
+        this.cargarDatos();
       // 👇 import dinámico solo en navegador
       import('pdfmake/build/pdfmake').then(pdfMakeModule => {
         import('pdfmake/build/vfs_fonts').then(pdfFontsModule => {

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, ViewChildren, QueryList, inject, signal, computed, PLATFORM_ID, HostListener } from '@angular/core';
+import { Component, DestroyRef, ViewChildren, QueryList, inject, signal, computed, PLATFORM_ID, HostListener, Inject, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
@@ -28,13 +28,16 @@ import { TipoMUnidadM } from '../../models/tipoMUnidadM.model';
 import { TipoMUnidadMService } from '../../services/tipoMUnidadM.service';
 import { TipoMedicion } from '../../models/tipomedicion.model';
 import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
+import { MatButtonModule } from '@angular/material/button';
+import { pdfService } from '../../services/pdf.service';
 @Component({
   selector: 'app-gestion-dispositivos',
   standalone: true,
   templateUrl: './gestion-dispositivos.html',
   imports: [CommonModule, BaseChartDirective,
     FormsModule,
-    ReactiveFormsModule, MatSidenavModule, MatIconModule, MatSelectModule, MatMenuModule, MatSlideToggleModule],
+    ReactiveFormsModule, MatSidenavModule,
+    MatButtonModule, MatIconModule, MatSelectModule, MatMenuModule, MatSlideToggleModule],
   styleUrls: ['./gestion-dispositivos.css']
 })
 export class GestionDispositivos {
@@ -42,13 +45,41 @@ export class GestionDispositivos {
 
   filtersOpen = false;
   selectedDeviceType = signal<string>(''); // o null
-selectedMeasurementType = signal<string>(''); // o null
-isDescending = signal<boolean>(false);
+  selectedMeasurementType = signal<string>(''); // o null
+  isDescending = signal<boolean>(false);
 
   deviceTypes: TipoDispositivo[] = [];
   measurementTypes: TipoMedicion[] = [];
 
 
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private dispositivoService: DispositivoService,
+    private dialog: MatDialog,
+    private TipoDS: TipoDispositivoService,
+    private TipMUMS: TipoMUnidadMService,
+    private pdfSvc: pdfService,
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
+    this.cargarDispositivos()
+      // Import dinámico solo en navegador
+      import('pdfmake/build/pdfmake').then(pdfMakeModule => {
+        import('pdfmake/build/vfs_fonts').then(pdfFontsModule => {
+          this.pdfMake = pdfMakeModule.default;
+
+          // 👇 detectar dónde viene el vfs
+          const vfs = (pdfFontsModule as any).pdfMake?.vfs || (pdfFontsModule as any).default?.pdfMake?.vfs;
+
+          if (vfs) {
+            this.pdfMake.vfs = vfs;
+          }
+        });
+      });
+    }
+    this.dispositivo$.subscribe(_d => {
+    })
+
+  }
   toggleFilters(event: MouseEvent) {
     event.stopPropagation();
     this.filtersOpen = !this.filtersOpen;
@@ -73,50 +104,43 @@ isDescending = signal<boolean>(false);
   // signal auxiliar para mantener dispositivos actualizados
   dispositivos = signal<Dispositivo[]>([]);
 
-  // filtrados con computed
-  /*dispositivosFiltrados = computed(() => {
-    const filtro = this.tipoSeleccionado();
-    console.log(this.dispositivos());
-    return filtro === 'Todos'
-      ? this.dispositivos()
-      : this.dispositivos().filter(d => d.idTipoDispositivoNavigation?.nombre === filtro);
-  });*/
-dispositivosFiltrados = computed(() => {
-  let dispositivos = [...this.dispositivos()]; // copia local
 
-  const tipo = this.selectedDeviceType();
-  const tipoMedicion = this.selectedMeasurementType();
-  const descendente = this.isDescending();
+  dispositivosFiltrados = computed(() => {
+    let dispositivos = [...this.dispositivos()]; // copia local
 
-  // 🔹 Filtro por tipo de dispositivo
-  if (tipo && tipo !== 'Todos') {
-    dispositivos = dispositivos.filter(
-      d => d.idTipoDispositivo === tipo
-    );
-  }
+    const tipo = this.selectedDeviceType();
+    const tipoMedicion = this.selectedMeasurementType();
+    const descendente = this.isDescending();
 
-  // 🔹 Filtro por tipo de medición (dentro de sensores)
-  if (tipoMedicion && tipoMedicion !== 'Todos') {
-    dispositivos = dispositivos.filter(d =>
-      d.sensors?.some(s =>
-        s.idTipoMUnidadMNavigation?.idTipoMedicion === tipoMedicion
-      )
-    );
-  }
+    // 🔹 Filtro por tipo de dispositivo
+    if (tipo && tipo !== 'Todos') {
+      dispositivos = dispositivos.filter(
+        d => d.idTipoDispositivo === tipo
+      );
+    }
 
-  // 🔹 Ordenar por nombre (ejemplo, puedes cambiar la propiedad)
-  dispositivos.sort((a, b) => {
-    const nA = a.nombre?.toLowerCase() ?? '';
-    const nB = b.nombre?.toLowerCase() ?? '';
-    return nA.localeCompare(nB);
+    // 🔹 Filtro por tipo de medición (dentro de sensores)
+    if (tipoMedicion && tipoMedicion !== 'Todos') {
+      dispositivos = dispositivos.filter(d =>
+        d.sensors?.some(s =>
+          s.idTipoMUnidadMNavigation?.idTipoMedicion === tipoMedicion
+        )
+      );
+    }
+
+    // 🔹 Ordenar por nombre (ejemplo, puedes cambiar la propiedad)
+    dispositivos.sort((a, b) => {
+      const nA = a.nombre?.toLowerCase() ?? '';
+      const nB = b.nombre?.toLowerCase() ?? '';
+      return nA.localeCompare(nB);
+    });
+
+    if (descendente) {
+      dispositivos.reverse();
+    }
+
+    return dispositivos;
   });
-
-  if (descendente) {
-    dispositivos.reverse();
-  }
-
-  return dispositivos;
-});
 
 
 
@@ -142,7 +166,7 @@ dispositivosFiltrados = computed(() => {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log("actualizo",result)
+      console.log("actualizo", result)
       if (result) {
         // Si se guardó correctamente, refrescamos la lista
         this.cargarDispositivos();
@@ -150,23 +174,24 @@ dispositivosFiltrados = computed(() => {
     });
   }
 
-eliminarDispositivo(d: Dispositivo) {
+  eliminarDispositivo(d: Dispositivo) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '800px',
-      data: { message:"Se borraran todos los datos del dispositivo asi como sus actuadores o sensores ademas de los otros datos que le pertenezcan" }   // 👈 enviamos el modelo
+      data: { message: "Se borraran todos los datos del dispositivo asi como sus actuadores o sensores ademas de los otros datos que le pertenezcan" }   // 👈 enviamos el modelo
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
       if (result) {
         // Si se guardó correctamente, refrescamos la lista
-        this.dispositivoService.deleteDispositivo(d.idDispositivo as string).subscribe(data=>{
+        this.dispositivoService.deleteDispositivo(d.idDispositivo as string).subscribe(data => {
 
         })
         this.cargarDispositivos();
       }
     });
-}
+  }
+
   openFilters() {
     const opened = this.dialog.openDialogs.find(
       d => d.componentInstance instanceof FiltersPanelComponent
@@ -178,9 +203,9 @@ eliminarDispositivo(d: Dispositivo) {
       return;
     }
 
-        console.log(this.selectedDeviceType());
-        console.log( this.selectedMeasurementType());
-        console.log(this.isDescending());
+    console.log(this.selectedDeviceType());
+    console.log(this.selectedMeasurementType());
+    console.log(this.isDescending());
     // Si no está abierto, lo abrimos
     const dialogRef = this.dialog.open(FiltersPanelComponent, {
       panelClass: 'custom-filters-dialog',
@@ -199,17 +224,31 @@ eliminarDispositivo(d: Dispositivo) {
 
     dialogRef.componentInstance.filtersChanged.subscribe(filters => {
       console.log('Filtros aplicados dinámicamente:', filters);
-      
-      this.selectedDeviceType.set(filters.deviceType ??this.selectedDeviceType());
+
+      this.selectedDeviceType.set(filters.deviceType ?? this.selectedDeviceType());
       this.selectedMeasurementType.set(filters.measurementType ?? this.selectedMeasurementType());
       this.isDescending.set(filters.order ?? this.isDescending());
-      
-        console.log(this.selectedDeviceType());
-        console.log( this.selectedMeasurementType());
-        console.log(this.isDescending());
+
+      console.log(this.selectedDeviceType());
+      console.log(this.selectedMeasurementType());
+      console.log(this.isDescending());
     });
 
   }
+
+onDeviceTypeChange(){
+
+}
+
+      
+onMeasurementTypeChange(){
+
+}
+
+onOrderChange($event:any){
+      this.isDescending.set(! this.isDescending());
+this.dispositivosFiltrados
+}
   allData = [
     { deviceType: 'Sensor 1', measurementType: 'Temperatura', value: 20 },
     { deviceType: 'Sensor 2', measurementType: 'Humedad', value: 40 },
@@ -232,18 +271,10 @@ eliminarDispositivo(d: Dispositivo) {
   }
 
   private destroyRef = inject(DestroyRef);
+  private pdfMake: any;
 
-  constructor(
-    private dispositivoService: DispositivoService,
-    private dialog: MatDialog,
-    private TipoDS: TipoDispositivoService,
-    private TipMUMS: TipoMUnidadMService
-  ) {
-    this.cargarDispositivos()
-    this.dispositivo$.subscribe(_d => {
-    })
 
-  }
+
   cargarDispositivos() {
     this.dispositivoService.getDispositivos().subscribe(data => {
       this.dispositivos.set(data);
@@ -264,5 +295,60 @@ eliminarDispositivo(d: Dispositivo) {
 
     }
     )
+  }
+
+
+  @ViewChild('chartCanvas0') chartCanvas0!: ElementRef<HTMLCanvasElement>;
+  async generarpdfsensor() {
+
+    let dispositivos = [
+      {
+        nombre: "Dispositivo A",
+        sn: "",
+        sensors: [
+          {
+            idTipoMUnidadMNavigation: {
+              idTipoMedicionNavigation: { nombre: "Temperatura" },
+              idUnidadMedidaNavigation: { nombre: "°C" }
+            },
+            medicions: [
+              { valor: 22.5, fecha: "2025-09-17 08:00" },
+              { valor: 23.0, fecha: "2025-09-17 09:00" },
+              { valor: 23.8, fecha: "2025-09-17 10:00" }
+            ]
+          },
+          {
+            nombre: "Humedad",
+            unidad: "%",
+            medicions: [
+              { valor: 55, fecha: "2025-09-17 08:00" },
+              { valor: 57, fecha: "2025-09-17 09:00" },
+              { valor: 54, fecha: "2025-09-17 10:00" }
+            ]
+          }
+        ]
+      } as Dispositivo,
+      {
+        nombre: "Dispositivo B",
+        sn: "",
+        sensors: [
+          {
+            idTipoMUnidadMNavigation: {
+              idTipoMedicionNavigation: { nombre: "Ph" },
+              idUnidadMedidaNavigation: { nombre: "Ph" }
+            },
+            medicions: [
+              { valor: 6.8, fecha: "2025-09-17 08:00" },
+              { valor: 6.9, fecha: "2025-09-17 09:00" },
+              { valor: 7.0, fecha: "2025-09-17 10:00" }
+            ]
+          }
+        ]
+      } as Dispositivo
+    ];
+
+    const canvas = this.chartCanvas0.nativeElement;
+
+    this.pdfSvc.generatePdfDispositivos(dispositivos, this.chartCanvas0)
   }
 }
