@@ -1,9 +1,24 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <div class="eventos-container">
   <h2>Gestión de Eventos</h2>
+
+  <!-- 🔽 Barra de búsqueda -->
+  <div class="buscador">
+    <input 
+      type="text" 
+      placeholder="Buscar por dispositivo, impacto, sistema o fecha..."
+      [(ngModel)]="terminoBusqueda"
+      (input)="aplicarFiltros()">
+  </div>
+
+  <!-- 🔽 Filtro por tipo de dispositivo -->
   <div class="filtro">
-    Dispositivos: <a href="#">Todos</a>
+    <label for="dispositivoFiltro">Tipo de Dispositivo:</label>
+    <select id="dispositivoFiltro" [(ngModel)]="dispositivoSeleccionadoFiltro" (change)="aplicarFiltros()">
+      <option value="Todos">Todos</option>
+      <option *ngFor="let d of dispositivos" [value]="d.idTipoDispositivo">
+        {{ d.idTipoDispositivo }}
+      </option>
+    </select>
   </div>
 
   <table class="tabla-eventos">
@@ -17,7 +32,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let evento of (eventos$ | async); let i = index" 
+      <tr *ngFor="let evento of eventosFiltrados; let i = index" 
           (click)="seleccionarEvento(evento)">
         <td>{{ i + 1 }}</td>
         <td>{{ evento.idDispositivoNavigation.nombre }}</td>

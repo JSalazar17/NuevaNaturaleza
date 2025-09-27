@@ -1,5 +1,26 @@
 <div class="usuarios-container">
   <h2 class="titulo-usuarios">Gestión de Usuarios</h2>
+
+  <!-- 🔍 Barra de búsqueda -->
+  <input 
+    type="text" 
+    placeholder="Buscar usuario por rol, cédula, nombre o correo..." 
+    [(ngModel)]="filtroTexto"
+    (input)="filtrarUsuarios()"
+    class="buscador"
+  />
+
+  <!-- 🔽 Filtro por rol -->
+  <div class="filtro-rol">
+    <label for="rolFiltro">Usuarios: </label>
+    <select id="rolFiltro" [(ngModel)]="rolSeleccionado" (change)="filtrarPorRol()">
+      <option value="Todos">Todos</option>
+      <option *ngFor="let rol of roles" [value]="rol.idRol">
+        {{ rol.nombre }}
+      </option>
+    </select>
+  </div>
+
   <table class="tabla-usuarios">
     <thead>
       <tr>
@@ -11,8 +32,7 @@
       </tr>
     </thead>
     <tbody>
-      @for(u of usuarios$|async;track u){
-      <tr>
+      <tr *ngFor="let u of usuariosFiltrados">
         <td>{{ getRolNombre(u.idRol) }}</td>
         <td>{{ u.cedula }}</td>
         <td>{{ u.nombre }}</td>
@@ -21,7 +41,7 @@
           <button class="btn-accion editar" (click)="editarUsuario(u)">Editar</button>
           <button class="btn-accion eliminar" (click)="eliminarUsuario(u.idUsuario!)">Eliminar</button>
         </td>
-      </tr>}
+      </tr>
     </tbody>
   </table>
 </div>

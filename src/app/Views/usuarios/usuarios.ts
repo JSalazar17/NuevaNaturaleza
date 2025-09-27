@@ -23,9 +23,12 @@ export class UsuariosComponent implements OnInit {
   roles$: Observable<Rol[]>=this.rolesSubject.asObservable();
   usuarios: Usuario[] = [];
   roles: Rol[] = [];
+  rolSeleccionado: string = "Todos"; // Valor inicial
   usuarioForm: Usuario = { idUsuario: '',idRol: '', cedula: '', nombre: '', correo: '', clave: '' };
   usuario:Usuario
   usuarioEditando = false;
+  usuariosFiltrados: Usuario[] = []; // 👈 lista que se muestra en la tabla
+  filtroTexto: string = ""; // texto del input
 
   constructor(private usuarioService: UsuarioService, 
     private dialog: MatDialog,
@@ -41,8 +44,9 @@ export class UsuariosComponent implements OnInit {
   }
 
   cargarUsuarios() {
-    this.usuarioService.getUsuarios().subscribe(data => {this.usuarios = data
-      this.usuariosSubject.next(data)
+    this.usuarioService.getUsuarios().subscribe(data => {
+      this.usuarios = data;
+      this.filtrarPorRol(); // inicializar con filtro
     });
   }
 
@@ -56,7 +60,25 @@ export class UsuariosComponent implements OnInit {
   getRolNombre(id: string): string {
   const rol = this.roles.find(r => r.idRol === id);
   return rol ? rol.nombre : 'Sin Rol';
-}
+  }
+
+  filtrarPorRol() {
+    if (this.rolSeleccionado === "Todos") {
+      this.usuariosFiltrados = [...this.usuarios];
+    } else {
+      this.usuariosFiltrados = this.usuarios.filter(u => u.idRol === this.rolSeleccionado);
+    }
+  }
+
+  filtrarUsuarios() {
+    const texto = this.filtroTexto.toLowerCase();
+    this.usuariosFiltrados = this.usuarios.filter(u => 
+      this.getRolNombre(u.idRol).toLowerCase().includes(texto) ||
+      u.cedula.toLowerCase().includes(texto) ||
+      u.nombre.toLowerCase().includes(texto) ||
+      u.correo.toLowerCase().includes(texto)
+    );
+  }
 
   guardarUsuario() {
     

@@ -15,9 +15,12 @@ import { BehaviorSubject, catchError, delay, Observable, of, retryWhen, scan } f
 })
 export class Eventos implements OnInit {
   eventos: Evento[] = [];
+  eventosFiltrados: Evento[] = [];
   dispositivos: Dispositivo[] = [];
   eventoSeleccionado: Evento | null = null;
   dispositivoSeleccionado: Dispositivo | null = null;
+  terminoBusqueda: string = "";
+  dispositivoSeleccionadoFiltro: string = "Todos";
 
   private eventosSubject = new BehaviorSubject<Evento[]>([]);
   eventos$: Observable<Evento[]>=this.eventosSubject.asObservable();
@@ -33,14 +36,35 @@ export class Eventos implements OnInit {
   }
 
   cargarEventos() {
-    this.eventoService.getEventos()
-  
-  .subscribe(data => {this.eventosSubject.next(data);console.log(data)});
+    this.eventoService.getEventos().subscribe(data => {
+      this.eventos = data;
+      this.eventosFiltrados = [...this.eventos]; // inicial
+    });
   }
 
-  /*cargarDispositivos() {
-    this.dispositivoService.getDispositivos().subscribe(data => {this.dispositivos = data;console.log(this.dispositivos)});
-  }*/
+  cargarDispositivos() {
+    this.dispositivoService.getDispositivos().subscribe(data => {
+      this.dispositivos = data;
+    });
+  }
+
+  aplicarFiltros() {
+    this.eventosFiltrados = this.eventos.filter(e => {
+      const busqueda = this.terminoBusqueda.toLowerCase();
+
+      const cumpleBusqueda =
+        e.idDispositivoNavigation.nombre.toLowerCase().includes(busqueda) ||
+        e.idImpactoNavigation.nombre.toLowerCase().includes(busqueda) ||
+        e.idSistemaNavigation.nombre.toLowerCase().includes(busqueda) ||
+        (e.fechaEvento ? new Date(e.fechaEvento).toLocaleDateString().includes(busqueda) : false);
+
+      const cumpleDispositivo =
+        this.dispositivoSeleccionadoFiltro === "Todos" ||
+        e.idDispositivoNavigation.idTipoDispositivo === this.dispositivoSeleccionadoFiltro;
+
+      return cumpleBusqueda && cumpleDispositivo;
+    });
+  }
 
   seleccionarEvento(evento: Evento) {
     this.eventoSeleccionado = evento;
