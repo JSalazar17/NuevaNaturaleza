@@ -190,6 +190,7 @@ export class AgregarDispositivo implements OnInit {
       valorMax: [null, Validators.required]
     });
     this.sensors.push(g);
+    return g;
     // visualmente los nuevos aparecerán arriba vía CSS (column-reverse)
   }
   removeSensor(i: number) { this.sensors.removeAt(i); }
@@ -339,28 +340,10 @@ export class AgregarDispositivo implements OnInit {
   clearArrays() {
     while (this.sensors.length) this.sensors.removeAt(0);
     while (this.actuadores.length) this.actuadores.removeAt(0);
-  }
-
-
-
-  cargarDatos() {
-
+      let d!: Dispositivo ;
     if (this.data) {
-      const d: Dispositivo = this.data.dispositivo;
-      // primero los simples
-      this.form.patchValue({
-        idDispositivo: d.idDispositivo,
-        nombre: d.nombre,
-        sn: d.sn,
-        descripcion: d.descripcion,
-        image: d.image,
-        idTipoDispositivo: d.idTipoDispositivo,
-        idMarca: { idMarca: d.idMarca, nombre: '' },
-        idSistema: d.idSistema,
-        idEstadoDispositivo: d.idEstadoDispositivo
-      });
-
-      // luego arrays
+       d= this.data.dispositivo;
+    }
       if (d.sensors) {
         d.sensors.forEach((sen: Sensor) => {
 
@@ -386,6 +369,53 @@ export class AgregarDispositivo implements OnInit {
           this.actuadores.push(g);
         });
       }
+  }
+
+
+
+  cargarDatos() {
+
+    if (this.data) {
+      const d: Dispositivo = this.data.dispositivo;
+      // primero los simples
+      this.form.patchValue({
+        idDispositivo: d.idDispositivo,
+        nombre: d.nombre,
+        sn: d.sn,
+        descripcion: d.descripcion,
+        image: d.image,
+        idTipoDispositivo: d.idTipoDispositivo,
+        idMarca: { idMarca: d.idMarca, nombre: '' },
+        idSistema: d.idSistema,
+        idEstadoDispositivo: d.idEstadoDispositivo
+      });
+
+      // luego arrays
+     /* if (d.sensors) {
+        d.sensors.forEach((sen: Sensor) => {
+
+          const g = this.fb.group({
+            idSensor: [sen.idSensor],
+            idTipoMedicion: [sen.idTipoMUnidadMNavigation?.idTipoMedicion],
+            idTipoMUnidadM: [sen.idTipoMUnidadM, Validators.required],
+            idPuntoOptimo: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].idPuntoOptimo : undefined : undefined],
+            valorMin: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].valorMin : 0 : 0],
+            valorMax: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].valorMax : 0 : 0]
+          });
+          this.sensors.push(g);
+        });
+      }
+      if (d.actuadores) {
+        d.actuadores.forEach((act: Actuador) => {
+          const g = this.fb.group({
+            idActuador: [act.idActuador],
+            idAccionAct: [act.idAccionAct, Validators.required],
+            on: [act.on, Validators.required],
+            off: [act.off, Validators.required]
+          });
+          this.actuadores.push(g);
+        });
+      }*/
     }
 
     console.log("FORM VALUE::");

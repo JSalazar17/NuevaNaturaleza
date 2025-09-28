@@ -1,16 +1,10 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, ViewChildren, QueryList, inject, signal, computed, PLATFORM_ID, HostListener, Inject, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, DestroyRef, ViewChildren, inject, signal, computed, PLATFORM_ID, HostListener, Inject, ViewChild, ElementRef } from '@angular/core';
+import {  FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { Dispositivo } from '../../models/dispositivo.model';
-import { ActuadorService } from '../../services/actuador.service';
-import { SensorService } from '../../services/sensor.service';
 import { DispositivoService } from '../../services/dispositivos.service';
-import { TipoMedicionService } from '../../services/tipomedicion.service';
-import { MedicionService } from '../../services/medicion.service';
-import { PuntoOptimoService } from '../../services/puntoOptimo.service';
-import { UnidadMedidaService } from '../../services/unidadMedida.service';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { Sensor } from '../../models/sensor.model';
 import { MatMenuModule } from '@angular/material/menu';
@@ -257,8 +251,12 @@ this.dispositivosFiltrados
   filteredData = [...this.allData];
 
   getChartData(sen: Sensor): ChartConfiguration['data'] {
+      sen.medicions = sen.medicions.map(r => ({
+    ...r,
+    fecha: new Date(r.fecha) // aquí ya lo guardas como Date
+  }));
     return {
-      labels: sen.medicions.map((m, i) => m.idFechaMedicion || 'M' + (i + 1)),
+      labels: sen.medicions.map((m, i) => m.fecha || 'M' + (i + 1)),
       datasets: [
         {
           data: sen.medicions.map(m => m.valor),
@@ -348,7 +346,7 @@ this.dispositivosFiltrados
     ];
 
     const canvas = this.chartCanvas0.nativeElement;
-
-    this.pdfSvc.generatePdfDispositivos(dispositivos, this.chartCanvas0)
+    console.log(this.dispositivos())
+    this.pdfSvc.generatePdfDispositivos(this.dispositivos(), this.chartCanvas0)
   }
 }
