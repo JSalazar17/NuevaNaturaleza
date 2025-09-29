@@ -1,0 +1,165 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+
+.filter-button {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 2000;
+}
+
+
+
+/* Panel lateral */
+.sidebar {
+  width: 220px;
+  background: #2d6a4f;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.sidebar .logo img {
+  width: 100px;
+  margin-bottom: 1rem;
+}
+
+.user-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.user-info i {
+  font-size: 40px;
+}
+
+.menu {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.menu a.active,
+.menu a:hover {
+  background: #40916c;
+}
+
+.logout {
+  background: #d00000;
+  border: none;
+  padding: 0.5rem 1rem;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Contenido */
+.content {
+  flex-grow: 1;
+  padding: 1.5rem;
+  background: #f1f1f1;
+}
+
+.filter {
+  margin-bottom: 1.5rem;
+}
+
+.devices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.device-card {
+  background: white;
+  border-radius: 10px;
+  margin: 1rem;
+  padding: 1em;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.device-card img {
+  width: 100px;
+  margin: 0.5rem 0;
+}
+
+.acciones button {
+  margin: 0.3rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.acciones .on {
+  background: #52b788;
+  color: white;
+}
+
+.acciones .off {
+  background: #d00000;
+  color: white;
+}
+
+/* Sensores */
+.sensor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+h3{
+    margin-right: 1em;
+  }
+.sensor-info {
+ 
+    display: flex;
+    flex-direction: row;
+}
+
+.sensor-chart {
+  flex: 1;
+  max-width: 250px;        /* 🔹 espacio máximo que puede usar la gráfica */
+  aspect-ratio: 1 / 1;     /* 🔹 cuadrado flexible (se ajusta con el ancho) */
+}
+
+.sensor-chart canvas {
+  width: 100% !important;
+  height: 100% !important; /* 🔹 fuerza al canvas a ocupar el div */
+}
+
+.acciones-finales {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.acciones-finales button {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.agregar {
+  background: #2d6a4f;
+  color: white;
+}
+
+.editar {
+  background: #40916c;
+  color: white;
+}

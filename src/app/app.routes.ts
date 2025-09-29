@@ -14,6 +14,8 @@ import { InicioComponent } from './Views/inicio/inicio';
 import { Testchart } from './Views/testchart/testchart';
 import { ParentComponent } from './Views/testviewpanel/dashboard';
 import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdocument';
+import { SensoresComponent} from './Views/sensores/sensores';
+import { ActuadoresComponent} from './Views/actuadores/actuadores';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -30,6 +32,8 @@ export const routes: Routes = [
       { path: 'notificaciones', component: NotificacionesComponent },
       { path: 'registrar-usuario', component: RegistrarUsuario},
       { path: 'agregar-dispositivo' , component: AgregarDispositivo},
+      { path: 'sensores', component: SensoresComponent},
+      { path: 'actuadores', component: ActuadoresComponent},
       { path: 'auditoria', component: AuditoriaComponent }, 
       { path: 'eventos', component: Eventos },     
       { path: 'inicio', component: InicioComponent },
