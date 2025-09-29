@@ -1,121 +1,66 @@
-<!-- Botón arriba a la derecha -->
-<button mat-button [matMenuTriggerFor]="filtersMenu">
-  
-    <mat-icon>filter_list</mat-icon>
-</button>
 
-<!-- Panel de filtros como menú -->
-<mat-menu #filtersMenu="matMenu" class="filters-panel-menu">
-  <div class="filters-panel" (click)="$event.stopPropagation()">
-    <mat-form-field appearance="fill" class="filter-item">
-      <mat-label>Tipo de Dispositivo</mat-label>
-      <mat-select [(value)]="selectedDeviceType" (selectionChange)="onDeviceTypeChange()">
-        <mat-option value="Todos">--</mat-option>
-        @for (dt of deviceTypes; track dt) {
-          <mat-option [value]="dt.idTipoDispositivo">{{ dt.nombre }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+<div class="gestion-container">
+  <h2>Gestión de Dispositivos</h2>
 
-    <mat-form-field appearance="fill" class="filter-item">
-      <mat-label>Tipo de Medición</mat-label>
-      <mat-select [(value)]="selectedMeasurementType" (selectionChange)="onMeasurementTypeChange()">
-        <mat-option value="Todos">--</mat-option>
-        @for (m of measurementTypes; track m) {
-          <mat-option [value]="m.idTipoMedicion">{{ m.nombre }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-slide-toggle
-      [checked]="isDescending"
-      (change)="onOrderChange($event)"
-      aria-label="Orden descendente"
-    >
-      Orden descendente
-    </mat-slide-toggle>
+  <!-- 🔽 Barra de búsqueda -->
+  <div class="buscador">
+    <input 
+      type="text" 
+      placeholder="Buscar por nombre, sistema o estado..."
+      [(ngModel)]="terminoBusqueda"
+      (input)="aplicarFiltros()">
   </div>
-</mat-menu>
 
-  <div class="hidden"><canvas #chartCanvas0  hidden></canvas></div>
-
-        <button mat-raised-button color="primary" type="button" (click)="generarpdfsensor()" style="right: 10px;position: absolute;top:80px">Generar pdf</button>
-
-<div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
-  <div class="dashboard">
-    <!-- Panel lateral -->
-
-    <!-- Contenido principal -->
-    <main class="content" style="
-    width: 100%;
-">
-      <h2>Gestión de dispositivos</h2>
-
-
-
-      <!-- Lista de dispositivos -->
-      <div class="devices">
-        @if(dispositivosFiltrados()){
-
-        <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados()">
-
-          <!-- Actuadores -->
-          <div *ngIf="dispositivo.idTipoDispositivoNavigation?.nombre === 'Actuador'">
-
-            <h3>{{ dispositivo.nombre }}</h3>
-            <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
-            <div *ngFor="let actu of dispositivo.actuadores">
-              <div class="acciones">
-                <button class="on">ON</button>
-                <button class="off">OFF</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sensores -->
-          <div *ngIf="dispositivo.idTipoDispositivoNavigation?.nombre === 'Sensor'" class="sensor-card">
-            <div class="sensor-info">
-
-              <h3>{{ dispositivo.nombre }}</h3>
-              <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
-
-
-            </div>
-
-            <div *ngFor="let sen of dispositivo.sensors">
-
-              <p><strong>Valor:</strong>
-                @if(sen.medicions.length>0){
-                {{ sen.medicions[(sen.medicions.length-1)].valor}}}
-              </p>
-              <div class="sensor-chart">
-
-                <div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
-
-                  <canvas baseChart [data]="getChartData(sen)" [options]="chartOptions" [type]="lineChartType">
-                  </canvas>
-
-
-
-                </div>
-              </div>
-            </div>
-          </div>
-          <button mat-icon-button color="primary" (click)="editarDispositivo(dispositivo)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="primary" (click)="eliminarDispositivo(dispositivo)">
-            <mat-icon>delete</mat-icon>
-          </button>
-
-        </div>
-        }
-      </div>
-
-      <!-- Botones agregar/editar -->
-      <div class="acciones-finales">
-        <button class="agregar">Agregar</button>
-        <button class="editar">Editar</button>
-      </div>
-    </main>
+  <!-- 🔽 Filtro por tipo de dispositivo -->
+  <div class="filtro">
+    <label for="dispositivoFiltro">Tipo de Dispositivo:</label>
+    <select id="dispositivoFiltro" [(ngModel)]="tipoSeleccionado" (change)="aplicarFiltros()">
+      <option value="Todos">Todos</option>
+      <option *ngFor="let tipo of deviceTypes" [value]="tipo.nombre">
+        {{ tipo.nombre }}
+      </option>
+    </select>
   </div>
+
+  <!-- 🔽 Tabla de dispositivos -->
+  <table class="tabla-dispositivos">
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Nombre</th>
+        <th>Sistema</th>
+        <th>Estado</th>
+        <th>Tipo de Dispositivo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dispositivo of dispositivosFiltrados; let i = index"
+          (click)="seleccionarDispositivo(dispositivo)">
+        <td>{{ i + 1 }}</td>
+        <td>{{ dispositivo.nombre }}</td>
+        <td>{{ dispositivo.idSistemaNavigation?.nombre || '-' }}</td>
+        <td>
+          <span 
+            [ngClass]="{
+              'estado-on': dispositivo.idEstadoDispositivoNavigation?.nombre === 'ON', 
+              'estado-off': dispositivo.idEstadoDispositivoNavigation?.nombre === 'OFF'
+            }">
+            {{ dispositivo.idEstadoDispositivoNavigation?.nombre || '-' }}
+          </span>
+        </td>
+        <td>{{ dispositivo.idTipoDispositivoNavigation?.nombre || '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 🔽 Detalle del dispositivo -->
+  <div class="detalle" *ngIf="dispositivoSeleccionado">
+    <h3>Información del Dispositivo</h3>
+    <p><strong>ID:</strong> {{ dispositivoSeleccionado.idDispositivo }}</p>
+    <p><strong>Nombre:</strong> {{ dispositivoSeleccionado.nombre }}</p>
+    <p><strong>Sistema:</strong> {{ dispositivoSeleccionado.idSistemaNavigation?.nombre }}</p>
+    <p><strong>Tipo:</strong> {{ dispositivoSeleccionado.idTipoDispositivoNavigation?.nombre }}</p>
+    <p><strong>Estado:</strong> {{ dispositivoSeleccionado.idEstadoDispositivoNavigation?.nombre }}</p>
+    <button class="btn-cerrar" (click)="cerrarDetalle()">Cerrar</button>
+  </div>
+</div>

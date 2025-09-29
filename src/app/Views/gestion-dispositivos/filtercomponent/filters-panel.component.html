@@ -1,18 +1,5 @@
 <div class="filters-panel">
   <mat-form-field appearance="fill" class="filter-item">
-    <mat-label>Tipo de Dispositivo</mat-label>
-    <mat-select [(value)]="selectedDeviceType" (selectionChange)="onDeviceTypeChange()">
-      <mat-option  value="Todos">
-            --
-      </mat-option>
-        @for(dt of deviceTypes;track dt){
-      <mat-option  [value]="dt.idTipoDispositivo">
-        {{ dt.nombre }}
-      </mat-option>}
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill" class="filter-item">
     <mat-label>Tipo de Medición</mat-label>
     <mat-select [(value)]="selectedMeasurementType" (selectionChange)="onMeasurementTypeChange()">
       <mat-option  value="Todos">

@@ -5,6 +5,24 @@ body {
   background: #f8f9fb;
 }
 
+.selector-rol {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.selector-rol label {
+  font-size: 14px;
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+.selector-rol select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+}
+
 /* Contenedor principal */
 .container {
   display: flex;
@@ -14,6 +32,7 @@ body {
 /* Sidebar */
 .sidebar {
   width: 250px;
+  height: 100vh;
   background: linear-gradient(180deg, #009688, #00796b);
   color: white;
   display: flex;
@@ -109,6 +128,38 @@ body {
   0% { background: #00796b; }
   50% { background: #ffffff; color: #000; }
   100% { background: #00796b; }
+}
+
+/* Submenús */
+.submenu a {
+  justify-content: space-between;
+}
+
+.flecha {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.submenu.open .flecha {
+  transform: rotate(180deg);
+}
+
+.submenu-list {
+  list-style: none;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.submenu-list li a {
+  font-size: 14px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.submenu-list li a:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Badge naranja */

@@ -25,6 +25,10 @@ export class NotificacionesComponent implements OnInit {
   titulos: Titulo[] = [];
   tiposNotificacion: TipoNotificacion[] = [];
   http: any;
+  // 🔹 Paginación
+  pageSize: number = 8; // cantidad por página
+  currentPage: number = 1;
+  totalPages: number = 1;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -40,6 +44,17 @@ export class NotificacionesComponent implements OnInit {
   if (isPlatformBrowser(this.platformId)) {
     this.cargarNotificaciones();
   }}
+
+  get paginatedNotificaciones(): Notificacion[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.notificaciones.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  cambiarPagina(direccion: number) {
+    this.currentPage += direccion;
+    if (this.currentPage < 1) this.currentPage = 1;
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+  }
 
   abrirEnlace(notificacion: Notificacion) {
     if (notificacion.enlace) {
@@ -66,6 +81,9 @@ export class NotificacionesComponent implements OnInit {
     this.cargandoSubject.next(true); // activa loading
     this.notificacionService.getNotificaciones().subscribe({
       next: (data: Notificacion[]) => {
+        this.notificaciones = data;
+        this.totalPages = Math.ceil(this.notificaciones.length / this.pageSize);
+        this.currentPage = 1; // reinicia a la primera página
         this.notificacionesSubject.next(data); // ✅ actualiza observable
         this.cargandoSubject.next(false); // ✅ desactiva loading
       },

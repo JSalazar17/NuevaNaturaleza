@@ -13,27 +13,90 @@
       <p>Acuaponía</p>
     </div>
 
-    <ul class="menu">
-      <li><a routerLink="/inicio"><i class="fas fa-home"></i><span *ngIf="!isCollapsed">Inicio</span></a></li>
-      <li><a routerLink="/gestion-dispositivos"><i class="fas fa-microchip"></i><span *ngIf="!isCollapsed">Dispositivos</span></a></li>
-      <li><a routerLink="/usuarios"><i class="fas fa-users"></i><span *ngIf="!isCollapsed">Usuarios</span></a></li>
-      <li><a routerLink="/eventos"><i class="fas fa-clipboard-list"></i><span *ngIf="!isCollapsed">Eventos</span></a></li>
-      <li><a routerLink="/auditoria"><i class="fas fa-search"></i><span *ngIf="!isCollapsed">Auditorías</span></a></li>
+    <!-- Selector de rol -->
+    <div class="selector-rol isNtCollapse" *ngIf="!isCollapsed">
+      <label for="rol">Rol:</label>
+      <select id="rol" [(ngModel)]="rolActual" (ngModelChange)="onRolChange($event)">
+        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+      </select>
+    </div>
 
-      <li class="notificaciones" (mouseenter)="mostrarPanel = true" (mouseleave)="mostrarPanel = false" [class.new]="hayNotificacionNueva">
-        <a routerLink="/notificaciones"><i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span></a>
+    <ul class="menu">
+      <li>
+        <a routerLink="/inicio">
+          <i class="fas fa-home"></i><span *ngIf="!isCollapsed">Inicio</span>
+        </a>
+      </li>
+
+      <!-- 🔹 Nuevo link: Gestión de Dispositivos -->
+      <li>
+        <a routerLink="/gestion-dispositivos">
+          <i class="fas fa-network-wired"></i><span *ngIf="!isCollapsed">Gestión de Dispositivos</span>
+        </a>
+      </li>
+
+      <!-- Submenú de Dispositivos -->
+      <li class="submenu" [class.open]="submenuOpen === 'dispositivos'">
+        <a href="javascript:void(0)" (click)="toggleSubmenu('dispositivos')">
+          <i class="fas fa-microchip"></i>
+          <span *ngIf="!isCollapsed">Dispositivos</span>
+          <i class="fas fa-chevron-down flecha" *ngIf="!isCollapsed"></i>
+        </a>
+
+        <ul class="submenu-list" *ngIf="submenuOpen === 'dispositivos' && !isCollapsed">
+          <li>
+            <a routerLink="/sensores">
+              <i class="fas fa-thermometer-half"></i><span>Sensores</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/actuadores">
+              <i class="fas fa-cogs"></i><span>Actuadores</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Solo visible para administradores -->
+      <li *ngIf="esAdmin()">
+        <a routerLink="/usuarios">
+          <i class="fas fa-users"></i><span *ngIf="!isCollapsed">Usuarios</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/eventos">
+          <i class="fas fa-clipboard-list"></i><span *ngIf="!isCollapsed">Eventos</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/auditoria">
+          <i class="fas fa-search"></i><span *ngIf="!isCollapsed">Auditorías</span>
+        </a>
+      </li>
+
+      <li class="notificaciones"
+          (mouseenter)="mostrarPanel = true"
+          (mouseleave)="mostrarPanel = false"
+          [class.new]="hayNotificacionNueva">
+        <a routerLink="/notificaciones">
+          <i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span>
+        </a>
         <span class="badge" *ngIf="hayNotificacionNueva"></span>
       </li>
     </ul>
 
-    <button class="logout"><i class="fas fa-sign-out-alt"></i><span *ngIf="!isCollapsed">Cerrar sesión</span></button>
+    <button class="logout">
+      <i class="fas fa-sign-out-alt"></i><span *ngIf="!isCollapsed">Cerrar sesión</span>
+    </button>
   </div>
 
   <!-- Panel notificaciones -->
   <div class="notif-panel" [class.notif-panel1]="isCollapsed" *ngIf="mostrarPanel">
     <h3>Notificaciones</h3>
     <ul>
-      <li *ngFor="let n of notificacionaes$|async">{{ n.mensaje }}</li>
+      <li *ngFor="let n of notificacionaes$ | async">{{ n.mensaje }}</li>
     </ul>
   </div>
 
