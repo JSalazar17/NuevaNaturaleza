@@ -55,6 +55,13 @@ export class LayoutComponent {
     return this.rolActual === 'Usuario';
   }
 
+  submenuOpen: string | null = null;
+
+  toggleSubmenu(menu: string) {
+  this.submenuOpen = this.submenuOpen === menu ? null : menu;
+  } 
+
+
   cargarNotificaciones() {
     this.notifService.getNotificaciones().subscribe(data => {
       this.notificacionSubject.next(data);

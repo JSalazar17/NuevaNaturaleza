@@ -16,7 +16,6 @@
     <!-- Selector de rol -->
     <div class="selector-rol isNtCollapse" *ngIf="!isCollapsed">
       <label for="rol">Rol:</label>
-      <!-- IMPORTANTE: ngModel + ngModelChange -->
       <select id="rol" [(ngModel)]="rolActual" (ngModelChange)="onRolChange($event)">
         <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
       </select>
@@ -29,10 +28,33 @@
         </a>
       </li>
 
+      <!-- 🔹 Nuevo link: Gestión de Dispositivos -->
       <li>
         <a routerLink="/gestion-dispositivos">
-          <i class="fas fa-microchip"></i><span *ngIf="!isCollapsed">Dispositivos</span>
+          <i class="fas fa-network-wired"></i><span *ngIf="!isCollapsed">Gestión de Dispositivos</span>
         </a>
+      </li>
+
+      <!-- Submenú de Dispositivos -->
+      <li class="submenu" [class.open]="submenuOpen === 'dispositivos'">
+        <a href="javascript:void(0)" (click)="toggleSubmenu('dispositivos')">
+          <i class="fas fa-microchip"></i>
+          <span *ngIf="!isCollapsed">Dispositivos</span>
+          <i class="fas fa-chevron-down flecha" *ngIf="!isCollapsed"></i>
+        </a>
+
+        <ul class="submenu-list" *ngIf="submenuOpen === 'dispositivos' && !isCollapsed">
+          <li>
+            <a routerLink="/sensores">
+              <i class="fas fa-thermometer-half"></i><span>Sensores</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/actuadores">
+              <i class="fas fa-cogs"></i><span>Actuadores</span>
+            </a>
+          </li>
+        </ul>
       </li>
 
       <!-- Solo visible para administradores -->
