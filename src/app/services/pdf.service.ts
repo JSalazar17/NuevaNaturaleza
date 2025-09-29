@@ -37,14 +37,17 @@ export class pdfService {
                 const avg = valores.reduce((a, b) => a + b, 0) / valores.length;
 
                 const canvas = chartCanvas0.nativeElement;
-
+                sensor.medicions = sensor.medicions.map(r => ({
+                    ...r,
+                    fecha: new Date(r.fecha) // aquí ya lo guardas como Date
+                }));
                 // destruir gráfico previo si ya existía
                 Chart.getChart(canvas)?.destroy();
 
                 new Chart(canvas, {
                     type: 'line',
                     data: {
-                        labels: sensor.medicions.map(m => m.fecha),
+                        labels: sensor.medicions.map(m => new Date ( m.fecha).toLocaleDateString()),
                         datasets: [{
                             label: sensor.idTipoMUnidadMNavigation?.idTipoMedicionNavigation.nombre ?? 'S/N',
                             data: valores,
@@ -60,9 +63,10 @@ export class pdfService {
 
                 const chartImg = canvas.toDataURL('image/png');
 
+                  
+                    console.log(sensor.medicions);
                 // Resumen + gráfico en el PDF
                 content.push(
-
 
 
                     {
@@ -82,10 +86,11 @@ export class pdfService {
                                 ],
                                 ...sensor.medicions.map(m => [
                                     { text: m.valor.toString(), alignment: "center" },
-                                    { text: m.fecha, alignment: "center" }
+                                    {text:new Date ( m.fecha).toLocaleDateString()+"  " +new Date (m.fecha).toLocaleTimeString(), alignment: "center"}
+                                    
                                 ])
                             ]
-                        },
+                        },   
                         layout: "lightHorizontalLines",
                         margin: [0, 0, 0, 15]
                     }

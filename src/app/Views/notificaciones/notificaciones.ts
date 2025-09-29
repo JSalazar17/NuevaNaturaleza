@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Notificacion } from '../../models/notificacion';
 import { NotificacionService } from '../../services/notificacion.service';
 import { Titulo } from '../../models/titulo';
 import { TituloService } from '../../services/titulo.service';
 import { TipoNotificacion } from '../../models/tiponotificacion';
 import { TipoNotificacionService } from '../../services/tiponotificacion.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 
@@ -31,6 +31,7 @@ export class NotificacionesComponent implements OnInit {
   totalPages: number = 1;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private notificacionService: NotificacionService,
     private tituloService: TituloService,
     private tipoNotificacionService: TipoNotificacionService,
@@ -39,8 +40,10 @@ export class NotificacionesComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     // Cargar primero títulos y tipos
+    
+  if (isPlatformBrowser(this.platformId)) {
     this.cargarNotificaciones();
-  }
+  }}
 
   get paginatedNotificaciones(): Notificacion[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;

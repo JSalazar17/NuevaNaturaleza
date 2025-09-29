@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { EventoService } from '../../services/evento.service';
 import { DispositivoService } from '../../services/dispositivos.service';
 import { Evento } from '../../models/evento.model';
 import { Dispositivo } from '../../models/dispositivo.model';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, catchError, delay, Observable, of, retryWhen, scan } from 'rxjs';
 
@@ -26,12 +26,15 @@ export class Eventos implements OnInit {
   eventos$: Observable<Evento[]>=this.eventosSubject.asObservable();
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private eventoService: EventoService,
     private dispositivoService: DispositivoService
   ) {}
 
   ngOnInit(): void {
-    this.cargarEventos();
+    
+  if (isPlatformBrowser(this.platformId)) {
+    this.cargarEventos();}
     //this.cargarDispositivos();
   }
 

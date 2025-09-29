@@ -91,6 +91,21 @@
   font-size: 20px;
   font-weight: 500;
 }
+.hidden {
+  position: absolute;
+  left: -9999px; /* mejor usar negativo que 10000px */
+  top: -9999px;
+  width: 900px;
+  height: 400px;
+  visibility: hidden; /* opcional, por si alguien usa inspección */
+}
+.filters-panel-menu .filters-panel {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 250px;
+}
 
 .btn-cerrar {
   margin-top: 10px;

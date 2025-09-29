@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, forwardRef, Inject, Optional } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, forwardRef, Inject, Optional, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -57,7 +57,7 @@ import { ActuadorService } from '../../services/actuador.service';
 export class AgregarDispositivo implements OnInit {
 
 
-  constructor(
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,
     @Optional() private dialogRef: MatDialogRef<AgregarDispositivo>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
@@ -81,7 +81,9 @@ export class AgregarDispositivo implements OnInit {
   marcasList: Marca[];
   // datos como observables
   tipos$!: Observable<TipoDispositivo[]>;
+  tiposSubject= new BehaviorSubject<TipoDispositivo[]>([])
   tipoMUnidades$!: Observable<TipoMUnidadM[]>
+  tipoMUnidadesSubject= new BehaviorSubject<TipoMUnidadM[]>([])
   accionesSubject = new BehaviorSubject<Accion[]>([])
   acciones$!: Observable<Accion[]>;
   sistemaSubject = new BehaviorSubject<Sistema[]>([])
@@ -117,7 +119,8 @@ export class AgregarDispositivo implements OnInit {
   });
   ngOnInit(): void {
 
-
+    
+  if (isPlatformBrowser(this.platformId)) {
     // cargar listas como observables (sin suscribir en componente)
     this.tipos$ = this.tipoSvc.obtenerTiposDispositivo(); // Observable<TipoDispositivo[]>
     this.tipoMUnidades$ = this.tipoMsvc.getTipoMUnidadMs();
@@ -139,6 +142,17 @@ export class AgregarDispositivo implements OnInit {
         }
       }
     })
+  }else{
+     this.tipos$ = this.tiposSubject; // Observable<TipoDispositivo[]>
+    this.tipoMUnidades$ = this.tipoMUnidadesSubject;
+    this.acciones$ = this.accionesSubject ;
+
+    this.sistemaSubject.next([]) ;
+    this.estadosSubject.next([]);
+    // cache de tipoMUnidades para filtrados
+    this.allTipoMUnidades = [];
+    this.marcasList=[]
+  }
     // marcas: autocomplete -> escuchamos valueChanges del control idMarca
     this.marcasFiltered$ = this.form.get('idMarca')!.valueChanges.pipe(
       startWith(''),
@@ -168,7 +182,7 @@ export class AgregarDispositivo implements OnInit {
   // ---------- agregar / eliminar ----------
   addSensor() {
     const g = this.fb.group({ // primer combobox (tipo medición)
-      idSensor: [''],
+      idSensor: [undefined],
       idTipoMedicion: [''],
       idTipoMUnidadM: ['', Validators.required],   // segundo combobox (id tipoMUnidadM)
       idPuntoOptimo: [undefined],
@@ -176,6 +190,7 @@ export class AgregarDispositivo implements OnInit {
       valorMax: [null, Validators.required]
     });
     this.sensors.push(g);
+    return g;
     // visualmente los nuevos aparecerán arriba vía CSS (column-reverse)
   }
   removeSensor(i: number) { this.sensors.removeAt(i); }
@@ -231,17 +246,24 @@ export class AgregarDispositivo implements OnInit {
         idTipoMunidadM: s.idTipoMUnidadM as string,
         valorMin: +s.valorMin,
         valorMax: +s.valorMax,
-        idPuntoOptimo: s.idPuntoOptimo,
-        idSensor: s.idSensor
 
       };
-      return {
+      if(s.idPuntoOptimo){
+        punto.idPuntoOptimo = s.idPuntoOptimo;
+      }
+      if(s.idSensor){
+        punto.idSensor = s.idSensor;
+      }
+      let sen = {
         idDispositivo: val.idDispositivo,
-        idSensor: s.idSensor,
         idTipoMUnidadM: s.idTipoMUnidadM,
         medicions: s.medicions,
         puntoOptimos: [punto]
-      } as Sensor;
+      } as Sensor
+      if(s.idSensor){
+        sen.idSensor=s.idSensor;
+      }
+      return sen;
     });
     console.log(sensorsPayload)
     const actuadoresPayload: Actuador[] = (val.actuadores || []).map((a: any) => ({
@@ -318,28 +340,10 @@ export class AgregarDispositivo implements OnInit {
   clearArrays() {
     while (this.sensors.length) this.sensors.removeAt(0);
     while (this.actuadores.length) this.actuadores.removeAt(0);
-  }
-
-
-
-  cargarDatos() {
-
+      let d!: Dispositivo ;
     if (this.data) {
-      const d: Dispositivo = this.data.dispositivo;
-      // primero los simples
-      this.form.patchValue({
-        idDispositivo: d.idDispositivo,
-        nombre: d.nombre,
-        sn: d.sn,
-        descripcion: d.descripcion,
-        image: d.image,
-        idTipoDispositivo: d.idTipoDispositivo,
-        idMarca: { idMarca: d.idMarca, nombre: '' },
-        idSistema: d.idSistema,
-        idEstadoDispositivo: d.idEstadoDispositivo
-      });
-
-      // luego arrays
+       d= this.data.dispositivo;
+    }
       if (d.sensors) {
         d.sensors.forEach((sen: Sensor) => {
 
@@ -365,6 +369,53 @@ export class AgregarDispositivo implements OnInit {
           this.actuadores.push(g);
         });
       }
+  }
+
+
+
+  cargarDatos() {
+
+    if (this.data) {
+      const d: Dispositivo = this.data.dispositivo;
+      // primero los simples
+      this.form.patchValue({
+        idDispositivo: d.idDispositivo,
+        nombre: d.nombre,
+        sn: d.sn,
+        descripcion: d.descripcion,
+        image: d.image,
+        idTipoDispositivo: d.idTipoDispositivo,
+        idMarca: { idMarca: d.idMarca, nombre: '' },
+        idSistema: d.idSistema,
+        idEstadoDispositivo: d.idEstadoDispositivo
+      });
+
+      // luego arrays
+     /* if (d.sensors) {
+        d.sensors.forEach((sen: Sensor) => {
+
+          const g = this.fb.group({
+            idSensor: [sen.idSensor],
+            idTipoMedicion: [sen.idTipoMUnidadMNavigation?.idTipoMedicion],
+            idTipoMUnidadM: [sen.idTipoMUnidadM, Validators.required],
+            idPuntoOptimo: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].idPuntoOptimo : undefined : undefined],
+            valorMin: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].valorMin : 0 : 0],
+            valorMax: [sen.puntoOptimos ? sen.puntoOptimos.length > 0 ? sen.puntoOptimos[sen.puntoOptimos.length - 1].valorMax : 0 : 0]
+          });
+          this.sensors.push(g);
+        });
+      }
+      if (d.actuadores) {
+        d.actuadores.forEach((act: Actuador) => {
+          const g = this.fb.group({
+            idActuador: [act.idActuador],
+            idAccionAct: [act.idAccionAct, Validators.required],
+            on: [act.on, Validators.required],
+            off: [act.off, Validators.required]
+          });
+          this.actuadores.push(g);
+        });
+      }*/
     }
 
     console.log("FORM VALUE::");
