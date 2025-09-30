@@ -91,3 +91,18 @@ tbody tr:hover {
   color: #555;
   font-style: italic;
 }
+
+.btn-eliminar {
+  padding: 6px 12px;
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-eliminar:hover {
+  background-color: #b71c1c;
+}
+
