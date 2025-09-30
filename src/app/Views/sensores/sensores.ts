@@ -1,6 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, ViewChildren, inject, signal, computed, PLATFORM_ID, HostListener, QueryList } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, DestroyRef, ViewChildren, inject, signal, computed, PLATFORM_ID, HostListener, QueryList, Inject } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { Dispositivo } from '../../models/dispositivo.model';
@@ -16,10 +16,15 @@ import { AgregarDispositivo } from '../agregar-dispositivo/agregar-dispositivo';
 import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 import { FiltersPanelComponent } from '../gestion-dispositivos/filtercomponent/filters-panel.component';
 import { MatIconModule } from '@angular/material/icon';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-sensores',
@@ -27,10 +32,18 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   templateUrl: './sensores.html',
   imports: [CommonModule, BaseChartDirective,
     FormsModule, ReactiveFormsModule, MatSidenavModule,
-    MatIconModule, MatSelectModule, MatMenuModule, MatSlideToggleModule],
+    MatIconModule, MatSelectModule, MatMenuModule,
+    MatButtonModule, MatSlideToggleModule,
+  MatDatepickerModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
+     ],
   styleUrls: ['./sensores.css']
 })
 export class SensoresComponent {
+
   @ViewChildren(BaseChartDirective) chart: QueryList<BaseChartDirective>;
   private dispositivosSubject = new BehaviorSubject<Dispositivo[]>([]);
   dispositivo$ = this.dispositivosSubject.asObservable();
@@ -44,12 +57,14 @@ export class SensoresComponent {
   selectedDeviceType = signal<string>('');
   selectedMeasurementType = signal<string>('');
   isDescending = signal<boolean>(false);
-
+items = computed(() => {
+    let dispositivos = [...this.dispositivos()];
+    dispositivos = dispositivos.filter(d => d.idTipoDispositivoNavigation?.nombre === 'Sensor');
+  return dispositivos
+});
   dispositivosFiltrados = computed(() => {
     let dispositivos = [...this.dispositivos()];
-    // 🔹 SOLO sensores
     dispositivos = dispositivos.filter(d => d.idTipoDispositivoNavigation?.nombre === 'Sensor');
-
     const tipo = this.selectedDeviceType();
     const tipoMedicion = this.selectedMeasurementType();
     const descendente = this.isDescending();
@@ -82,6 +97,7 @@ export class SensoresComponent {
   };
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private dispositivoService: DispositivoService,
     private dialog: MatDialog,
     private tipoDS: TipoDispositivoService,
@@ -89,9 +105,23 @@ export class SensoresComponent {
   ) {
     this.cargarDispositivos();
   }
+toggleSensorInfo(sensor: any) {
+  sensor.mostrarInfo = !sensor.mostrarInfo;
+}
+  rango = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
 
+  opciones = new FormControl<Dispositivo[]>([]);
+
+  isPlatformBrowser() {
+
+  return isPlatformBrowser(this.platformId)
+}
   cargarDispositivos() {
     this.dispositivoService.getDispositivos().subscribe(data => {
+      this.asignarDatosE(data);
       this.dispositivos.set(data);
       this.dispositivosSubject.next(data);
     });
@@ -105,9 +135,72 @@ export class SensoresComponent {
     });
   }
 
+asignarDatosE(data:Dispositivo[]){
+  data.forEach(dispo => {
+    if(dispo.sensors)
+    dispo.sensors.forEach(element => {
+      this.calcularDatosEstadisticos(element)
+    });
+  });
+}
+calcularDatosEstadisticos(sen: Sensor) {
+  let valores = sen.medicions.map(x => x.valor).sort((a, b) => a - b); // ordenamos para mediana
+  const n = valores.length;
+
+  if (n === 0) return;
+
+  // Media
+  const suma = valores.reduce((acc, val) => acc + val, 0);
+  let media = suma / n;
+
+  // Varianza muestral
+  let varianza = valores.reduce((acc, val) => acc + (val - media) ** 2, 0) / (n - 1);
+
+  // Desviación estándar
+  let desviacionE = Math.sqrt(varianza);
+
+  // Mediana
+  let mediana: number;
+  if (n % 2 === 0) {
+    mediana = (valores[n / 2 - 1] + valores[n / 2]) / 2;
+  } else {
+    mediana = valores[Math.floor(n / 2)];
+  }
+
+  // Moda
+  const frecuencias: Record<number, number> = {};
+  valores.forEach(v => {
+    frecuencias[v] = (frecuencias[v] || 0) + 1;
+  });
+
+  let maxFrecuencia = Math.max(...Object.values(frecuencias));
+  let moda = Object.keys(frecuencias)
+    .filter(k => frecuencias[+k] === maxFrecuencia)
+    .map(Number);
+  media = Number(media.toFixed(3));
+  varianza = Number(varianza.toFixed(3));
+  desviacionE = Number(desviacionE.toFixed(3));
+  mediana = Number(mediana.toFixed(3));
+  if (moda.length > 3) {
+    moda = moda.slice(0, 3);
+  }
+  // Guardar en el sensor
+  sen.datosEstadisticos = {
+    media,
+    varianza,
+    desviacionE,
+    mediana,
+    range: [Number(valores[0].toFixed(3)),Number(valores[valores.length-1].toFixed(3))],
+    moda: moda.length === 1 ? Number(moda[0].toFixed(3)) : moda // si hay más de una, devuelvo array
+  };
+}
+  onOrderChange($event: MatSlideToggleChange) {
+  this.isDescending.set(!this.isDescending());
+  }
+
   getChartData(sen: Sensor): ChartConfiguration['data'] {
     return {
-      labels: sen.medicions.map((m, i) => m.idFechaMedicion || 'M' + (i + 1)),
+      labels: sen.medicions.map((m, i) => new Date(m.fecha).toLocaleDateString() +" "+ new Date(m.fecha).toLocaleTimeString() || 'M' + (i + 1)),
       datasets: [{ data: sen.medicions.map(m => m.valor), label: 'Sensor', fill: true, tension: 0.25 }]
     };
   }
@@ -129,25 +222,5 @@ export class SensoresComponent {
     });
   }
 
-  openFilters() {
-    const dialogRef = this.dialog.open(FiltersPanelComponent, {
-      panelClass: 'custom-filters-dialog',
-      backdropClass: 'filters-backdrop',
-      position: { right: '0', top: '60px' },
-      width: '320px',
-      data: {
-        deviceTypes: this.deviceTypes,
-        measurementTypes: this.measurementTypes,
-        selectedDeviceType: this.selectedDeviceType(),
-        selectedMeasurementType: this.selectedMeasurementType(),
-        isDescending: this.isDescending()
-      }
-    });
 
-    dialogRef.componentInstance.filtersChanged.subscribe(filters => {
-      this.selectedDeviceType.set(filters.deviceType ?? this.selectedDeviceType());
-      this.selectedMeasurementType.set(filters.measurementType ?? this.selectedMeasurementType());
-      this.isDescending.set(filters.order ?? this.isDescending());
-    });
-  }
 }

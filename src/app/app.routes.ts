@@ -16,6 +16,7 @@ import { ParentComponent } from './Views/testviewpanel/dashboard';
 import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdocument';
 import { SensoresComponent} from './Views/sensores/sensores';
 import { ActuadoresComponent} from './Views/actuadores/actuadores';
+import { dtComponent } from './Views/sensores/dt/dt';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
   { path: 'testchart', component: Testchart},
+  { path:'datapicker', component:dtComponent},
   {
     path: '',
     component: LayoutComponent,
