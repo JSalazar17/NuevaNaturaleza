@@ -16,6 +16,7 @@ import { ParentComponent } from './Views/testviewpanel/dashboard';
 import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdocument';
 import { SensoresComponent} from './Views/sensores/sensores';
 import { ActuadoresComponent} from './Views/actuadores/actuadores';
+import { SugerenciasComponent } from './Views/sugerencias/sugerencias';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -32,6 +33,7 @@ export const routes: Routes = [
       { path: 'notificaciones', component: NotificacionesComponent },
       { path: 'registrar-usuario', component: RegistrarUsuario},
       { path: 'agregar-dispositivo' , component: AgregarDispositivo},
+      { path: 'sugerencias', component: SugerenciasComponent},
       { path: 'sensores', component: SensoresComponent},
       { path: 'actuadores', component: ActuadoresComponent},
       { path: 'auditoria', component: AuditoriaComponent }, 

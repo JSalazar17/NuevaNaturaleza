@@ -17,4 +17,8 @@ export class SugerenciasService {
   obtenerSugerencias(): Observable<Sugerencia[]> {
     return this.http.get<Sugerencia[]>(this.url);
   }
+
+  deleteSugerencias(id: string): Observable<any> {
+    return this.http.delete<Sugerencia[]>(this.url);
+  }
 }

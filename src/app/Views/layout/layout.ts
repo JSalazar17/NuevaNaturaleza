@@ -1,9 +1,8 @@
-import { ChangeDetectorRef, Component, Inject, NgZone, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
-
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-
-import { FormsModule } from '@angular/forms'; 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // necesario para ngModel
+import { NotificacionService } from '../../services/notificacion.service';
 import { Notificacion } from '../../models/notificacion';
 import { BehaviorSubject } from 'rxjs';
 
@@ -21,16 +20,17 @@ export class LayoutComponent {
   mostrarPanel = false;
   hayNotificacionNueva = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,
-              private cdr: ChangeDetectorRef,
-              private zone: NgZone,
-              private notifService: NotificacionService) {
-    
-  if (isPlatformBrowser(this.platformId)) {
+  // roles
+  roles = ['Administrador', 'Usuario'];
+  rolActual = 'Usuario'; // valor por defecto
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone,
+    private notifService: NotificacionService
+  ) {
     this.cargarNotificaciones();
     this.nuevaNotificacion();
-  }
-
   }
 
   toggleSidebar() {
