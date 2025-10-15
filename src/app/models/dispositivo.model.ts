@@ -15,6 +15,9 @@ export interface Dispositivo {
   idSistema?: string;
   idMarca?: string;
   idEstadoDispositivo?: string;
+  tipo?: string;
+  valorActual?: string;
+
 
   // Relaciones
   sensors?: Sensor[];

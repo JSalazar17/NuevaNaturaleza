@@ -24,6 +24,7 @@ export class RecuperarComponent {
   ) {}
 
   recuperar(): void {
+    console.log(this.correo)
     if (!this.correo) {
       this.error = 'Debe ingresar un correo válido';
       this.success = '';
@@ -35,6 +36,7 @@ export class RecuperarComponent {
       url: `${window.location.origin}/cambiar-contraseña`
     };
 
+    console.log(payload);
     this.authService.requestPassword(payload).subscribe({
       next: data => {
         console.log(data)

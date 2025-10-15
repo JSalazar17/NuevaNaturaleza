@@ -14,22 +14,22 @@
           <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
         </div>
 
-        <div class="actuador-controls">
-          <button mat-raised-button color="primary" (click)="cambiarEstado(dispositivo, true)">
+        <div *ngFor="let actuador of dispositivo.actuadores" class="actuador-controls">
+          <button
+            class="btn-on"
+            [class.active]="actuador.on === 'true'"
+            (click)="cambiarEstado(actuador, true)">
             ON
           </button>
-          <button mat-raised-button color="warn" (click)="cambiarEstado(dispositivo, false)">
+          <button
+            class="btn-off"
+            [class.active]="actuador.off === 'true'"
+            (click)="cambiarEstado(actuador, false)">
             OFF
           </button>
         </div>
       </div>
 
-      <button mat-icon-button color="primary" (click)="editarDispositivo(dispositivo)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button color="primary" (click)="eliminarDispositivo(dispositivo)">
-        <mat-icon>delete</mat-icon>
-      </button>
     </div>
   </div>
 </main>

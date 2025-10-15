@@ -1,0 +1,220 @@
+.programacion-container {
+  padding: 18px;
+  font-family: 'Poppins', sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Título */
+.programacion-container h2 {
+  text-align: center;
+  color: #00796b;
+  margin-bottom: 18px;
+}
+
+/* Tabla */
+.tabla-programacion {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  margin-bottom: 18px;
+}
+
+.tabla-programacion th,
+.tabla-programacion td {
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0f2f1;
+}
+
+.tabla-programacion th {
+  background-color: #009688;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tabla-programacion tr:nth-child(even) {
+  background-color: #f6fffb;
+}
+
+/* Botones de acción */
+.btn-editar, .btn-eliminar {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  margin: 0 4px;
+}
+
+.btn-editar {
+  background: #2e7d32;
+}
+
+.btn-eliminar {
+  background: #c62828;
+}
+
+/* Formulario */
+.formulario-programacion {
+  background: #f1faf6;
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-top: 8px;
+}
+
+.formulario-programacion h3 {
+  color: #00796b;
+  text-align: center;
+  margin-top: 0;
+}
+
+/* filas del formulario */
+.row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.col {
+  flex: 1;
+}
+
+/* inputs/select */
+select, input[type="number"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cfeee5;
+  border-radius: 6px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+/* botones del formulario */
+.botones {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-guardar {
+  background: #00796b;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-cancelar {
+  background: #9e9e9e;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* mensaje sin datos */
+.sin-datos {
+  text-align: center;
+  color: #666;
+  background: #fff;
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.formulario-dosificador {
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.formulario-dosificador h3 {
+  color: #2e7d32;
+  text-align: center;
+  margin-top: 0;
+}
+
+.formulario-dosificador textarea {
+  width: 100%;
+  border: 1px solid #c8e6c9;
+  border-radius: 6px;
+  padding: 8px;
+  min-height: 50px;
+  resize: none;
+}
+
+.boton-agregar-dosificador {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.btn-agregar {
+  background-color: #388e3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.btn-agregar:hover {
+  background-color: #2e7d32;
+}
+
+.lista-actuadores {
+  display: flex;
+  flex-direction: column;
+  background: #f4f8f3;
+  padding: 10px;
+  border-radius: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+.lista-actuadores div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.lista-actuadores input[type="radio"] {
+  margin-right: 8px;
+}
+
+.btn-guardar,
+.btn-cancelar {
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-guardar {
+  background: #4caf50;
+  color: white;
+  border: none;
+}
+
+.btn-cancelar {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  margin-left: 8px;
+}
+

@@ -19,6 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { Actuador } from '../../models/actuador.model';
 
 @Component({
   selector: 'app-actuadores',
@@ -133,8 +134,19 @@ export class ActuadoresComponent {
     });
   }
 
-  cambiarEstado(dispositivo: Dispositivo, estado: boolean) {
-    console.log(`Actuador ${dispositivo.nombre} => ${estado ? 'ON' : 'OFF'}`);
-    // Aquí luego conectamos con el backend para enviar la orden
+  cambiarEstado(actuador: Actuador, estado: boolean) {
+    // Estado visual y lógico
+    if (estado) {
+      actuador.on = 'true';
+      actuador.off = 'false';
+    } else {
+      actuador.on = 'false';
+      actuador.off = 'true';
+    }
+
+    console.log(`Actuador ${actuador.idActuador} => ${estado ? 'ON' : 'OFF'}`);
+
+    // 🔹 Aquí puedes llamar al backend si ya tienes el servicio
+    // this.actuadorService.cambiarEstado(actuador.idActuador!, estado).subscribe();
   }
 }

@@ -1,0 +1,61 @@
+<div class="checklist-container">
+  <h2 class="titulo">📋 Nuevo Checklist</h2>
+
+  <!-- 🔹 Filtro por rango de fechas -->
+  <div class="filtros-fechas">
+    <label>Desde:</label>
+    <input type="date" [(ngModel)]="fechaDesde" name="fechaDesde" class="input-fecha" />
+    <label>Hasta:</label>
+    <input type="date" [(ngModel)]="fechaHasta" name="fechaHasta" class="input-fecha" />
+    <button type="button" class="btn-exportar" (click)="exportarCSV()">📤 Exportar CSV</button>
+  </div>
+
+  <form (ngSubmit)="guardarChecklist()">
+    <table class="checklist-tabla">
+      <thead>
+        <tr>
+          <th>Dispositivo</th>
+          <th>Último Valor</th>
+          <th>Observación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of dispositivos; let i = index">
+          <td>{{ d.nombre }}</td>
+          <td><span class="ultimo-valor">{{ d.valorActual }}</span></td>
+          <td>
+            <input
+              *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Sensor'"
+              type="text"
+              [(ngModel)]="checklist.detalles[i].valorRegistrado"
+              name="valor-{{i}}"
+              placeholder="Valor medido"
+              class="input-sensor"
+            />
+            <select
+              *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Actuador'"
+              [(ngModel)]="checklist.detalles[i].estadoActuador"
+              name="estado-{{i}}"
+              class="select-actuador"
+            >
+              <option [ngValue]="true">Encendido</option>
+              <option [ngValue]="false">Apagado</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="observacion-general">
+      <label>📝 Observación General:</label>
+      <textarea
+        [(ngModel)]="checklist.observacionGeneral"
+        name="observacion"
+        placeholder="Escribe una observación general sobre los dispositivos..."
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn-guardar">💾 Guardar Checklist</button>
+    <p *ngIf="mensajeExito" class="mensaje-exito">{{ mensajeExito }}</p>
+  </form>
+</div>

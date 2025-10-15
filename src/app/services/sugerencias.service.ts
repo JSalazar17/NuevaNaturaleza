@@ -6,7 +6,7 @@ import { environment } from '../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SugerenciasService {
-  private url = environment+'/api/Sugerencias';
+  private url = environment + '/api/Sugerencias';
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +18,7 @@ export class SugerenciasService {
     return this.http.get<Sugerencia[]>(this.url);
   }
 
-  deleteSugerencias(id: string): Observable<any> {
-    return this.http.delete<Sugerencia[]>(this.url);
+  eliminarSugerencia(id: string): Observable<any> {
+    return this.http.delete(`${this.url}/${id}`);
   }
 }

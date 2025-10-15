@@ -15,7 +15,20 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(user: LoginModel): Observable<any> {
-    return this.http.post(this.apiUrl+"/login", user);
+    return this.http.post(`${this.apiUrl}/login`, user, { withCredentials: true });
+  }
+
+  saveUserSession(data: any): void {
+    localStorage.setItem('user', JSON.stringify(data));
+  }
+
+  getUserRole(): string {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user).rol : '';
+  }
+
+  logout(): void {
+    localStorage.removeItem('user');
   }
 
   // Paso 1: Solicitar recuperación
