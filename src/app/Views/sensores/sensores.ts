@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, ViewChildren, inject, signal, computed, PLATFORM_ID, HostListener, QueryList, Inject } from '@angular/core';
+import { Component, DestroyRef, ViewChildren, inject, signal, computed, PLATFORM_ID, HostListener, QueryList, Inject, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
@@ -25,6 +25,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
+import { pdfService } from '../../services/pdf.service';
+import { PdfSensor } from  '../../models/pdfsensor.model';
 
 @Component({
   selector: 'app-sensores',
@@ -36,7 +38,6 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatButtonModule, MatSlideToggleModule,
   MatDatepickerModule,
     MatFormFieldModule,
-    MatDatepickerModule,
     MatInputModule,
     MatNativeDateModule,
      ],
@@ -101,7 +102,8 @@ items = computed(() => {
     private dispositivoService: DispositivoService,
     private dialog: MatDialog,
     private tipoDS: TipoDispositivoService,
-    private tipMUMS: TipoMUnidadMService
+    private tipMUMS: TipoMUnidadMService,
+    private pdfSvc:pdfService
   ) {
     this.cargarDispositivos();
   }
@@ -113,7 +115,7 @@ toggleSensorInfo(sensor: any) {
     end: new FormControl<Date | null>(null),
   });
 
-  opciones = new FormControl<Dispositivo[]>([]);
+  opciones = new FormControl<string[]>([]);
 
   isPlatformBrowser() {
 
@@ -222,5 +224,12 @@ calcularDatosEstadisticos(sen: Sensor) {
     });
   }
 
-
+  @ViewChild('chartCanvas0') chartCanvas!: ElementRef<HTMLCanvasElement>;
+async pdfSensGet(){
+  if(this.rango.value.start == null ||
+  this.rango.value.end == null)
+  return;
+  let psens:PdfSensor = {desde:(this.rango.value.start),hasta:this.rango.value.end,idsDipositivos :this.opciones.value as string[]}
+  await this.pdfSvc.generatePdfDispositivos(psens,this.chartCanvas)
+}
 }

@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-inicio',
   standalone: true,
 
-  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule], // 🔹 Aquí se agrega CommonModule
+  imports: [CommonModule, FormsModule], // 🔹 Aquí se agrega CommonModule
 
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.css']

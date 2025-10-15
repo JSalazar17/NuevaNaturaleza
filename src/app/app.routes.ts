@@ -17,6 +17,7 @@ import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdo
 import { SensoresComponent} from './Views/sensores/sensores';
 import { ActuadoresComponent} from './Views/actuadores/actuadores';
 import { dtComponent } from './Views/sensores/dt/dt';
+import { ExcesoListComponent } from './Views/excesoList/excesoList';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,7 +25,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginController },
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
-  { path: 'testchart', component: Testchart},
+  { path: 'testexc', component: ExcesoListComponent},
   { path:'datapicker', component:dtComponent},
   {
     path: '',

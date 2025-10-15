@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, forwardRef, Inject, Optional, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { BehaviorSubject, Observable, map, startWith, switchMap } from 'rxjs';
@@ -32,6 +32,8 @@ import { Sistema } from '../../models/sistema.model';
 import { EstadoDispositivo } from '../../models/estadoDispositivo.model';
 import { SensorService } from '../../services/sensor.service';
 import { ActuadorService } from '../../services/actuador.service';
+import { ExcesoListComponent } from '../excesoList/excesoList';
+import { ExcesoPuntoOptimo } from '../../models/excesoPuntoOptimo.model';
 
 
 @Component({
@@ -59,7 +61,8 @@ export class AgregarDispositivo implements OnInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
     @Optional() private dialogRef: MatDialogRef<AgregarDispositivo>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialog: MatDialog,
   ) { }
 
   private fb = inject(FormBuilder);
@@ -181,18 +184,39 @@ export class AgregarDispositivo implements OnInit {
 
   // ---------- agregar / eliminar ----------
   addSensor() {
+    
     const g = this.fb.group({ // primer combobox (tipo medición)
       idSensor: [undefined],
       idTipoMedicion: [''],
       idTipoMUnidadM: ['', Validators.required],   // segundo combobox (id tipoMUnidadM)
       idPuntoOptimo: [undefined],
       valorMin: [null, Validators.required],
-      valorMax: [null, Validators.required]
+      valorMax: [null, Validators.required],
+      ExcesoPuntosOptimos:[ [] as   ExcesoPuntoOptimo[] ,Validators.required]
     });
     this.sensors.push(g);
     return g;
     // visualmente los nuevos aparecerán arriba vía CSS (column-reverse)
   }
+
+
+addExcesoInSensor(sens:any,i: number){
+  
+      const dialogRef = this.dialog.open(ExcesoListComponent, {
+        width:"1100px",
+        data:sens.value
+      });
+      dialogRef.afterClosed().subscribe((result:ExcesoPuntoOptimo) => {
+        if (result) {
+          sens.value.ExcesoPuntosOptimos = result
+          console.log(this.sensors.value)
+          console.log(this.sensors.at(i))
+
+        }
+      });
+}
+
+
   removeSensor(i: number) { this.sensors.removeAt(i); }
 
   addActuador() {

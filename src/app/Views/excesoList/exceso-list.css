@@ -1,0 +1,46 @@
+.margingd{
+
+    margin-bottom: 15px;
+}
+.disflex{
+    display: flex;
+    gap: 10px;
+}.btn-verde {
+  background-color: #36983a; /* verde material */
+  color: white !important;
+}
+
+.btn-verde:hover {
+    
+  cursor: pointer;
+  background-color: #d32f2f;
+  background-color: #2d672f; /* verde material */
+}
+.btn-rojo {
+  background-color: #f44336; /* rojo material */
+  color: white !important;
+}
+.btn-rojo:hover {
+  cursor: pointer;
+  background-color: #d32f2f;
+}
+.dialog-container{
+  
+    align-self: center;
+    justify-self: center;
+}
+.m2{
+  margin: 2em;
+}
+.w100{
+  width: 100%;
+
+} 
+.h100{
+  height: 100%;
+  max-height: 500px;
+}
+.card-item{
+  display: flex;
+  gap: 20px;
+}

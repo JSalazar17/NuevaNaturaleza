@@ -71,7 +71,14 @@
   padding: 1.5rem;
   background: #f1f1f1;
 }
-
+.hidden {
+  position: absolute;
+  left: -9999px; /* mejor usar negativo que 10000px */
+  top: -9999px;
+  width: 800px;
+  height: 600px;
+  visibility: hidden; /* opcional, por si alguien usa inspección */
+}
 .filter {
   margin-bottom: 1.5rem;
 }
