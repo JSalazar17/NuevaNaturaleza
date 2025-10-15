@@ -1,0 +1,143 @@
+.checklist-container {
+  max-width: 950px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.titulo {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.checklist-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.checklist-tabla th {
+  background: #4caf50;
+  color: white;
+  padding: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.checklist-tabla td {
+  border: 1px solid #eee;
+  padding: 10px;
+  text-align: center;
+}
+
+.checklist-tabla tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.ultimo-valor {
+  font-weight: bold;
+  color: #333;
+}
+
+.input-sensor, .select-actuador {
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.input-sensor:focus, .select-actuador:focus {
+  border-color: #4caf50;
+  outline: none;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.observacion-general {
+  margin-bottom: 20px;
+}
+
+.observacion-general label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #2e7d32;
+}
+
+.observacion-general textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 12px;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.observacion-general textarea:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+  outline: none;
+}
+
+.btn-guardar {
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  margin: 0 auto;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn-guardar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.mensaje-exito {
+  text-align: center;
+  color: #2e7d32;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.filtros-fechas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.input-fecha {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn-exportar {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-exportar:hover {
+  background-color: #218838;
+}
+

@@ -4,6 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { DispositivoService } from '../../services/dispositivos.service';
 import { Dispositivo } from '../../models/dispositivo.model';
 import { TipoDispositivo } from '../../models/tipodispositivo.model';
+import { MatDialog } from '@angular/material/dialog';
+import { AgregarDispositivo } from '../agregar-dispositivo/agregar-dispositivo';
+import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
+import { Router } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-gestion-dispositivos',
@@ -22,7 +28,11 @@ export class GestionDispositivos {
   dispositivoSeleccionado: Dispositivo | null = null;
   mostrarModal: boolean = false;
 
-  constructor(private dispositivoService: DispositivoService) {
+  constructor(
+    private dispositivoService: DispositivoService,
+    private dialog: MatDialog,
+    private router: Router) 
+    {
     this.cargarDispositivos();
   }
 
@@ -32,6 +42,10 @@ export class GestionDispositivos {
       this.dispositivosFiltrados = [...data];
     });
   }
+
+  irAHorarios() {
+  this.router.navigate(['/programacion-dosificador']); // 👈 Usa la ruta que definiste para la vista
+ }
 
   aplicarFiltros() {
     let filtrados = [...this.dispositivos];
@@ -62,4 +76,40 @@ export class GestionDispositivos {
     this.mostrarModal = false;
     this.dispositivoSeleccionado = null;
   }
+
+  agregarDispositivo() {
+  const dialogRef = this.dialog.open(AgregarDispositivo, {
+    width: '800px',
+    data: { dispositivo: null } // 👈 Se pasa vacío para crear nuevo
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) this.cargarDispositivos();
+  });
+}
+
+  editarDispositivo(dispositivo: Dispositivo) {
+  const dialogRef = this.dialog.open(AgregarDispositivo, {
+    width: '800px',
+    data: { dispositivo }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) this.cargarDispositivos();
+  });
+}
+
+eliminarDispositivo(d: Dispositivo) {
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '800px',
+    data: { message: 'Se borrará este dispositivo y sus datos relacionados' }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.dispositivoService.deleteDispositivo(d.idDispositivo as string)
+        .subscribe(() => this.cargarDispositivos());
+    }
+  });
+}
 }

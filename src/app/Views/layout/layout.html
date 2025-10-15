@@ -1,26 +1,22 @@
-<!-- Agrega en index.html en <head> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <div class="container">
-  <!-- Barra lateral -->
-  <div class="sidebar collapse" [class.collapsed]="isCollapsed">
-    <button class="toggle-btn isNtCollapse" (click)="toggleSidebar()">
-      <i class="fas fa-bars"></i>
-    </button>
-
-    <div class="logo isNtCollapse" *ngIf="!isCollapsed">
-      <img src="assets/logo_3_.png" alt="Logo" />
-      <p>Acuaponía</p>
+  <!-- 🔹 Barra superior -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <img src="assets/Logo_lestoma.jpg" alt="Logo" class="topbar-logo" />
     </div>
 
-    <!-- Selector de rol -->
-    <div class="selector-rol isNtCollapse" *ngIf="!isCollapsed">
-      <label for="rol">Rol:</label>
-      <select id="rol" [(ngModel)]="rolActual" (ngModelChange)="onRolChange($event)">
-        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
-      </select>
+    <div class="topbar-center">
+      <h1>BIENVENIDOS LESTOMA</h1>
     </div>
+  </header>
 
+  <!-- 🔹 Barra lateral -->
+  <div class="sidebar" [class.collapsed]="isCollapsed">
     <ul class="menu">
       <li>
         <a routerLink="/inicio">
@@ -28,14 +24,13 @@
         </a>
       </li>
 
-      <!-- 🔹 Nuevo link: Gestión de Dispositivos -->
       <li>
         <a routerLink="/gestion-dispositivos">
           <i class="fas fa-network-wired"></i><span *ngIf="!isCollapsed">Gestión de Dispositivos</span>
         </a>
       </li>
 
-      <!-- Submenú de Dispositivos -->
+      <!-- 🔹 Submenú -->
       <li class="submenu" [class.open]="submenuOpen === 'dispositivos'">
         <a href="javascript:void(0)" (click)="toggleSubmenu('dispositivos')">
           <i class="fas fa-microchip"></i>
@@ -57,16 +52,9 @@
         </ul>
       </li>
 
-      <!-- Solo visible para administradores -->
-      <li *ngIf="esAdmin()">
-        <a routerLink="/usuarios">
-          <i class="fas fa-users"></i><span *ngIf="!isCollapsed">Usuarios</span>
-        </a>
-      </li>
-
       <li>
-        <a routerLink="/eventos">
-          <i class="fas fa-clipboard-list"></i><span *ngIf="!isCollapsed">Eventos</span>
+        <a routerLink="/checklist">
+          <i class="fas fa-clipboard-list"></i><span *ngIf="!isCollapsed">CheckList</span>
         </a>
       </li>
 
@@ -76,32 +64,38 @@
         </a>
       </li>
 
-      <li class="notificaciones"
-          (mouseenter)="mostrarPanel = true"
-          (mouseleave)="mostrarPanel = false"
-          [class.new]="hayNotificacionNueva">
-        <a routerLink="/notificaciones">
-          <i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span>
+      <li class="notificaciones" (mouseenter)="mostrarPanel = true" (mouseleave)="mostrarPanel = false" [class.new]="hayNotificacionNueva"> <a routerLink="/notificaciones"> <i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span> </a> <span class="badge" *ngIf="hayNotificacionNueva"></span> </li> 
+
+      <li>
+        <a routerLink="/sugerencias">
+          <i class="fas fa-lightbulb"></i><span *ngIf="!isCollapsed">Sugerencias</span>
         </a>
-        <span class="badge" *ngIf="hayNotificacionNueva"></span>
-      </li>
+      </li> 
     </ul>
 
-    <button class="logout">
-      <i class="fas fa-sign-out-alt"></i><span *ngIf="!isCollapsed">Cerrar sesión</span>
+    <!-- 🔹 Pie con logos y textos -->
+    <div class="sidebar-footer" *ngIf="!isCollapsed">
+      <img src="assets/logo_GISTFA.jpg" alt="Logo 1" class="footer-logo" />
+      <img src="assets/escudo.png" alt="Logo 2" class="footer-logo" />
+      <p class="footer-text">
+        <strong>Grupo de investigación GISTFA</strong><br>
+        Semillero de investigación SERFAC<br><br>
+        <span class="director">Director:</span><br>
+        Jaime Eduardo Andrade Ramírez<br><br>
+        <span class="equipo">Equipo de desarrolladores:</span><br>
+        Jorge Ivan Salazar Gomez<br>
+        David Ricardo Contreras Espinoza
+      </p>
+    </div>
+
+    <button class="logout" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+      <span *ngIf="!isCollapsed">Cerrar sesión</span>
     </button>
   </div>
 
-  <!-- Panel notificaciones -->
-  <div class="notif-panel" [class.notif-panel1]="isCollapsed" *ngIf="mostrarPanel">
-    <h3>Notificaciones</h3>
-    <ul>
-      <li *ngFor="let n of notificacionaes$ | async">{{ n.mensaje }}</li>
-    </ul>
-  </div>
-
-  <!-- Contenido -->
-  <div class="content">
+  <!-- 🔹 Contenido principal -->
+  <div class="content" [class.collapsed-content]="isCollapsed">
     <router-outlet></router-outlet>
   </div>
 </div>

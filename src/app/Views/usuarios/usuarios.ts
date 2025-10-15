@@ -9,6 +9,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 import { MatDialog } from '@angular/material/dialog';
 import { CRUsuariosComponent } from './crusuarios/crusuarios';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-usuarios',
@@ -34,6 +35,7 @@ export class UsuariosComponent implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object,
     private usuarioService: UsuarioService, 
     private dialog: MatDialog,
+    private router: Router,
     private rolService: RolService) {
     
   if (isPlatformBrowser(this.platformId)) {
@@ -43,6 +45,10 @@ export class UsuariosComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  irAgregarUsuario() {
+  this.router.navigate(['/registrar-usuario']); // 👈 Ruta hacia la vista de agregar
+}
 
   cargarUsuarios() {
     this.usuarioService.getUsuarios().subscribe(data => {

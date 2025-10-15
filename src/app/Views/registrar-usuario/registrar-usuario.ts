@@ -49,7 +49,7 @@ export class RegistrarUsuario {
     this.usuarioService.createUsuario(this.usuario).subscribe({
       next: () => {
         // ✅ Redirección inmediata al login después de registrar
-        this.router.navigate(['/login']);
+        this.router.navigate(['/usuarios']);
       },
       error: (err) => {
         console.error(err);

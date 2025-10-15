@@ -10,6 +10,46 @@
   z-index: 2000;
 }
 
+.actuador-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;        /* 🔹 botones más juntos */
+  margin-top: 6px; /* 🔹 menos espacio arriba */
+}
+
+.actuador-controls button {
+  width: 60px;     /* 🔹 antes 80px */
+  padding: 6px 0;  /* 🔹 menos alto */
+  font-size: 0.85rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-on {
+  background-color: #bdbdbd;
+  color: white;
+}
+
+.btn-on.active {
+  background-color: #00c853;
+  box-shadow: 0 0 12px rgba(0, 200, 83, 0.6);
+  transform: scale(1.05);
+}
+
+.btn-off {
+  background-color: #bdbdbd;
+  color: white;
+}
+
+.btn-off.active {
+  background-color: #d32f2f;
+  box-shadow: 0 0 12px rgba(211, 47, 47, 0.6);
+  transform: scale(1.05);
+}
 
 
 /* Panel lateral */
@@ -78,22 +118,28 @@
 
 .devices {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* 🔹 antes 340px */
+  gap: 1rem; /* 🔹 menos separación entre tarjetas */
 }
 
 .device-card {
   background: white;
   border-radius: 10px;
-  margin: 1rem;
-  padding: 1em;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+  margin: 0.5rem;          /* 🔹 margen reducido */
+  padding: 0.8em;          /* 🔹 menos relleno */
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
   text-align: center;
+  width: 220px;            /* 🔹 límite de ancho */
+  min-height: 200px;       /* 🔹 más compacto verticalmente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .device-card img {
-  width: 100px;
-  margin: 0.5rem 0;
+  width: 70px; /* 🔹 imagen más pequeña */
+  margin: 0.3rem 0;
 }
 
 .acciones button {

@@ -1,11 +1,21 @@
-<div class="buzon-container">
-  <h2>Buzón de Sugerencias</h2>
+<!-- Botón flotante del buzón -->
+<div class="buzon-flotante" (click)="toggleBuzon()">
+  <img src="assets/sugerencia.png" alt="Buzón" />
+</div>
+
+<!-- Ventana emergente del buzón -->
+<div class="buzon-popup" *ngIf="mostrarBuzon">
+  <div class="buzon-header">
+    <h3>Buzón de Sugerencias</h3>
+    <button class="cerrar" (click)="toggleBuzon()">×</button>
+  </div>
+
   <form (ngSubmit)="enviarSugerencia()">
     <input type="text" [(ngModel)]="sugerencia.usuario" name="usuario" placeholder="Tu nombre (opcional)">
     <input type="email" [(ngModel)]="sugerencia.correo" name="correo" placeholder="Tu correo (opcional)">
     <textarea [(ngModel)]="sugerencia.mensaje" name="mensaje" placeholder="Escribe tu sugerencia..." required></textarea>
     <button type="submit">Enviar</button>
   </form>
+
   <p *ngIf="mensajeExito" class="exito">{{ mensajeExito }}</p>
 </div>
-

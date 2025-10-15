@@ -17,10 +17,11 @@ import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdo
 import { SensoresComponent} from './Views/sensores/sensores';
 import { ActuadoresComponent} from './Views/actuadores/actuadores';
 import { SugerenciasComponent } from './Views/sugerencias/sugerencias';
+import { ChecklistFormComponent } from './Views/checklist/checklist-form';
+import { ProgramacionDosificadorComponent } from './Views/programaciondosificador/programaciondosificador';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'registrar-usuario', component: RegistrarUsuario},
   { path: 'login', component: LoginController },
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
@@ -30,7 +31,10 @@ export const routes: Routes = [
     component: LayoutComponent,
     children:[
       { path: 'gestion-dispositivos', component: GestionDispositivos },
+      { path: 'programacion-dosificador', component: ProgramacionDosificadorComponent},
       { path: 'notificaciones', component: NotificacionesComponent },
+      { path: 'registrar-usuario', component: RegistrarUsuario},
+      { path: 'checklist', component: ChecklistFormComponent},
       { path: 'registrar-usuario', component: RegistrarUsuario},
       { path: 'agregar-dispositivo' , component: AgregarDispositivo},
       { path: 'sugerencias', component: SugerenciasComponent},
