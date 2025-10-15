@@ -24,12 +24,14 @@ export class LayoutComponent {
   hayNotificacionNueva = false;
   rol: string | null = null;
 
+
   constructor(
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
     private notifService: NotificacionService,
     private authService: AuthService, // 👈 agregado
     private router: Router,
+
   ) {
     this.cargarNotificaciones();
     this.nuevaNotificacion();
@@ -88,4 +90,5 @@ export class LayoutComponent {
       this.router.navigate(['/login']);
     }
   }
+
 }

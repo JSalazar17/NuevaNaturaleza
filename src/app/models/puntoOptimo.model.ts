@@ -1,3 +1,4 @@
+import { ExcesoPuntoOptimo } from "./excesoPuntoOptimo.model";
 import { TipoMUnidadM } from "./tipoMUnidadM.model";
 
 export interface PuntoOptimo {
@@ -6,5 +7,6 @@ export interface PuntoOptimo {
     idTipoMunidadM: string,
     valorMin: number,
     valorMax: number,
-    tipoMUnidadM?:TipoMUnidadM
+    tipoMUnidadM?:TipoMUnidadM,
+    excesoPuntosOptimos?:ExcesoPuntoOptimo[]
 }

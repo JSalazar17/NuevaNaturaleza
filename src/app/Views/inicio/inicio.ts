@@ -7,7 +7,7 @@ import { SugerenciasService } from '../../services/sugerencias.service';
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule], // 🔹 Aquí se agrega CommonModule
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.css']
 })

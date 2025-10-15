@@ -10,7 +10,6 @@ import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 import { Router } from '@angular/router';
 
 
-
 @Component({
   selector: 'app-gestion-dispositivos',
   standalone: true,
@@ -58,6 +57,7 @@ export class GestionDispositivos {
       );
     }
 
+
     if (this.tipoSeleccionado !== 'Todos') {
       filtrados = filtrados.filter(d =>
         d.idTipoDispositivoNavigation?.nombre === this.tipoSeleccionado
@@ -76,6 +76,7 @@ export class GestionDispositivos {
     this.mostrarModal = false;
     this.dispositivoSeleccionado = null;
   }
+
 
   agregarDispositivo() {
   const dialogRef = this.dialog.open(AgregarDispositivo, {
@@ -113,3 +114,4 @@ eliminarDispositivo(d: Dispositivo) {
   });
 }
 }
+

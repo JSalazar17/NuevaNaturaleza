@@ -1,0 +1,55 @@
+
+  <mat-card class="card-root dialog-container w100 h100">
+    <div class="m2">
+    <h2>Configurar Excesos</h2>
+
+    <div class="form-actions margingd">
+      <button mat-raised-button color="primary" (click)="addExceso()">Añadir exceso</button>
+    </div>
+    <form [formGroup]="form">
+      <div formArrayName="excesos">
+        <div *ngFor="let exceso of excesos.controls; let i = index" [formGroupName]="i" class="card-item">
+
+          <mat-form-field appearance="outline" class="third w100">
+            <mat-label>Dispositivo</mat-label>
+            <mat-select formControlName="idDispositivo">
+              <mat-option value="">--</mat-option>
+              <mat-option *ngFor="let d of actuadores()" [value]="d.idDispositivo">{{ d.nombre }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="third w100">
+            <mat-label>Tipo Exceso</mat-label>
+            <mat-select formControlName="idTipoExceso">
+              <mat-option value="">--</mat-option>
+              <mat-option *ngFor="let t of tiposExceso()" [value]="t.idTipoExceso">{{ t.nombre }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="third w100">
+            <mat-label>Acción</mat-label>
+            <mat-select formControlName="idAccionAct">
+              <mat-option value="">--</mat-option>
+              <mat-option *ngFor="let a of acciones()" [value]="a.idAccionAct">{{ a.accion }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-icon-button color="warn" (click)="removeExceso(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="disflex">
+        <div class="form-actions margingd">
+          <button mat-button color="primary" class="btn-verde" (click)="onClose()">Listo</button>
+        </div>
+        <div class="form-actions margingd  ">
+          <button mat-button color="" class="btn-rojo" (click)="onClose(false)">Cancelar</button>
+        </div>
+
+
+      </div>
+    </form>
+
+</div>
+  </mat-card>

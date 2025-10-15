@@ -1,8 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, ViewChildren, inject, signal, computed, PLATFORM_ID, HostListener, QueryList } from '@angular/core';
+import { Component, inject, signal, computed, PLATFORM_ID, HostListener, QueryList } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartType } from 'chart.js';
 import { Dispositivo } from '../../models/dispositivo.model';
 import { DispositivoService } from '../../services/dispositivos.service';
 import { TipoDispositivoService } from '../../services/tipodispositivos.service';
@@ -25,7 +23,7 @@ import { Actuador } from '../../models/actuador.model';
   selector: 'app-actuadores',
   standalone: true,
   templateUrl: './actuadores.html',
-  imports: [CommonModule, BaseChartDirective,
+  imports: [CommonModule,
     FormsModule, ReactiveFormsModule, MatSidenavModule,
     MatIconModule, MatSelectModule, MatMenuModule, MatSlideToggleModule],
   styleUrls: ['./actuadores.css']

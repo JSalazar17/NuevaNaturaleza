@@ -1,6 +1,36 @@
+@if(isPlatformBrowser()){
+<button mat-icon-button [matMenuTriggerFor]="menupdf">
 
-        <button mat-raised-button color="primary" type="button" (click)="generarpdfauditoria()" style="right: 10px;position: absolute;top:60px">Generar pdf</button>
+  <mat-icon>picture_as_pdf</mat-icon>
 
+</button>
+
+<!-- Panel de filtros como menú -->
+<mat-menu #menupdf="matMenu" class="filters-panel-menu">
+  <div class="filters-panel" (click)="$event.stopPropagation()">
+
+        <form [formGroup]="rango">
+      <mat-form-field appearance="fill">
+        <mat-label>Rango de fechas</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Desde">
+          <input matEndDate formControlName="end" placeholder="Hasta">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </form>
+
+  </div>
+  <button mat-icon-button  (click)="generarpdfauditoria()">
+
+    <mat-icon>cloud_download</mat-icon>
+
+  </button>
+</mat-menu>
+}
+        
+      
 <div class="auditoria-container">
   <h2>Gestión de Auditoría</h2>
 

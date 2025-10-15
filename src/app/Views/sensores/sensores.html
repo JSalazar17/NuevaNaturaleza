@@ -1,8 +1,75 @@
-<div class="filter-button">
-  <button mat-icon-button (click)="openFilters()">
-    <mat-icon>filter_list</mat-icon>
-  </button>
+@if(isPlatformBrowser()){
+
+  <div class="hidden">
+  <canvas #chartCanvas0></canvas>
 </div>
+
+  <button mat-icon-button [matMenuTriggerFor]="filtersMenu">
+
+  <mat-icon>filter_list</mat-icon>
+
+</button>
+
+<!-- Panel de filtros como menú -->
+<mat-menu #filtersMenu="matMenu" class="filters-panel-menu">
+  <div class="filters-panel" (click)="$event.stopPropagation()">
+
+    <mat-form-field appearance="fill" class="filter-item">
+      <mat-label>Tipo de Medición</mat-label>
+      <mat-select [(value)]="selectedMeasurementType">
+        <mat-option value="Todos">--</mat-option>
+        @for (m of measurementTypes; track m) {
+        <mat-option [value]="m.idTipoMedicion">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-slide-toggle [checked]="isDescending" (change)="onOrderChange($event)" aria-label="Orden descendente">
+      Orden descendente
+    </mat-slide-toggle>
+  </div>
+</mat-menu>
+
+<button mat-icon-button [matMenuTriggerFor]="menupdf">
+
+  <mat-icon>picture_as_pdf</mat-icon>
+
+</button>
+
+<!-- Panel de filtros como menú -->
+<mat-menu #menupdf="matMenu" class="filters-panel-menu">
+  <div class="filters-panel" (click)="$event.stopPropagation()">
+
+        <form [formGroup]="rango">
+      <mat-form-field appearance="fill">
+        <mat-label>Rango de fechas</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Desde">
+          <input matEndDate formControlName="end" placeholder="Hasta">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </form>
+<mat-form-field appearance="fill">
+  <mat-label>Seleccione sensores</mat-label>
+  <mat-select [formControl]="opciones" multiple>
+    @if(items()){
+    <mat-option *ngFor="let item of items()" [value]="item.idDispositivo">
+      {{ item.nombre }}
+    </mat-option>}
+  </mat-select>
+</mat-form-field>
+
+<p>Seleccionado: {{ opciones.value | json }}</p>
+
+  <button mat-icon-button  (click)="pdfSensGet()">
+
+    <mat-icon>cloud_download</mat-icon>
+
+  </button>
+  </div>
+</mat-menu>
 
 <main class="content">
   <h2>Sensores</h2>
@@ -10,20 +77,62 @@
     <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados()">
       <div class="sensor-card">
         <div class="sensor-info">
-          <h3>{{ dispositivo.nombre }}</h3>
-          <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
+          <h3 class="w-100">{{ dispositivo.nombre }}</h3>
+          <div class="bottons-card">
+
+            <button mat-icon-button color="primary" (click)="editarDispositivo(dispositivo)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="eliminarDispositivo(dispositivo)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </div>
 
         <div *ngFor="let sen of dispositivo.sensors">
-          <p><strong>Valor:</strong>
-            @if(sen.medicions.length>0){ {{ sen.medicions[(sen.medicions.length-1)].valor}} }
+          <div class="sensor-info">
+            
+            
+            <p ><strong>Tipo:</strong> {{ sen.idTipoMUnidadMNavigation?.idTipoMedicionNavigation?.nombre }}</p>
+            <p><strong>Unidad:</strong> {{ sen.idTipoMUnidadMNavigation?.idUnidadMedidaNavigation?.nombre }}</p>
+            <p><strong>Total mediciones:</strong> {{ sen.medicions.length }}</p>
+          @if(sen.medicions.length>0){
+            <p><strong>Ultimo valor:</strong>
+            {{ sen.medicions[(sen.medicions.length-1)].valor}}
           </p>
-          <div class="sensor-chart">
+        }</div>
+          <div class="sensor-chart" (click)="toggleSensorInfo(sen)">
             <canvas baseChart [data]="getChartData(sen)" [options]="chartOptions" [type]="lineChartType"></canvas>
           </div>
+          <button mat-icon-button color="accent" (click)="toggleSensorInfo(sen)">
+            @if(sen.mostrarInfo){
+
+            <mat-icon>keyboard_arrow_up</mat-icon>
+            }@else{
+
+            <mat-icon>keyboard_arrow_down</mat-icon>
+            }
+          </button>
+          <!-- Bloque de información del sensor -->
+          @if (sen.mostrarInfo) {
+          <div class="sensor-extra-info">
+              <h4>Datos estadisticos</h4>
+            <div class="sensor-info">
+              <p><strong>media:</strong> {{ sen.datosEstadisticos.media }}</p>
+              <p><strong>mediana:</strong> {{ sen.datosEstadisticos.mediana }}</p>
+              <p><strong>moda :</strong> {{ sen.datosEstadisticos.moda}}</p>
+          
+            </div>
+            <div class="sensor-info">
+              <p><strong>rango:</strong>@if(sen.datosEstadisticos.range.length){ {{ sen.datosEstadisticos.range[0] }} <strong> - </strong> {{ sen.datosEstadisticos.range[1] }}}</p>
+              <p><strong>varianza:</strong> {{ sen.datosEstadisticos.varianza }}</p>
+              <p><strong>desviacion estandar :</strong> {{ sen.datosEstadisticos.desviacionE }}</p>
+          
+            </div>
+          </div>
+          }
         </div>
       </div>
-
     </div>
   </div>
-</main>
+</main>}

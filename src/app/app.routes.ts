@@ -16,16 +16,20 @@ import { ParentComponent } from './Views/testviewpanel/dashboard';
 import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdocument';
 import { SensoresComponent} from './Views/sensores/sensores';
 import { ActuadoresComponent} from './Views/actuadores/actuadores';
+import { dtComponent } from './Views/sensores/dt/dt';
+import { ExcesoListComponent } from './Views/excesoList/excesoList';
 import { SugerenciasComponent } from './Views/sugerencias/sugerencias';
 import { ChecklistFormComponent } from './Views/checklist/checklist-form';
 import { ProgramacionDosificadorComponent } from './Views/programaciondosificador/programaciondosificador';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginController },
   { path: 'recuperar', component: RecuperarComponent },
   { path: 'cambiar-contraseña', component: CambiarContrasena},
-  { path: 'testchart', component: Testchart},
+  { path: 'testexc', component: ExcesoListComponent},
+  { path:'datapicker', component:dtComponent},
   {
     path: '',
     component: LayoutComponent,

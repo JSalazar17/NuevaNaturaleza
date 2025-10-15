@@ -107,7 +107,7 @@ export class PdfComponent {
   
         const canvas = this.chartCanvas0.nativeElement;
 
-        this.pdfSvc.generatePdfDispositivos(dispositivos,this.chartCanvas0)
+       // this.pdfSvc.generatePdfDispositivos({desde},this.chartCanvas0)
      }
 
 

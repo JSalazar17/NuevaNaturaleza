@@ -6,18 +6,31 @@ import { UsuarioService } from '../../services/usuario.service';
 import { AccionService } from '../../services/accion.service';
 import { DispositivoService } from '../../services/dispositivos.service';
 import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Dispositivo } from '../../models/dispositivo.model';
 import { Accion } from '../../models/accion.model';
 import { MatButtonModule } from '@angular/material/button';
 import { pdfService } from '../../services/pdf.service';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { PdfSensor } from '../../models/pdfsensor.model';
 
 @Component({
   selector: 'app-auditoria',
   templateUrl: './auditoria.html',
   imports: [CommonModule, DatePipe, FormsModule,
-    MatButtonModule],
+    MatButtonModule,MatMenuModule,
+  MatFormFieldModule, ReactiveFormsModule,
+MatIconModule,
+  MatDatepickerModule,MatSelectModule,
+    MatInputModule,
+    MatNativeDateModule,],
   styleUrls: ['./auditoria.css']
 })
 export class AuditoriaComponent implements OnInit {
@@ -36,13 +49,17 @@ export class AuditoriaComponent implements OnInit {
   mostrarModal = false;
 
   private pdfMake: any;
+
+  
+  rango = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private pdfSvc: pdfService,
     private auditoriaService: AuditoriaService,
-    private usuarioService: UsuarioService,
-    private dispositivoService: DispositivoService,
-    private accionService: AccionService,
+    
   ) {
 
     if (isPlatformBrowser(this.platformId)) {
@@ -62,7 +79,10 @@ export class AuditoriaComponent implements OnInit {
     }
 
   }
+  isPlatformBrowser() {
 
+  return isPlatformBrowser(this.platformId)
+}
   ngOnInit(): void {
     
   if (isPlatformBrowser(this.platformId)) {
@@ -123,6 +143,10 @@ export class AuditoriaComponent implements OnInit {
   }
 
   async generarpdfauditoria() {
-    this.pdfSvc.generatePdfAuditorias(this.auditoriasSubject.value)
+    if(this.rango.value.start == null ||
+    this.rango.value.end == null)
+    return;
+    let psens:PdfSensor = {desde:(this.rango.value.start),hasta:this.rango.value.end}
+    await this.pdfSvc.PdfAuditorias(psens)
   }
 }
