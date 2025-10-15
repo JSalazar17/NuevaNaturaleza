@@ -1,0 +1,38 @@
+<div class="sugerencias-container">
+  <h2>Gestión de Sugerencias</h2>
+
+  <div *ngIf="cargando" class="loading">
+    <p>Cargando sugerencias...</p>
+  </div>
+
+  <table *ngIf="!cargando && sugerencias.length > 0" class="tabla-sugerencias">
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Usuario</th>
+        <th>Correo</th>
+        <th>Mensaje</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sugerencia of sugerencias; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ sugerencia.usuario || 'Anónimo' }}</td>
+        <td>{{ sugerencia.correo || 'No registrado' }}</td>
+        <td>{{ sugerencia.mensaje }}</td>
+        <td>{{ sugerencia.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>
+          <button class="btn-eliminar" (click)="eliminarSugerencia(sugerencia.idSugerencia)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!cargando && sugerencias.length === 0" class="sin-datos">
+    No hay sugerencias registradas.
+  </p>
+</div>

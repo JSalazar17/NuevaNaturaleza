@@ -1,6 +1,10 @@
-
 <div class="gestion-container">
   <h2>Gestión de Dispositivos</h2>
+
+  <div class="acciones-superiores">
+    <button class="btn-agregar" (click)="agregarDispositivo()">➕ Agregar Dispositivo</button>
+    <button class="btn-horario" (click)="irAHorarios()">🕒 Horario Dosificador</button>
+  </div>
 
   <!-- 🔽 Barra de búsqueda -->
   <div class="buscador">
@@ -24,43 +28,53 @@
 
   <!-- 🔽 Tabla de dispositivos -->
   <table class="tabla-dispositivos">
-    <thead>
-      <tr>
-        <th>N°</th>
-        <th>Nombre</th>
-        <th>Sistema</th>
-        <th>Estado</th>
-        <th>Tipo de Dispositivo</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let dispositivo of dispositivosFiltrados; let i = index"
-          (click)="seleccionarDispositivo(dispositivo)">
-        <td>{{ i + 1 }}</td>
-        <td>{{ dispositivo.nombre }}</td>
-        <td>{{ dispositivo.idSistemaNavigation?.nombre || '-' }}</td>
-        <td>
-          <span 
-            [ngClass]="{
-              'estado-on': dispositivo.idEstadoDispositivoNavigation?.nombre === 'ON', 
-              'estado-off': dispositivo.idEstadoDispositivoNavigation?.nombre === 'OFF'
-            }">
-            {{ dispositivo.idEstadoDispositivoNavigation?.nombre || '-' }}
-          </span>
-        </td>
-        <td>{{ dispositivo.idTipoDispositivoNavigation?.nombre || '-' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <thead>
+    <tr>
+      <th>N°</th>
+      <th>Nombre</th>
+      <th>Sistema</th>
+      <th>Estado</th>
+      <th>Tipo de Dispositivo</th>
+      <th>Acciones</th> <!-- ✅ Nueva columna -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let dispositivo of dispositivosFiltrados; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ dispositivo.nombre }}</td>
+      <td>{{ dispositivo.idSistemaNavigation?.nombre || '-' }}</td>
+      <td>
+        <span 
+          [ngClass]="{
+            'estado-on': dispositivo.idEstadoDispositivoNavigation?.nombre === 'ON', 
+            'estado-off': dispositivo.idEstadoDispositivoNavigation?.nombre === 'OFF'
+          }">
+          {{ dispositivo.idEstadoDispositivoNavigation?.nombre || '-' }}
+        </span>
+      </td>
+      <td>{{ dispositivo.idTipoDispositivoNavigation?.nombre || '-' }}</td>
+      <td class="acciones"> <!-- ✅ Botones trasladados aquí -->
+        <button class="btn-editar" (click)="editarDispositivo(dispositivo)">
+          <i class="material-icons">edit</i>
+        </button>
+        <button class="btn-eliminar" (click)="eliminarDispositivo(dispositivo)">
+          <i class="material-icons">delete</i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-  <!-- 🔽 Detalle del dispositivo -->
-  <div class="detalle" *ngIf="dispositivoSeleccionado">
-    <h3>Información del Dispositivo</h3>
-    <p><strong>ID:</strong> {{ dispositivoSeleccionado.idDispositivo }}</p>
-    <p><strong>Nombre:</strong> {{ dispositivoSeleccionado.nombre }}</p>
-    <p><strong>Sistema:</strong> {{ dispositivoSeleccionado.idSistemaNavigation?.nombre }}</p>
-    <p><strong>Tipo:</strong> {{ dispositivoSeleccionado.idTipoDispositivoNavigation?.nombre }}</p>
-    <p><strong>Estado:</strong> {{ dispositivoSeleccionado.idEstadoDispositivoNavigation?.nombre }}</p>
-    <button class="btn-cerrar" (click)="cerrarDetalle()">Cerrar</button>
+  <!-- 🔽 Modal -->
+  <div class="modal" *ngIf="mostrarModal">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal()">&times;</span>
+      <h3>Información del Dispositivo</h3>
+      <p><strong>ID:</strong> {{ dispositivoSeleccionado?.idDispositivo }}</p>
+      <p><strong>Nombre:</strong> {{ dispositivoSeleccionado?.nombre }}</p>
+      <p><strong>Sistema:</strong> {{ dispositivoSeleccionado?.idSistemaNavigation?.nombre }}</p>
+      <p><strong>Tipo:</strong> {{ dispositivoSeleccionado?.idTipoDispositivoNavigation?.nombre }}</p>
+      <p><strong>Estado:</strong> {{ dispositivoSeleccionado?.idEstadoDispositivoNavigation?.nombre }}</p>
+    </div>
   </div>
 </div>

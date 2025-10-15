@@ -1,10 +1,12 @@
 import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // necesario para ngModel
 import { NotificacionService } from '../../services/notificacion.service';
 import { Notificacion } from '../../models/notificacion';
+import { Usuario } from '../../models/usuario.model';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -17,17 +19,19 @@ export class LayoutComponent {
   private notificacionSubject = new BehaviorSubject<Notificacion[]>([]);
   notificacionaes$ = this.notificacionSubject.asObservable();
   isCollapsed = false;
+  usuario: Usuario | null = null;
   mostrarPanel = false;
   hayNotificacionNueva = false;
+  rol: string | null = null;
 
-  // roles
-  roles = ['Administrador', 'Usuario'];
-  rolActual = 'Usuario'; // valor por defecto
 
   constructor(
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
-    private notifService: NotificacionService
+    private notifService: NotificacionService,
+    private authService: AuthService, // 👈 agregado
+    private router: Router,
+
   ) {
     this.cargarNotificaciones();
     this.nuevaNotificacion();
@@ -37,23 +41,14 @@ export class LayoutComponent {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  // método llamado por (ngModelChange)
-  onRolChange(newRol: string) {
-    this.rolActual = newRol;
-    console.log('Rol cambiado a:', this.rolActual);
-    // forzamos detección por si algo está fuera de NgZone
-    this.zone.run(() => {
-      this.cdr.detectChanges();
-    });
+  ngOnInit() {
+    const usuarioGuardado = localStorage.getItem('usuario');
+    if (usuarioGuardado) {
+      this.usuario = JSON.parse(usuarioGuardado);
+      this.rol = this.usuario?.idRol || null;
+    }
   }
 
-  esAdmin(): boolean {
-    return this.rolActual === 'Administrador';
-  }
-
-  esUsuario(): boolean {
-    return this.rolActual === 'Usuario';
-  }
 
   submenuOpen: string | null = null;
 
@@ -87,4 +82,13 @@ export class LayoutComponent {
       this.hayNotificacionNueva = false;
     }, 1000);
   }
+
+  logout() {
+    if (confirm('¿Seguro que deseas cerrar sesión?')) {
+      this.authService.logout(); // elimina token/cookies en backend
+      localStorage.removeItem('usuario');
+      this.router.navigate(['/login']);
+    }
+  }
+
 }

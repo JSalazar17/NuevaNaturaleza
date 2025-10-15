@@ -1,0 +1,119 @@
+<div class="programacion-container">
+  <h2>Programación de Dosificadores</h2>
+
+  <table class="tabla-programacion" *ngIf="programaciones?.length; else sinDatos">
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Dosificador</th>
+        <th>Hora</th>
+        <th>Minuto</th>
+        <th>Tiempo (seg)</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of programaciones; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ p.nombreDosificador || '-' }}</td>
+        <td>{{ p.hora }}</td>
+        <td>{{ p.minuto }}</td>
+        <td>{{ p.tiempoSegundos }}</td>
+        <td>
+          <button class="btn-editar" (click)="editar(p)">Editar</button>
+          <button class="btn-eliminar" (click)="eliminar(p.idProgramacion)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #sinDatos>
+    <p class="sin-datos">No hay programaciones registradas.</p>
+  </ng-template>
+
+  <!-- NUEVO: Formulario para agregar un dosificador -->
+<div class="formulario-dosificador" *ngIf="mostrarFormularioDosificador">
+  <h3>Agregar Nuevo Dosificador</h3>
+  <form (ngSubmit)="guardarDosificador()" #formDos="ngForm" autocomplete="off">
+    
+    <label>Seleccione un Actuador:</label>
+    <div class="lista-actuadores">
+      <div *ngFor="let dispositivo of dispositivosActuadores">
+        <input
+          type="radio"
+          name="idDispositivo"
+          [value]="dispositivo.idDispositivo"
+          [(ngModel)]="nuevoDosificador.idDispositivo"
+          required
+        />
+        <span>{{ dispositivo.nombre }} ({{ dispositivo.idTipoDispositivoNavigation?.nombre }})</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>Letra de Activación:</label>
+        <input
+          type="text"
+          name="letraActivacion"
+          maxlength="1"
+          required
+          [(ngModel)]="nuevoDosificador.letraActivacion"
+        />
+      </div>
+    </div>
+
+    <label>Descripción:</label>
+    <textarea
+      name="descripcion"
+      [(ngModel)]="nuevoDosificador.descripcion"
+    ></textarea>
+
+    <div class="botones">
+      <button type="submit" class="btn-guardar">Guardar</button>
+      <button type="button" class="btn-cancelar" (click)="cancelarDosificador()">Cancelar</button>
+    </div>
+  </form>
+</div>
+
+  <!-- Botón para mostrar el formulario -->
+  <div class="boton-agregar-dosificador" *ngIf="!mostrarFormularioDosificador">
+    <button class="btn-agregar" (click)="mostrarFormularioDosificador = true">+ Agregar Dosificador</button>
+  </div>
+
+  <div class="formulario-programacion">
+    <h3>{{ modoEdicion ? 'Modificar' : 'Agregar' }} Programación</h3>
+
+    <form (ngSubmit)="guardar()" #f="ngForm" autocomplete="off">
+      <label>Dosificador:</label>
+      <select name="idDosificador" required [(ngModel)]="programacion.idDosificador">
+        <option value="" disabled selected>-- Seleccione un dosificador --</option>
+        <option *ngFor="let d of dosificadores" [value]="d.idDosificador">
+          {{ d.idDispositivoNavigation?.nombre || d.descripcion || 'Sin nombre' }}
+        </option>
+      </select>
+
+      <div class="row">
+        <div class="col">
+          <label>Hora (0-23):</label>
+          <input type="number" name="hora" min="0" max="23" required [(ngModel)]="programacion.hora" />
+        </div>
+
+        <div class="col">
+          <label>Minuto (0-59):</label>
+          <input type="number" name="minuto" min="0" max="59" required [(ngModel)]="programacion.minuto" />
+        </div>
+
+        <div class="col">
+          <label>Tiempo (segundos):</label>
+          <input type="number" name="tiempoSegundos" min="1" required [(ngModel)]="programacion.tiempoSegundos" />
+        </div>
+      </div>
+
+      <div class="botones">
+        <button class="btn-guardar" type="submit">{{ modoEdicion ? 'Actualizar' : 'Guardar' }}</button>
+        <button class="btn-cancelar" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>

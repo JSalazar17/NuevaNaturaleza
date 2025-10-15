@@ -1,0 +1,72 @@
+.sugerencias-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.sugerencias-container h2 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #000000;
+}
+
+/* Tabla */
+.tabla-sugerencias {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  font-size: 0.95rem;
+}
+
+.tabla-sugerencias thead tr {
+  background: #009688;
+  color: #fff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.tabla-sugerencias th,
+.tabla-sugerencias td {
+  padding: 14px 18px;
+}
+
+.tabla-sugerencias tbody tr {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.tabla-sugerencias tbody tr:hover {
+  transform: scale(1.01);
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+/* Botón eliminar */
+.btn-eliminar {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-eliminar:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Estado vacío o carga */
+.loading,
+.sin-datos {
+  text-align: center;
+  font-style: italic;
+  margin-top: 15px;
+  color: #555;
+  font-size: 0.95rem;
+}

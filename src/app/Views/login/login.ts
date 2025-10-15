@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginModel } from '../../models/login.model';
-import { Router } from '@angular/router';   // 👈 Importar Router
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrls: ['./login.css'] // 👈 corregido (era styleUrl)
 })
 export class LoginController {
   user = signal<LoginModel>({ User: '', Pass: '' });
@@ -19,7 +19,7 @@ export class LoginController {
 
   constructor(
     private authService: AuthService,
-    private router: Router   
+    private router: Router
   ) {}
 
   togglePassword() {
@@ -27,21 +27,44 @@ export class LoginController {
   }
 
   iniciarSesion() {
+    console.log(this.user())
     const loginData = this.user();
+
     if (!loginData.User || !loginData.Pass) {
       this.errorMessage.set('Por favor, complete todos los campos.');
       return;
     }
 
     this.authService.login(loginData).subscribe({
-      next: response => {
+      next: (response) => {
         console.log('Login exitoso:', response);
-        this.errorMessage.set('');
-        this.router.navigate(['/eventos']);   
+        console.log(response.data);
+        console.log(response.numberResponse);
+        console.log(response.numberResponse === 0);
+
+        if (response.data && response.numberResponse === 0) {
+          // ✅ Guardar datos de usuario en localStorage
+          this.authService.saveUserSession(response.data);
+
+          // ✅ Redirigir según el rol
+          const rol = response.data.rol;
+          console.log(rol)
+          if (rol === 'Administrador') {
+            this.router.navigate(['/actuadores']);
+          } else if (rol === 'Operario') {
+            this.router.navigate(['/actuadores']);
+          } else {
+            this.router.navigate(['/login']);
+          }
+
+          this.errorMessage.set('');
+        } else {
+          this.errorMessage.set(response.message || 'Credenciales incorrectas.');
+        }
       },
-      error: err => {
+      error: (err) => {
         console.error('Error de login:', err);
-        this.errorMessage.set('Usuario o contraseña incorrectos.');
+        this.errorMessage.set('Error al conectar con el servidor.');
       }
     });
   }

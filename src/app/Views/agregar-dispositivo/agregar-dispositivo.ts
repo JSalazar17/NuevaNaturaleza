@@ -11,7 +11,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { BehaviorSubject, Observable, map, startWith, switchMap } from 'rxjs';
-
 import { Dispositivo } from '../../models/dispositivo.model';
 import { TipoDispositivo } from '../../models/tipodispositivo.model';
 import { TipoMedicion } from '../../models/tipomedicion.model';
@@ -108,7 +107,7 @@ export class AgregarDispositivo implements OnInit {
 
 
   form = this.fb.group({
-    idDispositivo: ['', Validators.required],
+    idDispositivo: [''],
     nombre: ['', Validators.required],
     sn: ['', Validators.required],
     descripcion: [''],

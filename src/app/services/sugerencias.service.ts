@@ -1,21 +1,26 @@
 import { Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
 import { Sugerencia } from "../models/sugerencia.model";
 import { Observable } from "rxjs";
 import { environment } from '../environment/environment';
-import { HttpClient } from "@angular/common/http";
 
 @Injectable({ providedIn: 'root' })
 export class SugerenciasService {
-  private apiUrl = environment+'api/sugerencias';
+
+  private url = environment + '/api/Sugerencias';
 
   constructor(private http: HttpClient) {}
 
   agregarSugerencia(sugerencia: Sugerencia): Observable<Sugerencia> {
-    return this.http.post<Sugerencia>(this.apiUrl, sugerencia);
+    return this.http.post<Sugerencia>(this.url, sugerencia);
   }
 
   obtenerSugerencias(): Observable<Sugerencia[]> {
-    return this.http.get<Sugerencia[]>(this.apiUrl);
+    return this.http.get<Sugerencia[]>(this.url);
+  }
+
+  eliminarSugerencia(id: string): Observable<any> {
+    return this.http.delete(`${this.url}/${id}`);
   }
   
 

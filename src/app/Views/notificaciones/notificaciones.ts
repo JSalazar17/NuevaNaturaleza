@@ -7,7 +7,7 @@ import { TipoNotificacion } from '../../models/tiponotificacion';
 import { TipoNotificacionService } from '../../services/tiponotificacion.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-notificaciones',
@@ -18,15 +18,16 @@ import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 export class NotificacionesComponent implements OnInit {
   
   private notificacionesSubject = new BehaviorSubject<Notificacion[]>([]);
-  notificaciones$: Observable<Notificacion[]>=this.notificacionesSubject.asObservable();
+  notificaciones$: Observable<Notificacion[]> = this.notificacionesSubject.asObservable();
   private cargandoSubject = new BehaviorSubject<boolean>(true);
   cargando$ = this.cargandoSubject.asObservable();
+
   notificaciones: Notificacion[] = [];
   titulos: Titulo[] = [];
   tiposNotificacion: TipoNotificacion[] = [];
-  http: any;
+
   // 🔹 Paginación
-  pageSize: number = 8; // cantidad por página
+  pageSize: number = 8;
   currentPage: number = 1;
   totalPages: number = 1;
 
@@ -36,24 +37,32 @@ export class NotificacionesComponent implements OnInit {
     private tituloService: TituloService,
     private tipoNotificacionService: TipoNotificacionService,
     private cd: ChangeDetectorRef
-    
   ) {}
-  ngOnInit(): void {
-    // Cargar primero títulos y tipos
-    
-  if (isPlatformBrowser(this.platformId)) {
-    this.cargarNotificaciones();
-  }}
 
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.cargarNotificaciones();
+    }
+  }
+
+  // Devuelve la porción actual
   get paginatedNotificaciones(): Notificacion[] {
+    if (!this.notificaciones || this.notificaciones.length === 0) return [];
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.notificaciones.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // trackBy para optimizar renderizado
+  trackByNotificacion(index: number, item: Notificacion) {
+    return item.idNotificacion;
   }
 
   cambiarPagina(direccion: number) {
     this.currentPage += direccion;
     if (this.currentPage < 1) this.currentPage = 1;
     if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    // Forzamos detection para recalcular getter en caso de que haga falta
+    this.cd.detectChanges();
   }
 
   abrirEnlace(notificacion: Notificacion) {
@@ -61,38 +70,63 @@ export class NotificacionesComponent implements OnInit {
       window.open(notificacion.enlace, '_blank');
     }
 
-    // Marcar como leída en el frontend
-    notificacion.leido = true;
+    // Marcar como leída en frontend si no lo está
+    if (!notificacion.leido) {
+      notificacion.leido = true;
+      // Actualizar en backend
+      if (notificacion.idNotificacion) {
+        this.notificacionService.updateNotificacion(notificacion.idNotificacion, notificacion).subscribe({
+          next: () => { /* ok */ },
+          error: (err) => console.error("Error al actualizar notificación", err)
+        });
+      }
+      // actualizar subject para quien lo consuma
+      this.notificacionesSubject.next(this.notificaciones);
+    }
+  }
 
-    // Si quieres guardar en backend
-    this.notificacionService.updateNotificacion(notificacion.idNotificacion as string,notificacion).subscribe({
-      next: () => console.log("Notificación marcada como leída"),
-      error: (err) => console.error("Error al actualizar notificación", err)
+  eliminarNotificacion(id: string, event: Event) {
+    // evitamos que el click se propague y ejecute abrirEnlace
+    event.stopPropagation();
+
+    if (!id) return;
+
+    if (!confirm('¿Seguro que deseas eliminar esta notificación?')) return;
+
+    this.notificacionService.deleteNotificacion(id).subscribe({
+      next: () => {
+        // removemos localmente
+        this.notificaciones = this.notificaciones.filter(n => n.idNotificacion !== id);
+        // recalculamos páginas
+        this.totalPages = Math.max(1, Math.ceil(this.notificaciones.length / this.pageSize));
+        if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+        // emitimos nuevo valor
+        this.notificacionesSubject.next(this.notificaciones);
+        // forzamos detección
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error eliminando notificación', err);
+        alert('Ocurrió un error al eliminar la notificación.');
+      }
     });
   }
 
-
-
-
-  cargando: boolean = true;
-
-
   cargarNotificaciones(): void {
-    this.cargandoSubject.next(true); // activa loading
+    this.cargandoSubject.next(true);
     this.notificacionService.getNotificaciones().subscribe({
       next: (data: Notificacion[]) => {
-        this.notificaciones = data;
-        this.totalPages = Math.ceil(this.notificaciones.length / this.pageSize);
-        this.currentPage = 1; // reinicia a la primera página
-        this.notificacionesSubject.next(data); // ✅ actualiza observable
-        this.cargandoSubject.next(false); // ✅ desactiva loading
+        this.notificaciones = data || [];
+        this.totalPages = Math.max(1, Math.ceil(this.notificaciones.length / this.pageSize));
+        this.currentPage = 1;
+        this.notificacionesSubject.next(this.notificaciones);
+        this.cargandoSubject.next(false);
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error cargando notificaciones', err);
-        this.cargandoSubject.next(false); // incluso si falla
+        this.cargandoSubject.next(false);
       }
     });
   }
 }
-  
-
