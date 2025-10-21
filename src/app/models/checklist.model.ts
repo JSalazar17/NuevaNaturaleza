@@ -9,6 +9,7 @@ export interface ChecklistDetalle {
 export interface Checklist {
   idChecklist?: string;
   fecha?: Date;
+  usuario?: string;
   observacionGeneral?: string;
   detalles: ChecklistDetalle[];
 }

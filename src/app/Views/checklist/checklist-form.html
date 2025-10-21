@@ -25,19 +25,20 @@
           <td><span class="ultimo-valor">{{ d.valorActual }}</span></td>
           <td>
             <input
-              *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Sensor'"
-              type="text"
-              [(ngModel)]="checklist.detalles[i].valorRegistrado"
-              name="valor-{{i}}"
-              placeholder="Valor medido"
-              class="input-sensor"
-            />
-            <select
-              *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Actuador'"
-              [(ngModel)]="checklist.detalles[i].estadoActuador"
-              name="estado-{{i}}"
-              class="select-actuador"
-            >
+                *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Sensor'"
+                type="text"
+                [(ngModel)]="checklist.detalles[i].valorRegistrado"
+                [attr.name]="'valor-' + i"
+                placeholder="Valor medido"
+                class="input-sensor"
+              />
+
+              <select
+                *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Actuador'"
+                [(ngModel)]="checklist.detalles[i].estadoActuador"
+                [attr.name]="'estado-' + i"
+                class="select-actuador"
+              >
               <option [ngValue]="true">Encendido</option>
               <option [ngValue]="false">Apagado</option>
             </select>

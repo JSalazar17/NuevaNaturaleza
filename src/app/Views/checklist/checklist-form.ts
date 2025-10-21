@@ -58,6 +58,7 @@ export class ChecklistFormComponent implements OnInit {
   }
 
   guardarChecklist(): void {
+    console.log(this.checklist)
     this.checklistService.create(this.checklist).subscribe(() => {
       this.mensajeExito = 'Checklist guardado con éxito ✅';
       this.checklist = { fecha: new Date(), observacionGeneral: '', detalles: [] };
