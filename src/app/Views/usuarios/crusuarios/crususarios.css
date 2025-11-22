@@ -10,13 +10,17 @@
   user-select: none;
   color: #333;
 }
-
+.dnones{
+  margin-bottom: -15px;
+}
 .checkbox-container input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
-
+.error{
+  color:red;
+}
 .checkbox-container .checkmark {
   position: absolute;
   left: 0;

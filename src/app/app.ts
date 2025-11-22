@@ -1,11 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http'; 
-import { FormsModule } from '@angular/forms';
+import { ToggleComponent } from "./Views/share/toggle.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,HttpClientModule],
+  imports: [RouterOutlet, ToggleComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

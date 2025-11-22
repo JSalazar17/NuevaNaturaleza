@@ -38,19 +38,5 @@ export class NotificacionService {
   marcarComoLeida(id: string): Observable<Notificacion> {
     return this.http.put<Notificacion>(`${this.apiUrl}/${id}`, { leido: true });
   }  
-  public iniciarConexion(): void {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment}/hubs/notificaciones`)
-      .withAutomaticReconnect()
-      .build();
 
-    this.hubConnection.start()
-      .then(() => console.log('Conectado a SignalR'))
-      .catch(err => console.log('Error al conectar:', err));
-
-  }
-  public hubNotifications():signalR.HubConnection{
-    return this.hubConnection;
-  }
-  //envie toda la notificacion 
 }

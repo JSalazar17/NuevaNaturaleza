@@ -1,19 +1,41 @@
 <div class="formulario">
   <h3>{{ usuarioEditando ? 'Editar Usuario' : 'Agregar Usuario' }}</h3>
-  <form >
-    <select [(ngModel)]="usuario.idRol" name="rolId" required>
-      <option *ngFor="let rol of roles" [value]="rol.idRol">{{ rol.nombre }}</option>
-    </select>
-    <input [(ngModel)]="usuario.cedula" name="cedula" placeholder="Cédula" required>
-    <input [(ngModel)]="usuario.nombre" name="nombre" placeholder="Nombre" required>
-    <input [(ngModel)]="usuario.correo" name="correo" placeholder="Correo" required>
+
+  <form [formGroup]="usuarioForm" (ngSubmit)="guardarUsuario()">
+
+   
+      <mat-form-field appearance="outline" class="filter-item dnones">
+      <mat-label>Seleccione un rol</mat-label>
+      <mat-select  formControlName="idRol" >
+        <mat-option value="">--</mat-option>
+        @for (m of roles ; track m) {
+        <mat-option [value]="m.idRol">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <input formControlName="cedula" placeholder="Cédula">
+    <input formControlName="nombre" placeholder="Nombre">
+    <input formControlName="correo" placeholder="Correo">
+
+    @if(usuarioEditando){
+      
     <label class="checkbox-container">
-      <input type="checkbox" [(ngModel)]="cambiarClave" name="cambiarClave" (click)="print(cambiarClave)">
+      <input type="checkbox" (click)="cambiarClave=!cambiarClave">
       <span class="checkmark"></span>
       Cambiar contraseña
     </label>
-    @if(cambiarClave){
-    <input [(ngModel)]="usuario.clave" name="clave" placeholder="Clave" required>}
-    <button type="submit" (click)="guardarUsuario()">{{ usuarioEditando ? 'Actualizar' : 'Agregar' }}</button>
+
+      @if(cambiarClave){
+        <input formControlName="clave" placeholder="Nueva contraseña">
+      }
+    } @else {
+      <input formControlName="clave" placeholder="Contraseña">
+    }
+
+    <p class="error" *ngIf="mensajeError">
+      {{ mensajeError }}
+    </p>
+
+    <button type="submit">{{ usuarioEditando ? 'Actualizar' : 'Agregar' }}</button>
   </form>
 </div>

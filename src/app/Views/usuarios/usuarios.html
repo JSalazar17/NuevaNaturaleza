@@ -1,10 +1,21 @@
 <div class="usuarios-container">
   <h2 class="titulo-usuarios">Gestión de Usuarios</h2>
+<div class="accions">
 
-  <div class="acciones-superiores">
-  <button class="btn-agregar" (click)="irAgregarUsuario()">➕ Agregar Usuario</button>
-</div>
+  <!-- 🔽 Filtro por rol -->
 
+      <mat-form-field appearance="outline" class="filter-item dnones">
+      <mat-label>Tipo usuario</mat-label>
+      <mat-select [(value)]="rolSeleccionado"  (selectionChange)="filtrarPorRol()">
+        <mat-option value="Todos">--</mat-option>
+        @for (m of roles$ |async; track m) {
+        <mat-option [value]="m.idRol">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+
+<div class="dfmin">
   <!-- 🔍 Barra de búsqueda -->
   <input 
     type="text" 
@@ -14,33 +25,32 @@
     class="buscador"
   />
 
-  <!-- 🔽 Filtro por rol -->
-  <div class="filtro-rol">
-    <label for="rolFiltro">Usuarios: </label>
-    <select id="rolFiltro" [(ngModel)]="rolSeleccionado" (change)="filtrarPorRol()">
-      <option value="Todos">Todos</option>
-      <option *ngFor="let rol of roles" [value]="rol.idRol">
-        {{ rol.nombre }}
-      </option>
-    </select>
-  </div>
+  
+  <div class="acciones-superiores">
+  <button class="btn-agregar" (click)="irAgregarUsuario()">➕ Agregar Usuario</button>
+</div>
+</div>
 
+
+
+</div>
   <table class="tabla-usuarios">
     <thead>
       <tr>
         <th>Rol</th>
-        <th>Cédula</th>
+        <th class="dnone">Cédula</th>
         <th>Nombre</th>
-        <th>Correo</th>
+        <th class="dnone">Correo</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let u of usuariosFiltrados">
-        <td>{{ getRolNombre(u.idRol) }}</td>
-        <td>{{ u.cedula }}</td>
+      <tr *ngFor="let u of usuariosFiltrados() | paginate: { itemsPerPage: 5, currentPage: paginaActual }; let i = index">
+
+        <td>{{ u.idRolNavigation?.nombre }}</td>
+        <td class="dnone">{{ u.cedula }}</td>
         <td>{{ u.nombre }}</td>
-        <td>{{ u.correo }}</td>
+        <td class="dnone">{{ u.correo }}</td>
         <td>
           <button class="btn-accion editar" (click)="editarUsuario(u)">Editar</button>
           <button class="btn-accion eliminar" (click)="eliminarUsuario(u.idUsuario!)">Eliminar</button>
@@ -48,4 +58,12 @@
       </tr>
     </tbody>
   </table>
+  <!-- 🔽 Paginador -->
+<pagination-controls 
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
+
 </div>

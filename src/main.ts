@@ -6,6 +6,11 @@ import { App } from './app/app';
 
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { Chart } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
+
+
+Chart.register(zoomPlugin);
 bootstrapApplication(App, {
   ...appConfig, // <-- conserva lo que ya tenías (router, http, etc.)
   providers: [

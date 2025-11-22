@@ -8,11 +8,15 @@ import { TipoNotificacionService } from '../../services/tiponotificacion.service
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ToggleService } from '../../services/toggle.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 
 @Component({
   selector: 'app-notificaciones',
   templateUrl: './notificaciones.html',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,NgxPaginationModule],
   styleUrls: ['./notificaciones.css']
 })
 export class NotificacionesComponent implements OnInit {
@@ -22,12 +26,13 @@ export class NotificacionesComponent implements OnInit {
   private cargandoSubject = new BehaviorSubject<boolean>(true);
   cargando$ = this.cargandoSubject.asObservable();
 
+  paginaActual: number = 1;
   notificaciones: Notificacion[] = [];
   titulos: Titulo[] = [];
   tiposNotificacion: TipoNotificacion[] = [];
 
   // 🔹 Paginación
-  pageSize: number = 8;
+  pageSize: number = 6;
   currentPage: number = 1;
   totalPages: number = 1;
 
@@ -36,7 +41,9 @@ export class NotificacionesComponent implements OnInit {
     private notificacionService: NotificacionService,
     private tituloService: TituloService,
     private tipoNotificacionService: TipoNotificacionService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private toggleSvc:ToggleService,
+    private matDialog:MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -90,9 +97,15 @@ export class NotificacionesComponent implements OnInit {
     event.stopPropagation();
 
     if (!id) return;
-
-    if (!confirm('¿Seguro que deseas eliminar esta notificación?')) return;
-
+      const dialogRef = this.matDialog.open(ConfirmDialogComponent, {
+          width: '800px',
+          data: { message:'¿Deseas eliminar esta notificación?' }   // 👈 enviamos el modelo
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(result)
+          if (result) {
+            
     this.notificacionService.deleteNotificacion(id).subscribe({
       next: () => {
         // removemos localmente
@@ -104,12 +117,15 @@ export class NotificacionesComponent implements OnInit {
         this.notificacionesSubject.next(this.notificaciones);
         // forzamos detección
         this.cd.detectChanges();
+        this.toggleSvc.show('Notificacion elimincada exitosamente','success')
       },
       error: (err) => {
         console.error('Error eliminando notificación', err);
-        alert('Ocurrió un error al eliminar la notificación.');
       }
     });
+
+          }})
+
   }
 
   cargarNotificaciones(): void {

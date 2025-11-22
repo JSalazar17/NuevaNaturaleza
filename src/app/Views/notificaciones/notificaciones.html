@@ -1,6 +1,8 @@
 <div class="notificaciones-container">
-  <h2>Gestión de Notificaciones</h2>
+ 
 
+
+<h2>Notificaciones</h2>
   <div *ngIf="cargando$ | async" class="loading">
     <p>Cargando notificaciones...</p>
   </div>
@@ -9,20 +11,22 @@
     <table class="tabla-notificaciones" *ngIf="notificaciones.length > 0; else noData">
       <thead>
         <tr>
-          <th>Título</th>
-          <th>Tipo Notificación</th>
+          <th class="dnones">Título</th>
           <th>Mensaje</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
+      @for (notificacion of ((notificaciones$ | async) || []) 
+       | paginate: { itemsPerPage: 5, currentPage: paginaActual }; 
+       let i = $index; track notificacion.idNotificacion) {
+
         <!-- Ahora iteramos sobre la porción paginada -->
-        <tr *ngFor="let notificacion of paginatedNotificaciones; let i = index; trackBy: trackByNotificacion"
+        <tr 
             [class.no-leida]="!notificacion.leido"
             [class.leida]="notificacion.leido">
-          <td (click)="abrirEnlace(notificacion)">{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
-          <td (click)="abrirEnlace(notificacion)">{{ notificacion.idTipoNotificacionNavigation?.nombre || 'Sin tipo' }}</td>
-          <td (click)="abrirEnlace(notificacion)">{{ notificacion.mensaje || '-' }}</td>
+          <td  class="dnones" (click)="abrirEnlace(notificacion)">{{ notificacion.idTituloNavigation?.titulo1 || 'Sin título' }}</td>
+          <td (click)="abrirEnlace(notificacion)" class="widthMensaje">{{ notificacion.mensaje || '-' }}</td>
           <td>
             <!-- Solo aparece cuando la notificación ya está leída -->
             <button *ngIf="notificacion.leido"
@@ -31,10 +35,16 @@
               Eliminar
             </button>
           </td>
-        </tr>
+        </tr>}
       </tbody>
     </table>
 
+<pagination-controls
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
     <ng-template #noData>
       <div class="no-data">
         <p>No hay notificaciones disponibles.</p>
@@ -42,10 +52,6 @@
     </ng-template>
 
     <!-- Controles de paginación -->
-    <div class="paginacion" *ngIf="notificaciones.length > pageSize">
-      <button (click)="cambiarPagina(-1)" [disabled]="currentPage === 1">Anterior</button>
-      <span>Página {{currentPage}} de {{totalPages}}</span>
-      <button (click)="cambiarPagina(1)" [disabled]="currentPage === totalPages">Siguiente</button>
-    </div>
+
   </div>
 </div>

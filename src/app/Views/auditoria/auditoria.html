@@ -1,10 +1,9 @@
-@if(isPlatformBrowser()){
+ <div class="auditoria-container">
+  <div class="dispflex">
+  @if(isPlatformBrowser()){
 <button mat-icon-button [matMenuTriggerFor]="menupdf">
-
   <mat-icon>picture_as_pdf</mat-icon>
-
 </button>
-
 <!-- Panel de filtros como menú -->
 <mat-menu #menupdf="matMenu" class="filters-panel-menu">
   <div class="filters-panel" (click)="$event.stopPropagation()">
@@ -22,44 +21,59 @@
     </form>
 
   </div>
-  <button mat-icon-button  (click)="generarpdfauditoria()">
+  
+  <button mat-icon-button class="ml15px" (click)="generarpdfauditoria()"  title="descargar PDF">
 
     <mat-icon>cloud_download</mat-icon>
 
   </button>
 </mat-menu>
 }
-        
-      
-<div class="auditoria-container">
-  <h2>Gestión de Auditoría</h2>
+  <h2 class="w100">Gestión de Auditoría</h2>
 
+</div>    <div class="buscador">
+    <input 
+      type="text" 
+      placeholder="Buscar por dispositivo, impacto, sistema o fecha..."
+      [(ngModel)]="terminoBusqueda"
+      (input)="aplicarFiltros()">
+  </div>
   <table class="tabla-auditorias">
     <thead>
       <tr>
-        <th>N°</th>
+        <th class="dnone">N°</th>
         <th>Usuario</th>
         <th>Dispositivo</th>
         <th>Acción</th>
-        <th>Fecha</th>
+        <th class="w80px dnones">Fecha y hora</th>
         <th>Observación</th>
       </tr>
     </thead>
     <tbody>
-      @for (item of (auditorias$ | async); let i = $index; track item.idAuditoria) {
+      @for (item of auditorias()
+       | paginate: { itemsPerPage: 6, currentPage: paginaActual }; 
+       let i = $index; track item.idAuditoria) {
+
         <tr 
           (click)="seleccionarAuditoria(item)" 
           [class.selected]="item === auditoriaSeleccionada">
-          <td>{{ i + 1 }}</td>
+          <td class="dnone">{{ i + 1 }}</td>
           <td>{{ item.usuarioNombre }}</td>
           <td>{{ item.dispositivoNombre }}</td>
-          <td>{{ item.accionNombre }}</td>
-          <td>{{ item.fecha | date:'short' }}</td>
+          <td>{{ item.idAccionNavigation.accion||"n/a" }}</td>
+          <td class="w80px dnones">{{ item.fecha}}</td>
           <td>{{ item.observacion }}</td>
         </tr>
       }
     </tbody>
   </table>
+  <!-- 🔽 Paginador -->
+<pagination-controls
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
 
   <!-- Modal -->
   @if (mostrarModal) {

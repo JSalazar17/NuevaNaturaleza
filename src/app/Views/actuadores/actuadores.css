@@ -209,3 +209,20 @@ h3{
   background: #40916c;
   color: white;
 }
+
+@media (max-width: 611px) {
+.devices {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1rem;
+}
+
+.device-card{
+    width: 120px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+}

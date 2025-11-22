@@ -1,0 +1,66 @@
+<div class="container">
+  <h2 class="title">Analizador de Imágenes con IA</h2>
+
+  <div class="panels">
+    <!-- Panel izquierdo -->
+    <div class="panel clickable" (click)="onImageClick()">
+      <h3>Imagen de entrada</h3>
+      <div class="image-box">
+        @if (inputImage()) {
+          <img [src]="inputImage()" alt="Entrada" class="preview" />
+        } @else {
+          <div class="placeholder">Haz clic aquí para subir una imagen</div>
+        }
+      </div>
+    </div>
+
+    <!-- Panel derecho -->
+    <div class="panel">
+      <h3>Resultado</h3>
+        @if (loading()) {
+          <div class="loader"></div>
+        }
+      <div class="image-box"> 
+        @if (outputImage()) {
+          <img [src]="outputImage()" alt="Resultado" class="preview" />
+        } @else {
+          <div class="placeholder">Esperando análisis...</div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button (click)="analyze()" [disabled]="!inputImage() || loading()">
+      {{ loading() ? 'Analizando...' : 'Analizar' }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  @if (recommendations().length > 0) {
+    @if(recommendations()[0] === "Esperando detección..."){
+
+    <div class="recommendations">
+      <h1>No se detecto cebollin</h1>
+    </div>
+    }
+    @else{
+    <div class="recommendations">
+      <ul>
+        @for (r of recommendations(); track r) {
+          @if(r===recommendations()[0]){
+           <h4> {{ r }}</h4>
+          }
+          @else {
+            
+          <li>{{ r }}</li>
+          }
+        }
+      </ul>
+    </div>
+  }
+  }
+</div>

@@ -1,34 +1,21 @@
-
-# Etapa 1: Compilar Angular
+# Etapa de construcción
 FROM node:20 AS build
-
 WORKDIR /app
 
-# Copiar package.json y package-lock.json primero (mejora caché)
 COPY package*.json ./
+RUN npm install --legacy-peer-deps
 
-# Instalar dependencias
-RUN npm install
-
-# Copiar todo el código
 COPY . .
+RUN npm run build -- --project Acuaponic-Front --configuration production  
 
-# Compilar Angular en modo producción
-RUN npm run build -- --configuration production
+# Etapa de servidor Nginx
+FROM nginx:alpine
 
-# Etapa 2: Servir con Nginx
-FROM nginx:stable-alpine
-
-# Eliminar default.conf de Nginx
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copiar configuración de Nginx para Angular
+# Copiamos el archivo de configuración personalizado
 COPY default.conf /etc/nginx/conf.d/default.conf
 
-
-# Copiar los archivos compilados de Angular
-COPY --from=build /app/dist/Acuaponic-Front /usr/share/nginx/html
+# Copiamos el build correcto de Angular (AJUSTA SI ES NECESARIO)
+COPY --from=build /app/dist/Acuaponic-Front/browser /usr/share/nginx/html
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

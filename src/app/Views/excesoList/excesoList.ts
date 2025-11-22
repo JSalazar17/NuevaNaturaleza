@@ -87,8 +87,8 @@ export class ExcesoListComponent {
     })
       if(this.data){
         console.log(this.data)
-        if((this.data.ExcesoPuntosOptimos as ExcesoPuntoOptimo[]).length >0)
-        for(let exc of (this.data.ExcesoPuntosOptimos as ExcesoPuntoOptimo[])){
+        if((this.data.excesoPuntosOptimos as ExcesoPuntoOptimo[])&& (this.data.excesoPuntosOptimos as ExcesoPuntoOptimo[]).length >0)
+        for(let exc of (this.data.excesoPuntosOptimos as ExcesoPuntoOptimo[])){
           let aex = this.addExceso();
           aex.setValue(exc)
         }
@@ -104,16 +104,19 @@ export class ExcesoListComponent {
 
   addExceso() {
     let group = this.fb.group({
+      idPuntoOptimo: [null as string | null],
+      idExcesoPuntoOptimo: [null as string | null],
       idDispositivo: [''],
       idTipoExceso: [''],
-      idAccionAct: ['']
+      idAccionAct: [''],
+      idAccionActNavigation: [null as Accion | null],
+      idTipoExcesoNavigation: [null as TipoExceso | null]
     });  
     if(this.excesos.length>0)
    { this.excesos.insert(0, group); }
   else
     {this.excesos.push(group); }
   
-  console.log(this.excesos.value);  
   return group
   }
 
@@ -127,8 +130,9 @@ export class ExcesoListComponent {
      return this.sensores();
   }
   onClose(sure:boolean=true){
-    if(sure)
+    if(sure){
     this.dialogRef.close(this.excesos.value as ExcesoPuntoOptimo[]);
+  console.log(this.excesos.value);  }
   else
     this.dialogRef.close(undefined);
   }

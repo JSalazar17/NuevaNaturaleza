@@ -19,4 +19,5 @@ export class AccionService {
   getAccionPorId(id: string): Observable<Accion> {
     return this.http.get<Accion>(`${this.apiUrl}/${id}`);
   }
+  
 }

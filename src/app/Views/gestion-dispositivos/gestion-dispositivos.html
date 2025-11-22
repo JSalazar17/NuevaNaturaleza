@@ -1,55 +1,71 @@
 <div class="gestion-container">
   <h2>Gestión de Dispositivos</h2>
+<div class="dispflex">
+    <!-- 🔽 Filtro por tipo de dispositivo -->
+<div class="acciones-superiores2 nodisplay">
+    <mat-form-field appearance="outline" class="filter-item tdis">
+      <mat-label >Tipo Dispositivo</mat-label>
+      <mat-select [(value)]="tipoSeleccionado" (selectionChange)="aplicarFiltros()"  (change)="aplicarFiltros()" >
+        <mat-option value="Todos">--</mat-option>
+        @for (m of deviceTypes(); track m) {
+        <mat-option [value]="m.idTipoDispositivo">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-  <div class="acciones-superiores">
-    <button class="btn-agregar" (click)="agregarDispositivo()">➕ Agregar Dispositivo</button>
-    <button class="btn-horario" (click)="irAHorarios()">🕒 Horario Dosificador</button>
-  </div>
-
-  <!-- 🔽 Barra de búsqueda -->
+    <mat-form-field appearance="outline" class="filter-item area">
+      <mat-label>Area</mat-label>
+      <mat-select [(value)]="TipoArea" (selectionChange)="aplicarFiltros()"  (change)="aplicarFiltros()">
+        <mat-option value="Todos">--</mat-option>
+        @for (m of Areas(); track m) {
+        <mat-option [value]="m.idArea">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    </div>
+    <!-- 🔽 Barra de búsqueda -->
   <div class="buscador">
     <input 
       type="text" 
-      placeholder="Buscar por nombre, sistema o estado..."
+      placeholder="Buscar por nombre..."
       [(ngModel)]="terminoBusqueda"
       (input)="aplicarFiltros()">
   </div>
-
-  <!-- 🔽 Filtro por tipo de dispositivo -->
-  <div class="filtro">
-    <label for="dispositivoFiltro">Tipo de Dispositivo:</label>
-    <select id="dispositivoFiltro" [(ngModel)]="tipoSeleccionado" (change)="aplicarFiltros()">
-      <option value="Todos">Todos</option>
-      <option *ngFor="let tipo of deviceTypes" [value]="tipo.nombre">
-        {{ tipo.nombre }}
-      </option>
-    </select>
+  <div class="acciones-superiores">
+    @if(isAdmin()){
+    <button class="btn-agregar" (click)="agregarDispositivo()">➕ Agregar Dispositivo</button>}
+    <button class="btn-horario" (click)="irAHorarios()">🕒 Horario Dosificador</button>
   </div>
+
+
+</div>
+
 
   <!-- 🔽 Tabla de dispositivos -->
   <table class="tabla-dispositivos">
   <thead>
     <tr>
-      <th>N°</th>
+      <th class="nodisplay">N°</th>
       <th>Nombre</th>
-      <th>Sistema</th>
+      <th class="nodisplay">Sistema</th>
       <th>Estado</th>
       <th>Tipo de Dispositivo</th>
-      <th>Acciones</th> <!-- ✅ Nueva columna -->
+      <th><p class="nodisp">Acciones</p></th> <!-- ✅ Nueva columna -->
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let dispositivo of dispositivosFiltrados; let i = index">
-      <td>{{ i + 1 }}</td>
+    <tr *ngFor="let dispositivo of dispositivosFiltrados() | paginate: { itemsPerPage:7, currentPage: paginaActual }; let i = index">
+
+      <td class="nodisplay">{{ i + 1 }}</td>
       <td>{{ dispositivo.nombre }}</td>
-      <td>{{ dispositivo.idSistemaNavigation?.nombre || '-' }}</td>
+      <td class="nodisplay">{{ dispositivo.sistema || '-' }}</td>
       <td>
         <span 
           [ngClass]="{
             'estado-on': dispositivo.idEstadoDispositivoNavigation?.nombre === 'ON', 
             'estado-off': dispositivo.idEstadoDispositivoNavigation?.nombre === 'OFF'
           }">
-          {{ dispositivo.idEstadoDispositivoNavigation?.nombre || '-' }}
+          {{ dispositivo.estado || '-' }}
         </span>
       </td>
       <td>{{ dispositivo.idTipoDispositivoNavigation?.nombre || '-' }}</td>
@@ -57,13 +73,22 @@
         <button class="btn-editar" (click)="editarDispositivo(dispositivo)">
           <i class="material-icons">edit</i>
         </button>
+        
+    @if(isAdmin()){
         <button class="btn-eliminar" (click)="eliminarDispositivo(dispositivo)">
           <i class="material-icons">delete</i>
-        </button>
+        </button>}
       </td>
     </tr>
   </tbody>
 </table>
+<!-- 🔽 Paginación -->
+<pagination-controls 
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
 
   <!-- 🔽 Modal -->
   <div class="modal" *ngIf="mostrarModal">

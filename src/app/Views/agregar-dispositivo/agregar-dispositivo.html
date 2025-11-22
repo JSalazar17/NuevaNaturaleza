@@ -1,11 +1,13 @@
-<mat-card class="card-root dialog-container" style="min-width: 200px;min-height: 100%;">
+<mat-card class="card-root dialog-container" style="
+    width: 100%;
+min-width: 200px;min-height: 100%;">
   <div class="card-header">
-    @if(data){
-      <h2>Editar dispositivo</h2>
+    @if(data.dispositivo){
+    <h2>Editar dispositivo</h2>
     }@else{
-      <h2>Agregar dispositivo</h2>
+    <h2>Agregar dispositivo</h2>
     }
-    
+
     <button *ngIf="isEditMode" mat-icon-button (click)="close()" aria-label="Cerrar">
       <mat-icon>close</mat-icon>
     </button>
@@ -36,6 +38,23 @@
         }
       </mat-autocomplete>
     </mat-form-field>
+
+
+    <mat-form-field  appearance="outline" class="third w100">
+      <input type="text" #areaInput placeholder="Selecciona un elemento" aria-label="Elemento" matInput
+        [formControl]="control" [matAutocomplete]="auto1" (click)="filtrar()" (input)="filtrar()"
+        [formControlName]="'idArea'" />
+
+      <mat-autocomplete #auto1="matAutocomplete" class="mat-autocomplete-panel" [displayWith]="displayAreaFn.bind(this)">
+        @for(opcione of opcionesFiltradas(); track opcione.idArea){
+        <mat-option [value]="opcione">
+          {{ opcione.nombre}}
+        </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+
     <mat-form-field appearance="outline" class="third w100">
       <mat-label>Sistema</mat-label>
       <mat-select formControlName="idSistema">
@@ -117,7 +136,8 @@
             </mat-form-field>
           </div>
 
-          <div class="item-actions"><button mat-icon-button color="warn" type="button" (click)="addExcesoInSensor(sensor,i)">
+          <div class="item-actions"><button mat-icon-button color="warn" type="button"
+              (click)="addExcesoInSensor(sensor,i)">
               <mat-icon>addExcesoInSensor</mat-icon>
             </button>
           </div>

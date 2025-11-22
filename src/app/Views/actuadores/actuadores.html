@@ -1,10 +1,6 @@
-<div class="filter-button">
-  <button mat-icon-button (click)="openFilters()">
-    <mat-icon>filter_list</mat-icon>
-  </button>
-</div>
 
-<main class="content">
+
+<main class="content" id="actuadores">
   <h2>Actuadores</h2>
   <div class="devices">
     <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados()">
@@ -14,19 +10,16 @@
           <img [src]="dispositivo.image" alt="{{ dispositivo.nombre }}" />
         </div>
 
-        <div *ngFor="let actuador of dispositivo.actuadores" class="actuador-controls">
-          <button
-            class="btn-on"
-            [class.active]="actuador.on === 'true'"
-            (click)="cambiarEstado(actuador, true)">
-            ON
-          </button>
-          <button
-            class="btn-off"
-            [class.active]="actuador.off === 'true'"
-            (click)="cambiarEstado(actuador, false)">
-            OFF
-          </button>
+        <div *ngFor="let actuador of dispositivo.actuadores" class="actuador-controls" >
+          <mat-slide-toggle
+  [checked]='(actuador.idAccionAct)=="80b8364b-8603-42d9-b857-0db5f055c6fd"'
+  (change)="onToggleChange($event,dispositivo)"
+  aria-label="Orden descendente"
+>
+  
+</mat-slide-toggle>
+
+
         </div>
       </div>
 

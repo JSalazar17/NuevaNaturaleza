@@ -3,11 +3,11 @@
 <div class="container">
   <!-- 🔹 Barra superior -->
   <header class="topbar">
-    <div class="topbar-left">
+    <div class="topbar-left  ">
       <button class="toggle-btn" (click)="toggleSidebar()">
         <i class="fas fa-bars"></i>
       </button>
-      <img src="assets/Logo_lestoma.jpg" alt="Logo" class="topbar-logo" />
+      <img src="assets/logo_3_.png" alt="Logo" class="topbar-logo nodisp3" />
     </div>
 
     <div class="topbar-center">
@@ -18,14 +18,9 @@
   <!-- 🔹 Barra lateral -->
   <div class="sidebar" [class.collapsed]="isCollapsed">
     <ul class="menu">
-      <li>
-        <a routerLink="/inicio">
-          <i class="fas fa-home"></i><span *ngIf="!isCollapsed">Inicio</span>
-        </a>
-      </li>
 
       <li>
-        <a routerLink="/gestion-dispositivos">
+        <a routerLink="/gestion-dispositivos" (click)="toggleSidebar(true)">
           <i class="fas fa-network-wired"></i><span *ngIf="!isCollapsed">Gestión de Dispositivos</span>
         </a>
       </li>
@@ -40,12 +35,12 @@
 
         <ul class="submenu-list" *ngIf="submenuOpen === 'dispositivos' && !isCollapsed">
           <li>
-            <a routerLink="/sensores">
+            <a routerLink="/sensores" (click)="toggleSidebar(true)">
               <i class="fas fa-thermometer-half"></i><span>Sensores</span>
             </a>
           </li>
           <li>
-            <a routerLink="/actuadores">
+            <a routerLink="/actuadores" (click)="toggleSidebar(true)">
               <i class="fas fa-cogs"></i><span>Actuadores</span>
             </a>
           </li>
@@ -53,40 +48,44 @@
       </li>
 
       <li>
-        <a routerLink="/checklist">
+        <a routerLink="/checklist" (click)="toggleSidebar(true)">
           <i class="fas fa-clipboard-list"></i><span *ngIf="!isCollapsed">CheckList</span>
         </a>
       </li>
-
+     
+    @if(isAdmin()){
       <li>
-        <a routerLink="/auditoria">
+        <a routerLink="/auditoria" (click)="toggleSidebar(true)">
           <i class="fas fa-search"></i><span *ngIf="!isCollapsed">Auditorías</span>
         </a>
       </li>
-
-      <li class="notificaciones" (mouseenter)="mostrarPanel = true" (mouseleave)="mostrarPanel = false" [class.new]="hayNotificacionNueva"> <a routerLink="/notificaciones"> <i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span> </a> <span class="badge" *ngIf="hayNotificacionNueva"></span> </li> 
+      <li>
+        <a routerLink="/eventos" (click)="toggleSidebar(true)">
+          <i class="material-icons">event</i><span *ngIf="!isCollapsed">Eventos</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/usuarios" (click)="toggleSidebar(true)">
+          <i class="material-icons">account_box</i><span *ngIf="!isCollapsed">Usuarios</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/sugerencias" (click)="toggleSidebar(true)">
+          <i class="fas fa-lightbulb" ></i><span *ngIf="!isCollapsed">Sugerencias</span>
+        </a>
+      </li> 
+    }
+      <li class="notificaciones" (mouseenter)="mostrarPanel = true" (mouseleave)="mostrarPanel = false" [class.new]="hayNotificacionNueva"> 
+        <a routerLink="/notificaciones" (click)="toggleSidebar(true)"> <i class="fas fa-bell"></i><span *ngIf="!isCollapsed">Notificaciones</span> </a> <span class="badge" *ngIf="hayNotificacionNueva"></span> </li> 
 
       <li>
-        <a routerLink="/sugerencias">
-          <i class="fas fa-lightbulb"></i><span *ngIf="!isCollapsed">Sugerencias</span>
+        <a routerLink="/Iac"  (click)="toggleSidebar(true)">
+          <i  class="material-icons">touch_app</i><span *ngIf="!isCollapsed">IA</span>
         </a>
       </li> 
     </ul>
 
-    <!-- 🔹 Pie con logos y textos -->
-    <div class="sidebar-footer" *ngIf="!isCollapsed">
-      <img src="assets/logo_GISTFA.jpg" alt="Logo 1" class="footer-logo" />
-      <img src="assets/escudo.png" alt="Logo 2" class="footer-logo" />
-      <p class="footer-text">
-        <strong>Grupo de investigación GISTFA</strong><br>
-        Semillero de investigación SERFAC<br><br>
-        <span class="director">Director:</span><br>
-        Jaime Eduardo Andrade Ramírez<br><br>
-        <span class="equipo">Equipo de desarrolladores:</span><br>
-        Jorge Ivan Salazar Gomez<br>
-        David Ricardo Contreras Espinoza
-      </p>
-    </div>
+
 
     <button class="logout" (click)="logout()">
       <i class="fas fa-sign-out-alt"></i>
@@ -95,7 +94,54 @@
   </div>
 
   <!-- 🔹 Contenido principal -->
-  <div class="content" [class.collapsed-content]="isCollapsed">
-    <router-outlet></router-outlet>
+  <div class="content" [class.collapsed-content]="isCollapsed"  (click)="toggleSidebar(true)">
+    <div class="rcontent">
+    <router-outlet></router-outlet></div>
+     <div _ngcontent-ng-c1968843830="" class="buzon-flotante"  (click)="toggleBuzon()">
+      <mat-icon><i class="material-icons">email</i></mat-icon>
+    </div>
+ <!-- Ventana emergente del buzón -->
+<div class="buzon-popup" *ngIf="mostrarBuzon">
+  <div class="buzon-header">
+    <h3>Buzón de Sugerencias</h3>
+    <button class="cerrar" (click)="toggleBuzon()">×</button>
   </div>
+
+  <form (ngSubmit)="enviarSugerencia()">
+    <input type="text" [(ngModel)]="sugerencia.usuario" name="usuario" placeholder="Tu nombre (opcional)">
+    <input type="email" [(ngModel)]="sugerencia.correo" name="correo" placeholder="Tu correo (opcional)">
+    <textarea [(ngModel)]="sugerencia.mensaje" name="mensaje" placeholder="Escribe tu sugerencia..." required></textarea>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <p *ngIf="mensajeExito" class="exito">{{ mensajeExito }}</p>
+</div>
+  </div>
+    <!-- 🔹 Barra inferior -->
+    
+ 
+     <footer class="bottombar">
+    
+      <img src="assets/logo_3_.png" alt="Logo" class="natubar-logo nodisp" />
+          <!-- 🔹 Pie con logos y textos -->
+
+
+    <div class="bottombar-center">
+      
+      <p class="footer-text">
+        <strong>Grupo de investigación GISTFA</strong><br>
+        Semillero de investigación SERFAC<br><br>
+        <span class="director">Director:</span>
+        Jaime Eduardo Andrade Ramírez<br><br>
+      </p>
+    <div class="footer-text nodisp3" >
+        <span class="equipo">Equipo de desarrolladores:</span><br>
+        Jorge Ivan Salazar Gomez<br>
+        David Ricardo Contreras Espinoza
+    </div>
+    </div>
+    
+      <img src="assets/escudo.png" alt="Logo 2" class="footer-logo nodisp2" />
+
+  </footer>
 </div>

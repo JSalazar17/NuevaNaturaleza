@@ -151,11 +151,12 @@ select, input[type="number"] {
   width: 100%;
   border: 1px solid #c8e6c9;
   border-radius: 6px;
-  padding: 8px;
   min-height: 50px;
   resize: none;
 }
-
+.filter-item{
+  width: 100%;
+}
 .boton-agregar-dosificador {
   display: flex;
   justify-content: center;

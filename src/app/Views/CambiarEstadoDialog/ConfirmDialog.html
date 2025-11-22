@@ -1,0 +1,12 @@
+<h2 mat-dialog-title class="text-center">Seleccione el tipo de acción</h2> <mat-dialog-content class="dialog-content"><mat-radio-group [(ngModel)]="selectedOption" class="radio-group">
+  <mat-radio-button value="Pruebas">Pruebas</mat-radio-button>
+  <mat-radio-button value="Mantenimiento">Mantenimiento</mat-radio-button>
+  <mat-radio-button value="Otra">Otra (especifique)</mat-radio-button>
+</mat-radio-group>
+
+<mat-form-field *ngIf="selectedOption === 'Otra'" appearance="outline" class="input-field">
+  <mat-label>Especifique el motivo</mat-label>
+  <input matInput [(ngModel)]="customText" required />
+</mat-form-field>
+</mat-dialog-content> <mat-dialog-actions align="end"> <button mat-button color="warn" (click)="cancelar()">Cancelar</button>
+   <button mat-flat-button color="primary" (click)="confirmar()" [disabled]="!isValid()">Confirmar</button> </mat-dialog-actions> 

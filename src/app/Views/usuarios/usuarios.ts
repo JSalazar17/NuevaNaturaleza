@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
 import { Rol } from '../../models/rol.model';
 import { UsuarioService } from '../../services/usuario.service';
@@ -10,12 +10,14 @@ import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 import { MatDialog } from '@angular/material/dialog';
 import { CRUsuariosComponent } from './crusuarios/crusuarios';
 import { Router } from '@angular/router';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.css'],
-  imports: [FormsModule,CommonModule]
+  imports: [FormsModule, CommonModule, NgxPaginationModule, MatSelectModule]
 })
 export class UsuariosComponent implements OnInit {
   private usuariosSubject = new BehaviorSubject<Usuario[]>([]);
@@ -28,8 +30,9 @@ export class UsuariosComponent implements OnInit {
   usuarioForm: Usuario = { idUsuario: '',idRol: '', cedula: '', nombre: '', correo: '', clave: '' };
   usuario:Usuario
   usuarioEditando = false;
-  usuariosFiltrados: Usuario[] = []; // 👈 lista que se muestra en la tabla
+  usuariosFiltrados= signal<Usuario[]>([]); // 👈 lista que se muestra en la tabla
   filtroTexto: string = ""; // texto del input
+  paginaActual: number = 1;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -47,12 +50,20 @@ export class UsuariosComponent implements OnInit {
   }
 
   irAgregarUsuario() {
-  this.router.navigate(['/registrar-usuario']); // 👈 Ruta hacia la vista de agregar
+    const dialogRef = this.dialog.open(CRUsuariosComponent, {
+          width: '800px',
+          data: { roles:this.roles}   // 👈 enviamos el modelo
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(result)
+        });
 }
 
   cargarUsuarios() {
     this.usuarioService.getUsuarios().subscribe(data => {
       this.usuarios = data;
+      this.usuariosSubject.next(data);
       this.filtrarPorRol(); // inicializar con filtro
     });
   }
@@ -71,20 +82,20 @@ export class UsuariosComponent implements OnInit {
 
   filtrarPorRol() {
     if (this.rolSeleccionado === "Todos") {
-      this.usuariosFiltrados = [...this.usuarios];
+      this.usuariosFiltrados.set([...this.usuarios]);
     } else {
-      this.usuariosFiltrados = this.usuarios.filter(u => u.idRol === this.rolSeleccionado);
+      this.usuariosFiltrados.set(this.usuarios.filter(u => u.idRol === this.rolSeleccionado));
     }
   }
 
   filtrarUsuarios() {
     const texto = this.filtroTexto.toLowerCase();
-    this.usuariosFiltrados = this.usuarios.filter(u => 
+    this.usuariosFiltrados.set(this.usuarios.filter(u => 
       this.getRolNombre(u.idRol).toLowerCase().includes(texto) ||
       u.cedula.toLowerCase().includes(texto) ||
       u.nombre.toLowerCase().includes(texto) ||
       u.correo.toLowerCase().includes(texto)
-    );
+    ));
   }
 
   guardarUsuario() {

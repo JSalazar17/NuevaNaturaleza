@@ -16,6 +16,7 @@
 }
 
 .buscador {
+  width: 440px;
   margin-bottom: 10px;
 }
 
@@ -24,15 +25,15 @@
   width: 100%;
   max-width: 400px;
   padding: 10px 14px;
-  margin: 0 auto 20px auto;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 0.95rem;
 }
 
 .filtro {
-  margin: 10px 0 20px 0;
   font-size: 0.95rem;
+  
+    margin-right: 20px;
 }
 
 .filtro label {
@@ -114,4 +115,42 @@
 @keyframes fadeIn {
   from {opacity: 0; transform: translateY(-10px);}
   to {opacity: 1; transform: translateY(0);}
+}
+
+
+.paginador {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+::ng-deep .ngx-pagination li {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+::ng-deep .ngx-pagination .current {
+  background-color: #3f51b5; /* color Material primario */
+  color: white;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+.dispflex{
+  display: flex;
+  justify-content: center;
+  margin: 0 20px;
+}
+.w100{
+  width: 90%;
+}
+
+
+@media (max-width: 654px) {
+
+.dnone{
+  display: none;
+}
+.eventos-container {
+    padding: 0;
+  }
 }

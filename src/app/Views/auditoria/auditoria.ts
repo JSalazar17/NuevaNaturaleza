@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { Auditoria } from '../../models/auditoria.model';
 import { Usuario } from '../../models/usuario.model';
 import { AuditoriaService } from '../../services/auditoria.service';
@@ -20,23 +20,28 @@ import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { PdfSensor } from '../../models/pdfsensor.model';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ToggleService } from '../../services/toggle.service';
 
 @Component({
   selector: 'app-auditoria',
   templateUrl: './auditoria.html',
-  imports: [CommonModule, DatePipe, FormsModule,
+  imports: [CommonModule, FormsModule,
     MatButtonModule,MatMenuModule,
   MatFormFieldModule, ReactiveFormsModule,
 MatIconModule,
   MatDatepickerModule,MatSelectModule,
     MatInputModule,
-    MatNativeDateModule,],
+    MatNativeDateModule,NgxPaginationModule],
   styleUrls: ['./auditoria.css']
 })
 export class AuditoriaComponent implements OnInit {
 
+
   private auditoriasSubject = new BehaviorSubject<Auditoria[]>([]);
   auditorias$: Observable<Auditoria[]> = this.auditoriasSubject.asObservable();
+  auditorias = signal<Auditoria[]> ([]);
+  
   private usuarioSubject = new BehaviorSubject<Usuario[]>([]);
   usuarios$: Observable<Usuario[]> = this.usuarioSubject.asObservable();
   private dispositivoSubject = new BehaviorSubject<Dispositivo[]>([]);
@@ -47,6 +52,8 @@ export class AuditoriaComponent implements OnInit {
   auditoriaSeleccionada?: Auditoria;
   usuarioInfo: any;
   mostrarModal = false;
+  
+  paginaActual: number = 1;
 
   private pdfMake: any;
 
@@ -55,10 +62,12 @@ export class AuditoriaComponent implements OnInit {
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
+terminoBusqueda: string;
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private pdfSvc: pdfService,
     private auditoriaService: AuditoriaService,
+    private togleSvc: ToggleService
     
   ) {
 
@@ -89,13 +98,35 @@ export class AuditoriaComponent implements OnInit {
     this.cargarAuditorias();}
   }
 
+
+aplicarFiltros() {
+  this.auditorias.set([... this.auditoriasSubject.getValue().filter(a=>{
+    const busqueda =this.terminoBusqueda.toLowerCase()
+    return    a.dispositivoNombre?.toLowerCase().includes(busqueda) ||
+        a.usuarioNombre?.toLowerCase().includes(busqueda) ||
+        a.idAccionNavigation.accion?.toLowerCase().includes(busqueda) ||
+        (a.fecha ? new Date(a.fecha).toLocaleDateString().indexOf(busqueda)!=-1 : false);;
+  })])
+}
+
+
+
+
+
+
+
+
   cargarAuditorias(): void {
     this.auditoriaService.getAuditorias().subscribe((data: Auditoria[]) => {
-      this.auditoriasSubject.next(data); console.log(data)
-
+      this.auditoriasSubject.next(data.map((d:Auditoria)=>{  
+     d.fecha = new Date(d.fecha).toLocaleDateString() +" "+ new Date(d.fecha).toLocaleTimeString() ;
+        return d} ));
+        
+        console.log(data)
       this.cargarAcciones();
       this.cargarUsuarios();
       this.cargarDispositivos();
+      this.auditorias.set([... this.auditoriasSubject.getValue()])
     });
   }
 
@@ -121,7 +152,7 @@ export class AuditoriaComponent implements OnInit {
 
     const auditorias = this.auditoriasSubject.getValue();
     auditorias.forEach(a => {
-      a.accionNombre = a.IdAccionNavigation?.accion ?? 'N/A';
+      a.accionNombre = a.idAccionNavigation?.accion ?? 'N/A';
     });
     this.auditoriasSubject.next([...auditorias]);
 
@@ -145,8 +176,15 @@ export class AuditoriaComponent implements OnInit {
   async generarpdfauditoria() {
     if(this.rango.value.start == null ||
     this.rango.value.end == null)
-    return;
+    {
+      
+    this.togleSvc.show('Generando CSV.', 'loading')
+      return;}
     let psens:PdfSensor = {desde:(this.rango.value.start),hasta:this.rango.value.end}
-    await this.pdfSvc.PdfAuditorias(psens)
+    if(await this.pdfSvc.PdfAuditorias(psens)){
+    this.togleSvc.show('Generando CSV.', 'loading')
+    }else{
+      this.togleSvc.show('No hay registros en el rango seleccionado.', 'warning')
+    }
   }
 }

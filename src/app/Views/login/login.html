@@ -1,6 +1,6 @@
 <div class="login-wrapper">
   <div class="login-card">
-    <img src="assets/Logo_lestoma.jpg" alt="Logo" class="logo">
+    <img src="assets/logo_3_.png" alt="Logo" class="logo">
 
     <h2 class="title">Bienvenido</h2>
     <p class="subtitle">Ingresa con tu cuenta</p>
@@ -37,11 +37,10 @@
         <label for="showPassword">Mostrar Contraseña</label>
       </div>
 
-      <button type="submit">Ingresar</button>
+      <button type="submit" id="Ingresar">Ingresar</button>
 
       <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
     </form>
-
-    <a routerLink="/recuperar" class="forgot-password">¿Olvidó su contraseña?</a>
+    <a routerLink="/recuperar" class="forgot-password" (click)="goToRecuperar()"><p>¿Olvidó su contraseña?</p></a>
   </div>
 </div>

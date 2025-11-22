@@ -64,12 +64,16 @@
   border-radius: 5px;
   cursor: pointer;
 }
-
+.disflex{
+display: flex;
+gap: 10px;
+justify-self: center;
+}
 /* Contenido */
 .content {
+  
   flex-grow: 1;
   padding: 1.5rem;
-  background: #f1f1f1;
 }
 .hidden {
   position: absolute;
@@ -101,6 +105,13 @@
 .device-card img {
   width: 100px;
   margin: 0.5rem 0;
+}
+
+.buttons{
+    margin: 0 1.5em;
+    display: flex;
+    gap: 50px;
+    max-width: 260px;
 }
 
 .acciones button {
@@ -156,8 +167,10 @@ h3{
 
 .sensor-chart {
   flex: 1;
-  max-height: 150px;        /* 🔹 cuadrado flexible (se ajusta con el ancho) */
-  max-height: 120px;   
+  max-height: 150px;   
+  height: 300px;
+  position: relative;
+
 }
 
 .sensor-chart canvas {
@@ -186,4 +199,30 @@ h3{
 .editar {
   background: #40916c;
   color: white;
+}
+
+
+@media (max-width:460px) {
+    .sensor-chart {
+        min-width: 395px;
+        margin-left: -21px;
+    }
+    .device-card{
+        min-width: 350px;
+        max-width: 350px;
+    overflow: hidden;
+    padding: 1.5em;
+  }
+  
+.content {
+  padding: 0rem;
+}
+}
+
+@media (max-width:411px) {
+
+.device-card{
+  margin:0;
+}
+
 }
