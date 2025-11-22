@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { EventoService } from '../../services/evento.service';
 import { DispositivoService } from '../../services/dispositivos.service';
 import { Evento } from '../../models/evento.model';
@@ -16,6 +16,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { PdfSensor } from '../../models/pdfsensor.model';
 import { pdfService } from '../../services/pdf.service';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { Console } from 'console';
+import { ToggleService } from '../../services/toggle.service';
 
 @Component({
   selector: 'app-eventos',
@@ -27,17 +30,19 @@ MatIconModule,
   MatDatepickerModule,MatSelectModule,
     MatInputModule,
     MatNativeDateModule,
+    NgxPaginationModule
   ],
   styleUrls: ['./eventos.css']
 })
 export class Eventos implements OnInit {
-  eventos: Evento[] = [];
-  eventosFiltrados: Evento[] = [];
+  eventos= signal<Evento[]>([]);
+  eventosFiltrados=signal<Evento[]>([])
   dispositivos: Dispositivo[] = [];
   eventoSeleccionado: Evento | null = null;
   dispositivoSeleccionado: Dispositivo | null = null;
   terminoBusqueda: string = "";
   dispositivoSeleccionadoFiltro: string = "Todos";
+  paginaActual: number = 1;
 
   private eventosSubject = new BehaviorSubject<Evento[]>([]);
   eventos$: Observable<Evento[]>=this.eventosSubject.asObservable();
@@ -51,7 +56,8 @@ export class Eventos implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object,
     private pdfSvc: pdfService,
     private eventoService: EventoService,
-    private dispositivoService: DispositivoService
+    private dispositivoService: DispositivoService,
+    private toggleSvc:ToggleService
   ) {}
 
   ngOnInit(): void {
@@ -63,8 +69,13 @@ export class Eventos implements OnInit {
 
   cargarEventos() {
     this.eventoService.getEventos().subscribe(data => {
-      this.eventos = data;
-      this.eventosFiltrados = [...this.eventos]; // inicial
+      
+      this.eventos.set(data.map(x=>{
+        x.fecha = (new Date(x.fechaEvento).toLocaleDateString() +" "+ new Date(x.fechaEvento).toLocaleTimeString() );
+        return x;
+      }));
+      console.log(data)
+      this.eventosFiltrados.set([...this.eventos()]); // inicial
     });
   }
 
@@ -75,21 +86,21 @@ export class Eventos implements OnInit {
   }
 
   aplicarFiltros() {
-    this.eventosFiltrados = this.eventos.filter(e => {
+    this.eventosFiltrados.set(this.eventos().filter(e => {
       const busqueda = this.terminoBusqueda.toLowerCase();
 
       const cumpleBusqueda =
         e.idDispositivoNavigation.nombre.toLowerCase().includes(busqueda) ||
         e.idImpactoNavigation.nombre.toLowerCase().includes(busqueda) ||
         e.idSistemaNavigation.nombre.toLowerCase().includes(busqueda) ||
-        (e.fechaEvento ? new Date(e.fechaEvento).toLocaleDateString().includes(busqueda) : false);
+        (e.fechaEvento ? new Date(e.fechaEvento).toLocaleDateString().indexOf(busqueda)!=-1 : false);
 
       const cumpleDispositivo =
         this.dispositivoSeleccionadoFiltro === "Todos" ||
         e.idDispositivoNavigation.idTipoDispositivo === this.dispositivoSeleccionadoFiltro;
 
       return cumpleBusqueda && cumpleDispositivo;
-    });
+    }));
   }
 
   seleccionarEvento(evento: Evento) {
@@ -109,7 +120,10 @@ export class Eventos implements OnInit {
   async generarpdfEventos() {
     if(this.rango.value.start == null ||
     this.rango.value.end == null)
-    return;
+    {
+      this.toggleSvc.show('Seleccione fecha inicial y final', 'warning')
+      return;}
+      this.toggleSvc.show('Generando PDF.', 'loading')
     let psens:PdfSensor = {desde:(this.rango.value.start),hasta:this.rango.value.end}
     await this.pdfSvc.PdfEventos(psens)
   }

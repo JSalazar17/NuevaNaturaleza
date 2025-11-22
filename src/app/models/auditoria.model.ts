@@ -14,6 +14,6 @@ export interface Auditoria {
   accionNombre?: string;
   idDispositivoNavigation?:Dispositivo,
   idUsuarioNavigation?:Usuario,
-  IdAccionNavigation:Accion,
+  idAccionNavigation:Accion,
 }
 

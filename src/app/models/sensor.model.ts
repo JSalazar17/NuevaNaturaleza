@@ -5,7 +5,7 @@ import { TipoMUnidadM } from "./tipoMUnidadM.model";
 
 export interface Sensor{
 mostrarInfo: any;
-    idSensor?:String,
+    idSensor?:string,
     idDispositivo?:string,
     idTipoMUnidadM?:string;
     idTipoMUnidadMNavigation?:TipoMUnidadM,

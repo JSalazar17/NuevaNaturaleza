@@ -1,13 +1,27 @@
 .checklist-container {
-  max-width: 950px;
-  margin: 30px auto;
+  width:100%;
   background: #ffffff;
-  padding: 30px;
+  padding: 10px 10px;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.filters-panel{
+    margin: 10px;
+    display: grid;
+}
+.sinborde{
+  
+    padding: 8px; 
+     border: 0 !important; 
+     border-radius: 8px; 
+}
+.center{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 .titulo {
   text-align: center;
   color: #2e7d32;
@@ -63,7 +77,8 @@
 }
 
 .observacion-general {
-  margin-bottom: 20px;
+  display: grid;justify-items: center;
+  gap: 20px;
 }
 
 .observacion-general label {
@@ -74,11 +89,10 @@
 }
 
 .observacion-general textarea {
-  width: 100%;
+  width: 90%;
   min-height: 100px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 12px;
   resize: vertical;
   transition: all 0.3s ease;
 }
@@ -99,7 +113,7 @@
   font-size: 16px;
   font-weight: bold;
   display: block;
-  margin: 0 auto;
+  margin-bottom: 20px;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
@@ -141,3 +155,33 @@
   background-color: #218838;
 }
 
+@media (max-width: 650px) {
+
+.accions{
+  padding-bottom: 55px;
+}
+.dnone{
+  display: none;
+}
+.auditoria-container {
+    padding: 0;
+  }
+  .tabla-auditorias th,
+.tabla-auditorias td {
+  padding: 5px 2.5px;
+}
+.w80px{
+  width: 180px;
+  max-width:180px;
+}
+.input-sensor ,.select-actuador{
+    width: 180px;
+}
+}
+
+@media (max-width: 420px) {
+
+    .input-sensor, .select-actuador {
+        width: 140px;
+    }
+}

@@ -1,5 +1,5 @@
 .usuarios-container {
-  padding: 20px;
+  padding: 10px;
   font-family: Arial, sans-serif;
 }
 
@@ -12,7 +12,6 @@
 }
 
 .filtro-rol {
-  margin: 10px 0 20px 0;
   font-size: 0.95rem;
 }
 
@@ -26,23 +25,33 @@
   border-radius: 6px;
   border: 1px solid #ccc;
 }
+.filter-item{
+  min-width: 140px;
+}
+.accions {
+  padding-bottom: 1.5em;
+  display: flex;
+  max-height: 40px;
+  
+    justify-content: center;
+}
 
 .buscador {
   display: block;
   width: 100%;
   max-width: 400px;
   padding: 10px 14px;
-  margin: 0 auto 20px auto;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 0.95rem;
+  margin :0 100px;
 }
 
 /* Tabla */
 .tabla-usuarios {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 10px;
+  border-spacing: 0 1px;
   font-size: 0.95rem;
 }
 
@@ -55,13 +64,14 @@
 
 .tabla-usuarios th,
 .tabla-usuarios td {
-  padding: 14px 18px;
+  padding:2px 8px;
+  text-align: center;
 }
 
 .tabla-usuarios tbody tr {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease-in-out;
 }
 
@@ -75,11 +85,12 @@
 .btn-accion {
   border: none;
   padding: 6px 12px;
-  margin: 0 4px;
+  margin: 2px 4px;
   border-radius: 6px;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
+    min-width: 80px;
 }
 
 .btn-accion.editar {
@@ -103,7 +114,7 @@
 .acciones-superiores {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 15px;
+  min-width: 190px;
 }
 
 .btn-agregar {
@@ -123,3 +134,67 @@
   transform: scale(1.05);
 }
 
+.paginador {
+  display: flex;
+  justify-content: center;
+}
+
+::ng-deep .ngx-pagination li {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+::ng-deep .ngx-pagination .current {
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.dfmin{
+  display: flex;
+  max-height: 40px;
+  flex-direction: row;
+
+}
+
+@media (max-width:972px) {
+  .buscador{
+    margin: 0 20px;}
+}
+@media (max-width:771px) {
+  .buscador{
+    margin: 0 ;}
+  .dfmin{
+  display: flex;
+  max-height: 120px;
+  gap: 5px;
+  padding-right: 25px;
+}
+.accions {
+  gap: 10px;
+  
+}
+}
+@media (max-width: 654px) {
+.dfmin{
+  display: flex;
+  flex-direction: column;
+  max-height: 120px;
+  gap: 5px;
+  padding-right: 25px;
+}
+.accions{
+  
+    padding-bottom: 55px;
+}
+.dnone{
+  display: none;
+}
+}
+
+
+@media (max-width: 340px) {
+.dnones{
+  display: none;
+}}

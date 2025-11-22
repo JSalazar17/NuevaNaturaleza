@@ -1,58 +1,174 @@
 import { Routes } from '@angular/router';
-import { LayoutComponent } from './Views/layout/layout';
-import { GestionDispositivos } from './Views/gestion-dispositivos/gestion-dispositivos';
-import { RegistrarUsuario } from './Views/registrar-usuario/registrar-usuario';
-import { AuditoriaComponent } from './Views/auditoria/auditoria'; 
-import { Eventos} from './Views/eventos/eventos'; 
-import { LoginController } from './Views/login/login';
-import { RecuperarComponent } from './Views/recuperar/recuperar';
-import { UsuariosComponent } from './Views/usuarios/usuarios';
-import { AgregarDispositivo } from './Views/agregar-dispositivo/agregar-dispositivo';
-import { CambiarContrasena } from './Views/cambiar-contraseña/cambiar-contraseña';
-import { NotificacionesComponent } from './Views/notificaciones/notificaciones';
-import { InicioComponent } from './Views/inicio/inicio';
-import { Testchart } from './Views/testchart/testchart';
-import { ParentComponent } from './Views/testviewpanel/dashboard';
-import { PdfComponent } from './Views/gestion-dispositivos/filtercomponent/pdfdocument';
-import { SensoresComponent} from './Views/sensores/sensores';
-import { ActuadoresComponent} from './Views/actuadores/actuadores';
-import { dtComponent } from './Views/sensores/dt/dt';
-import { ExcesoListComponent } from './Views/excesoList/excesoList';
-import { SugerenciasComponent } from './Views/sugerencias/sugerencias';
-import { ChecklistFormComponent } from './Views/checklist/checklist-form';
-import { ProgramacionDosificadorComponent } from './Views/programaciondosificador/programaciondosificador';
-
+import { AuthGuard } from './services/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginController },
-  { path: 'recuperar', component: RecuperarComponent },
-  { path: 'cambiar-contraseña', component: CambiarContrasena},
-  { path: 'testexc', component: ExcesoListComponent},
-  { path:'datapicker', component:dtComponent},
+
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./Views/login/login').then((m) => m.LoginController),
+  },
+  {
+    path: 'recuperar',
+    loadComponent: () =>
+      import('./Views/recuperar/recuperar').then((m) => m.RecuperarComponent),
+  },
+  {
+    path: 'cambiar-contraseña',
+    loadComponent: () =>
+      import('./Views/cambiar-contraseña/cambiar-contraseña').then(
+        (m) => m.CambiarContrasena
+      ),
+  },
+  {
+    path: 'testexc',
+    loadComponent: () =>
+      import('./Views/excesoList/excesoList').then(
+        (m) => m.ExcesoListComponent
+      ),
+  },
+  {
+    path: 'datapicker',
+    loadComponent: () =>
+      import('./Views/sensores/dt/dt').then((m) => m.dtComponent),
+  },
+  {
+    path: 'testd',
+    loadComponent: () =>
+      import('./Views/CambiarEstadoDialog/confirmDialog').then(
+        (m) => m.DialogSelectTipoComponent
+      ),
+  },
+
   {
     path: '',
-    component: LayoutComponent,
-    children:[
-      { path: 'gestion-dispositivos', component: GestionDispositivos },
-      { path: 'programacion-dosificador', component: ProgramacionDosificadorComponent},
-      { path: 'notificaciones', component: NotificacionesComponent },
-      { path: 'registrar-usuario', component: RegistrarUsuario},
-      { path: 'checklist', component: ChecklistFormComponent},
-      { path: 'registrar-usuario', component: RegistrarUsuario},
-      { path: 'agregar-dispositivo' , component: AgregarDispositivo},
-      { path: 'sugerencias', component: SugerenciasComponent},
-      { path: 'sensores', component: SensoresComponent},
-      { path: 'actuadores', component: ActuadoresComponent},
-      { path: 'auditoria', component: AuditoriaComponent }, 
-      { path: 'eventos', component: Eventos },     
-      { path: 'inicio', component: InicioComponent },
-      { path: 'usuarios', component: UsuariosComponent},
-      { path: 'dc', component: ParentComponent},
-      { path: 'tpdf', component: PdfComponent},
-    ]
-  }
+    loadComponent: () =>
+      import('./Views/layout/layout').then((m) => m.LayoutComponent),
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'gestion-dispositivos',
+        loadComponent: () =>
+          import('./Views/gestion-dispositivos/gestion-dispositivos').then(
+            (m) => m.GestionDispositivos
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'Iac',
+        loadComponent: () =>
+          import('./Views/iac/iac').then((m) => m.Iac),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'programacion-dosificador',
+        loadComponent: () =>
+          import('./Views/programaciondosificador/programaciondosificador').then(
+            (m) => m.ProgramacionDosificadorComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'notificaciones',
+        loadComponent: () =>
+          import('./Views/notificaciones/notificaciones').then(
+            (m) => m.NotificacionesComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'registrar-usuario',
+        loadComponent: () =>
+          import('./Views/registrar-usuario/registrar-usuario').then(
+            (m) => m.RegistrarUsuario
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'checklist',
+        loadComponent: () =>
+          import('./Views/checklist/checklist-form').then(
+            (m) => m.ChecklistFormComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'agregar-dispositivo',
+        loadComponent: () =>
+          import('./Views/agregar-dispositivo/agregar-dispositivo').then(
+            (m) => m.AgregarDispositivo
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'sugerencias',
+        loadComponent: () =>
+          import('./Views/sugerencias/sugerencias').then(
+            (m) => m.SugerenciasComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'sensores',
+        loadComponent: () =>
+          import('./Views/sensores/sensores').then(
+            (m) => m.SensoresComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'actuadores',
+        loadComponent: () =>
+          import('./Views/actuadores/actuadores').then(
+            (m) => m.ActuadoresComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'auditoria',
+        loadComponent: () =>
+          import('./Views/auditoria/auditoria').then(
+            (m) => m.AuditoriaComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'eventos',
+        loadComponent: () =>
+          import('./Views/eventos/eventos').then((m) => m.Eventos),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'inicio',
+        loadComponent: () =>
+          import('./Views/inicio/inicio').then((m) => m.InicioComponent),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'usuarios',
+        loadComponent: () =>
+          import('./Views/usuarios/usuarios').then(
+            (m) => m.UsuariosComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'dc',
+        loadComponent: () =>
+          import('./Views/testviewpanel/dashboard').then(
+            (m) => m.ParentComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'tpdf',
+        loadComponent: () =>
+          import('./Views/gestion-dispositivos/filtercomponent/pdfdocument').then(
+            (m) => m.PdfComponent
+          ),
+        canActivate: [AuthGuard],
+      },
+    ],
+  },
 ];
-
-
-

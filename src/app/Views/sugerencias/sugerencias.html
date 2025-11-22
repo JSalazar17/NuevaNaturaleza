@@ -1,38 +1,42 @@
 <div class="sugerencias-container">
-  <h2>Gestión de Sugerencias</h2>
 
-  <div *ngIf="cargando" class="loading">
-    <p>Cargando sugerencias...</p>
-  </div>
 
-  <table *ngIf="!cargando && sugerencias.length > 0" class="tabla-sugerencias">
+
+<h2>Sugerencias</h2>
+  <table  class="tabla-sugerencias">
     <thead>
       <tr>
-        <th>N°</th>
+        <th class="dnone">N°</th>
         <th>Usuario</th>
-        <th>Correo</th>
         <th>Mensaje</th>
         <th>Fecha</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let sugerencia of sugerencias; let i = index">
-        <td>{{ i + 1 }}</td>
+      
+      @for (sugerencia of ((sugerencias$ | async) || []) 
+      
+       | paginate: { itemsPerPage: 5, currentPage: paginaActual }; 
+       let i = $index; track sugerencia.idSugerencia) {
+      <tr>
+        <td class="dnone">{{ i + 1 }}</td>
         <td>{{ sugerencia.usuario || 'Anónimo' }}</td>
-        <td>{{ sugerencia.correo || 'No registrado' }}</td>
-        <td>{{ sugerencia.mensaje }}</td>
-        <td>{{ sugerencia.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="message">{{ sugerencia.mensaje }}</td>
+        <td class="minw">{{ sugerencia.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>
           <button class="btn-eliminar" (click)="eliminarSugerencia(sugerencia.idSugerencia)">
             Eliminar
           </button>
         </td>
-      </tr>
+      </tr>}
     </tbody>
   </table>
 
-  <p *ngIf="!cargando && sugerencias.length === 0" class="sin-datos">
-    No hay sugerencias registradas.
-  </p>
+<pagination-controls
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
 </div>

@@ -36,4 +36,8 @@ export class ActuadorService {
   deleteActuador(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  ONOFFActuador(id: string,dto:Actuador,idSistema:string,observacion:string): Observable<Actuador> {
+    console.log({id,dto,idSistema});
+    return this.http.post<Actuador>(`${this.apiUrl}/ONOFF`,{id,dto,idSistema,observacion});
+  }
 }

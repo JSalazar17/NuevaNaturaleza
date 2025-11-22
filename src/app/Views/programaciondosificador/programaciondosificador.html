@@ -9,7 +9,8 @@
         <th>Hora</th>
         <th>Minuto</th>
         <th>Tiempo (seg)</th>
-        <th>Acciones</th>
+        
+@if(isAdmin()){<th>Acciones</th>}
       </tr>
     </thead>
     <tbody>
@@ -19,10 +20,11 @@
         <td>{{ p.hora }}</td>
         <td>{{ p.minuto }}</td>
         <td>{{ p.tiempoSegundos }}</td>
-        <td>
+        
+@if(isAdmin()){<td>
           <button class="btn-editar" (click)="editar(p)">Editar</button>
           <button class="btn-eliminar" (click)="eliminar(p.idProgramacion)">Eliminar</button>
-        </td>
+        </td>}
       </tr>
     </tbody>
   </table>
@@ -32,34 +34,34 @@
   </ng-template>
 
   <!-- NUEVO: Formulario para agregar un dosificador -->
+@if(isAdmin()){
 <div class="formulario-dosificador" *ngIf="mostrarFormularioDosificador">
   <h3>Agregar Nuevo Dosificador</h3>
   <form (ngSubmit)="guardarDosificador()" #formDos="ngForm" autocomplete="off">
     
     <label>Seleccione un Actuador:</label>
     <div class="lista-actuadores">
-      <div *ngFor="let dispositivo of dispositivosActuadores">
-        <input
-          type="radio"
-          name="idDispositivo"
-          [value]="dispositivo.idDispositivo"
-          [(ngModel)]="nuevoDosificador.idDispositivo"
-          required
-        />
-        <span>{{ dispositivo.nombre }} ({{ dispositivo.idTipoDispositivoNavigation?.nombre }})</span>
-      </div>
+          <mat-form-field appearance="outline" class="filter-item area">
+      <mat-label>Area</mat-label>
+      <mat-select [(value)]="nuevoDosificador.idDispositivo" >
+        <mat-option value="Todos">--</mat-option>
+        @for (m of dispositivosActuadores; track m) {
+        <mat-option [value]="m.idDispositivo">{{ m.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
     </div>
 
     <div class="row">
       <div class="col">
-        <label>Letra de Activación:</label>
-        <input
+        <label>Letra de Activación   </label><br>
+        <input matInput
           type="text"
           name="letraActivacion"
           maxlength="1"
           required
           [(ngModel)]="nuevoDosificador.letraActivacion"
-        />
+        /><br>
       </div>
     </div>
 
@@ -75,7 +77,6 @@
     </div>
   </form>
 </div>
-
   <!-- Botón para mostrar el formulario -->
   <div class="boton-agregar-dosificador" *ngIf="!mostrarFormularioDosificador">
     <button class="btn-agregar" (click)="mostrarFormularioDosificador = true">+ Agregar Dosificador</button>
@@ -85,13 +86,17 @@
     <h3>{{ modoEdicion ? 'Modificar' : 'Agregar' }} Programación</h3>
 
     <form (ngSubmit)="guardar()" #f="ngForm" autocomplete="off">
-      <label>Dosificador:</label>
-      <select name="idDosificador" required [(ngModel)]="programacion.idDosificador">
-        <option value="" disabled selected>-- Seleccione un dosificador --</option>
-        <option *ngFor="let d of dosificadores" [value]="d.idDosificador">
-          {{ d.idDispositivoNavigation?.nombre || d.descripcion || 'Sin nombre' }}
-        </option>
-      </select>
+      
+          <mat-form-field appearance="outline" class="filter-item area">
+      <mat-label>Dosificador:</mat-label>
+      <mat-select [(value)]="programacion.idDosificador" >
+        <mat-option value="Todos">--</mat-option>
+        @for (m of dosificadores; track m) {
+        <mat-option [value]="m.idDosificador">
+          {{ m.idDispositivoNavigation?.nombre || m.descripcion || 'Sin nombre' }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
       <div class="row">
         <div class="col">
@@ -115,5 +120,5 @@
         <button class="btn-cancelar" type="button" (click)="cancelar()">Cancelar</button>
       </div>
     </form>
-  </div>
+  </div>}
 </div>

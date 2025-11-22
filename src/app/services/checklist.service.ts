@@ -21,7 +21,7 @@ export class ChecklistService {
   }
 
   getChecklistsPorFechas(desde: string, hasta: string) {
-  return this.http.get<any[]>(`${this.url}/checklists/filtrar?desde=${desde}&hasta=${hasta}`);
+  return this.http.get<any[]>(`${this.url}/filtrar?desde=${desde}&hasta=${hasta}`);
 }
 
 

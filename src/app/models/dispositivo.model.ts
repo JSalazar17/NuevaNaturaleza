@@ -4,6 +4,7 @@ import { Sensor } from "./sensor.model";
 import { TipoDispositivo } from "./tipodispositivo.model";
 import { EstadoDispositivo } from "./estadoDispositivo.model";
 import { Sistema } from "./sistema.model";
+import { Area } from "./area.model";
 
 export interface Dispositivo {
   idDispositivo?: string;
@@ -17,6 +18,9 @@ export interface Dispositivo {
   idEstadoDispositivo?: string;
   tipo?: string;
   valorActual?: string;
+  sistema?: string;
+  estado?: string;
+  idArea?:string;
 
 
   // Relaciones
@@ -26,5 +30,5 @@ export interface Dispositivo {
   idMarcaNavigation?: Marca | null;
   idEstadoDispositivoNavigation?: EstadoDispositivo | null; // 🔹 agregado
   idSistemaNavigation?: Sistema | null;
-  
+  idAreaNavigation?: Area | null;
 }

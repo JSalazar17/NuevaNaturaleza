@@ -1,4 +1,8 @@
-@if(isPlatformBrowser()){
+
+
+<div class="eventos-container">
+  <div class="dispflex">
+  @if(isPlatformBrowser()){
 <button mat-icon-button [matMenuTriggerFor]="menupdf">
 
   <mat-icon>picture_as_pdf</mat-icon>
@@ -21,7 +25,7 @@
       </mat-form-field>
     </form>
     
-  <button mat-icon-button  (click)="generarpdfEventos()">
+  <button mat-icon-button  (click)="generarpdfEventos()" title="descargar PDF">
 
     <mat-icon>cloud_download</mat-icon>
 
@@ -29,9 +33,13 @@
   </div>
 </mat-menu>
 }
+  <h2 class="w100">Gestión de Eventos</h2></div>
 
-<div class="eventos-container">
-  <h2>Gestión de Eventos</h2>
+   <!-- 🔽 Filtro por tipo de dispositivo -->
+
+
+    <div class="dispflex">
+
 
   <!-- 🔽 Barra de búsqueda -->
   <div class="buscador">
@@ -41,39 +49,38 @@
       [(ngModel)]="terminoBusqueda"
       (input)="aplicarFiltros()">
   </div>
-
-  <!-- 🔽 Filtro por tipo de dispositivo -->
-  <div class="filtro">
-    <label for="dispositivoFiltro">Tipo de Dispositivo:</label>
-    <select id="dispositivoFiltro" [(ngModel)]="dispositivoSeleccionadoFiltro" (change)="aplicarFiltros()">
-      <option value="Todos">Todos</option>
-      <option *ngFor="let d of dispositivos" [value]="d.idTipoDispositivo">
-        {{ d.idTipoDispositivo }}
-      </option>
-    </select>
-  </div>
-
+</div>
+ 
   <table class="tabla-eventos">
     <thead>
       <tr>
-        <th>N°</th>
-        <th>Dispositivo</th>
+        <th class="dnone">N°</th>
         <th>Impacto</th>
-        <th>Sistema</th>
+        <th class="dnone">Sistema</th>
+        <th>Dispositivo</th>
+        <th>Accion</th>
         <th>Fecha</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let evento of eventosFiltrados; let i = index" 
-          (click)="seleccionarEvento(evento)">
-        <td>{{ i + 1 }}</td>
-        <td>{{ evento.idDispositivoNavigation.nombre }}</td>
+      <tr *ngFor="let evento of eventosFiltrados() | paginate: { itemsPerPage: 8, currentPage: paginaActual }; let i = index" 
+    (click)="seleccionarEvento(evento)">
+        <td class="dnone">{{ i + 1 }}</td>
         <td>{{ evento.idImpactoNavigation.nombre }}</td>
-        <td>{{ evento.idSistemaNavigation.nombre }}</td>
-        <td>{{ evento.fechaEvento | date:'short' }}</td>
+        <td class="dnone">{{ evento.idSistemaNavigation.nombre }}</td>
+        <td>{{ evento.idDispositivoNavigation.nombre }}</td>
+        <td>{{ evento.idAccionActNavigation?.accion }}</td>
+        <td>{{ evento.fecha }}</td>
       </tr>
     </tbody>
   </table>
+<!-- 🔽 Paginador -->
+<pagination-controls 
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
 
   <!-- Cuadro de detalle -->
   <div class="detalle" *ngIf="dispositivoSeleccionado">

@@ -1,9 +1,14 @@
+import { Dispositivo } from "./dispositivo.model";
+
 export interface ChecklistDetalle {
   idChecklistDetalle?: string;
   idChecklist?: string;
   idDispositivo?: string;
+  nombreDispositivo?:string;
+  idDispositivoNavigation?:Dispositivo;
+  ultimoValorMedido:string;
   valorRegistrado?: string;   // lo que escribe el usuario para sensores
-  estadoActuador?: boolean;   // true = encendido, false = apagado (para actuadores)
+  estadoActuador?: boolean|string;   // true = encendido, false = apagado (para actuadores)
 }
 
 export interface Checklist {

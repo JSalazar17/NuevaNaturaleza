@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginModel } from '../../models/login.model';
 import { Router } from '@angular/router';
+import { ToggleService } from '../../services/toggle.service';
 
 @Component({
   selector: 'app-login',
@@ -19,13 +20,18 @@ export class LoginController {
 
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private togleSvc:ToggleService
+  ) {
+      this.togleSvc.show('Bienvenido al panel principal', 'success');}
 
   togglePassword() {
     this.showPassword.update(v => !v);
   }
 
+goToRecuperar() {
+            this.router.navigate(['/recuperar']);
+}
   iniciarSesion() {
     console.log(this.user())
     const loginData = this.user();
@@ -51,14 +57,19 @@ export class LoginController {
           console.log(rol)
           if (rol === 'Administrador') {
             this.router.navigate(['/actuadores']);
+            
+        this.togleSvc.show('Ha iniciado sesión correctamente, bienvenido.', 'success');
           } else if (rol === 'Operario') {
             this.router.navigate(['/actuadores']);
+            
+        this.togleSvc.show('Ha iniciado sesión correctamente, bienvenido.', 'success');
           } else {
             this.router.navigate(['/login']);
           }
 
           this.errorMessage.set('');
         } else {
+        this.togleSvc.show('Credenciales invalidas, intente nuevamente.', 'error');
           this.errorMessage.set(response.message || 'Credenciales incorrectas.');
         }
       },
