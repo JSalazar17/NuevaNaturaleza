@@ -185,3 +185,29 @@
         width: 140px;
     }
 }
+
+.paginador {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+::ng-deep .ngx-pagination li {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+::ng-deep .ngx-pagination .current {
+  background-color: #3f51b5; /* color Material primario */
+  color: white;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+.dispflex{
+  display: flex;
+  justify-content: center;
+  margin: 0 20px;
+}
+.w100{
+  width: 90%;
+}

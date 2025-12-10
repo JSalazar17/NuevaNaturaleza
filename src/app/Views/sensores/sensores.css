@@ -201,6 +201,15 @@ h3{
   color: white;
 }
 
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
 
 @media (max-width:460px) {
     .sensor-chart {

@@ -15,6 +15,7 @@ import { MatDateRangePicker, MatDateRangeInput, MatDatepickerModule } from "@ang
 import { MatMenu, MatMenuModule } from "@angular/material/menu";
 import { AuthService } from '../../services/auth.service';
 import { ToggleService } from '../../services/toggle.service';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-checklist-form',
@@ -24,12 +25,11 @@ import { ToggleService } from '../../services/toggle.service';
     MatInputModule,
     MatSelectModule,
     MatButtonModule, MatIcon, MatDateRangePicker, MatDateRangeInput, MatMenu,
-
-
     MatMenuModule, ReactiveFormsModule,
     MatIconModule,
     MatDatepickerModule, MatSelectModule,
     MatInputModule,
+    NgxPaginationModule,
     MatNativeDateModule],
   templateUrl: './checklist-form.html',
   styleUrls: ['./checklist-form.css']
@@ -44,7 +44,8 @@ export class ChecklistFormComponent implements OnInit {
   mensajeExito = '';
   fechaDesde: string = '';
   fechaHasta: string = '';
-
+  itemsPorPagina = 4;
+  paginaActual = 1;
 
   rango = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -58,23 +59,30 @@ export class ChecklistFormComponent implements OnInit {
     private authService: AuthService,
     private togleSvc: ToggleService
   ) {
-
-
     const usuarioGuardado = this.authService.getFullUser();
-    console.log("this.authService.getUserRole()")
-    console.log(this.authService.getUserRole())
-    this.rol = this.authService.getUserRole()
-    this.isAdmin.set(this.rol?.toString() === "Administrador")
-    console.log(this.isAdmin())
+    console.log("this.authService.getUserRole()");
+    console.log(this.authService.getUserRole());
+    this.rol = this.authService.getUserRole();
+    this.isAdmin.set(this.rol?.toString() === "Administrador");
+    console.log(this.isAdmin());
   }
 
   ngOnInit(): void {
     this.cargarDispositivos();
   }
 
+  // totalPaginas para el paginador
+  get totalPaginas() {
+    return Math.max(1, Math.ceil(this.dispositivos().length / this.itemsPorPagina));
+  }
+
+  // Devuelve el índice real en checklist.detalles para una fila visual i
+  indexReal(i: number): number {
+    return (this.paginaActual - 1) * this.itemsPorPagina + i;
+  }
+
   cargarDispositivos(): void {
     this.dispositivoService.getDispositivos().subscribe(data => {
-
       this.dispositivos.set(data.map(d => {
         let valorActual = 'Desconocido';
         if (d.sensors && d.sensors.length) {
@@ -86,22 +94,22 @@ export class ChecklistFormComponent implements OnInit {
         else if (d.actuadores && d.actuadores.length > 0) {
           valorActual = d.actuadores[0].idAccionActNavigation?.accion ?? 'Desconocido';
         }
-
         return { ...d, valorActual };
       }));
 
-      this.dispositivos.set(this.dispositivos().sort(x => x.idTipoDispositivo?.indexOf("efb53fa9-8f7a-4970-9fdf-7b85bdc9f382") ?? 1))
+      this.dispositivos.set(this.dispositivos().sort(x => x.idTipoDispositivo?.indexOf("efb53fa9-8f7a-4970-9fdf-7b85bdc9f382") ?? 1));
 
-
-      console.log(this.dispositivos())
+      // inicializar/actualizar detalles con el mismo orden y longitud que dispositivos
       this.checklist.detalles = this.dispositivos().map(d => ({
         idDispositivo: d.idDispositivo,
         valorRegistrado: '',
-        ultimoValorMedido: (d.sensors && d.sensors.length && d.sensors[0].medicions) ? d.sensors[0].medicions[d.sensors[0].medicions.length - 1].valor.toString() :
-          (d.actuadores && d.actuadores.length > 0) ? d.actuadores[0].idAccionActNavigation?.accion : 'Desconocido'
-        ,
+        ultimoValorMedido: (d.sensors && d.sensors.length && d.sensors[0].medicions) ? d.sensors[0].medicions[d.sensors[0].medicions.length - 1].valor.toString()
+          : (d.actuadores && d.actuadores.length > 0) ? d.actuadores[0].idAccionActNavigation?.accion : 'Desconocido',
         estadoActuador: undefined
       } as ChecklistDetalle));
+
+      // Reiniciar paginación cuando se cargan dispositivos
+      this.paginaActual = 1;
     });
   }
 
@@ -112,13 +120,12 @@ export class ChecklistFormComponent implements OnInit {
     this.checklist.detalles.forEach((d, i) => {
       if (!d.valorRegistrado)
         valido = false;
-    }
-    );
+    });
     if ((!this.checklist.observacionGeneral) || (!this.checklist.detalles || !this.checklist.detalles[0]) || !valido) {
       this.togleSvc.show('Por favor completa todos los campos antes de guardar', 'warning');
       return;
     }
-    console.log(this.checklist)
+    console.log(this.checklist);
 
     this.togleSvc.show('Campos completos guardando checklist', 'loading');
     this.checklistService.create(this.checklist).subscribe(() => {
@@ -132,10 +139,7 @@ export class ChecklistFormComponent implements OnInit {
 
   // 🔹 Exportar reportes a CSV según rango de fechas
   exportarCSV(): void {
-
-    if (this.rango.value.start == null ||
-      this.rango.value.end == null)
-      return;
+    if (this.rango.value.start == null || this.rango.value.end == null) return;
 
     this.checklistService.getChecklistsPorFechas(this.rango.value.start.toUTCString(), this.rango.value.end.toUTCString()).subscribe((data: Checklist[]) => {
       if (data.length === 0) {
@@ -160,7 +164,6 @@ export class ChecklistFormComponent implements OnInit {
       let hora = new Date(x.fecha as Date).toLocaleTimeString()
       let time = hora.split(":")
       if (hora.indexOf("p", 6) > 0) {
-
         time[0] = (12 + parseInt(time[0])).toString()
         hora = time[0] + ":" + time[1]
       } else {
@@ -171,7 +174,7 @@ export class ChecklistFormComponent implements OnInit {
       }
       return x.detalles.map(d => {
         return ([x.usuario as string, new Date(x.fecha as Date).toLocaleDateString() + " " + hora, x.observacionGeneral as string, d.nombreDispositivo as string,
-        d.ultimoValorMedido as string, d.valorRegistrado as string]).join(",") as string
+          d.ultimoValorMedido as string, d.valorRegistrado as string]).join(",") as string
       }).join('\n')
     });
     return [headers, ...rows].join('\n');

@@ -95,9 +95,17 @@
   min-width: 120px;
 }
 
+.buscador{
+  width: 350px;
+  margin: 10px auto;
+}
 
-
-
+.buscador input{
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
 
 @media (max-width: 654px) {
 .message{

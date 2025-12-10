@@ -103,7 +103,11 @@
 </button>
 </div>
   <div class="devices">
-    <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados()">
+
+  <!-- PAGINADO: solo 3 por página -->
+  <div class="device-card"
+       *ngFor="let dispositivo of dispositivosPaginados | slice:(paginaActual-1)*itemsPorPagina:(paginaActual*itemsPorPagina)">
+
       <div class="sensor-card">
         <div class="sensor-info">
           <h3 class="w-100">{{ dispositivo.nombre }}</h3>
@@ -123,6 +127,7 @@
             {{ sen.medicions[(sen.medicions.length-1)].valor}}
           </p>
         }</div>
+        
           <div class="sensor-chart" >
             <canvas baseChart [data]="getCachedChartData(sen)" [options]="chartOptions" [type]="lineChartType"></canvas>
 
@@ -157,5 +162,10 @@
         </div>
       </div>
     </div>
+    <div class="paginacion">
+        <button mat-button (click)="paginaAnterior()" [disabled]="paginaActual===1">◀ Anterior</button>
+        <span>Página {{paginaActual}} / {{totalPaginas}}</span>
+        <button mat-button (click)="paginaSiguiente()" [disabled]="paginaActual===totalPaginas">Siguiente ▶</button>
+      </div>
   </div>
 </main>}

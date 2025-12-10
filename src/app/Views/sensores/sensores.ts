@@ -32,6 +32,8 @@ import { Area } from '../../models/area.model';
 import { SignalRService } from '../../services/signalr.service';
 import { AuthService } from '../../services/auth.service';
 import { ToggleService } from '../../services/toggle.service';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-sensores',
@@ -44,6 +46,7 @@ import { ToggleService } from '../../services/toggle.service';
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
+    NgxPaginationModule,
     MatNativeDateModule,
   ],
   styleUrls: ['./sensores.css']
@@ -66,6 +69,8 @@ export class SensoresComponent implements OnInit, OnDestroy {
   areas = signal<Area[]>([])
   areaSelect: string;
   intento = 0;
+  itemsPorPagina = 3;
+  paginaActual = 1;
 // dentro de la clase SensoresComponent
 private _zoomPanTimers = new WeakMap<Chart, number | undefined>();
 private _zoomPanDelay = 150; // ms, ajuste fino: 100-300 ms suele ir bien
@@ -174,7 +179,8 @@ private _zoomPanDelay = 150; // ms, ajuste fino: 100-300 ms suele ir bien
     private areaSvc: AreaService,
     private signalRService: SignalRService,
     private authService: AuthService,
-    private togleSvc: ToggleService
+    private togleSvc: ToggleService,
+    private cdr: ChangeDetectorRef
   ) {
 
     const usuarioGuardado = this.authService.getFullUser();
@@ -275,6 +281,42 @@ private _zoomPanDelay = 150; // ms, ajuste fino: 100-300 ms suele ir bien
       });
     });
   }
+
+  get totalPaginas() {
+  return Math.ceil(this.dispositivosFiltrados().length / this.itemsPorPagina);
+}
+
+// Devuelve solo los sensores que se muestran en la página actual
+get dispositivosPaginados() {
+  const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+  const fin = inicio + this.itemsPorPagina;
+  return this.dispositivosFiltrados().slice(inicio, fin);
+}
+
+// Cambiar página
+paginaAnterior() {
+  if (this.paginaActual > 1) {
+    this.paginaActual--;
+    setTimeout(() => this.refrescarGraficas(), 100);
+  }
+}
+
+paginaSiguiente() {
+  if (this.paginaActual < this.totalPaginas) {
+    this.paginaActual++;
+    setTimeout(() => this.refrescarGraficas(), 100);
+  }
+}
+
+refrescarGraficas() {
+  if (this.charts) {
+    this.charts.forEach(c => c?.chart?.update());
+  }
+}
+
+ngAfterViewInit() {
+  this.charts.changes.subscribe(() => this.refrescarGraficas());
+}
 
   asignarDatosE(data: Dispositivo[]) {
     data.forEach(dispo => {
