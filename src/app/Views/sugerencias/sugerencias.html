@@ -3,6 +3,15 @@
 
 
 <h2>Sugerencias</h2>
+<!-- 🔍 Campo de Búsqueda -->
+<div class="buscador">
+  <input 
+  type="text" 
+  placeholder="Buscar usuario, mensaje o fecha..."
+  [(ngModel)]="terminoBusqueda"
+  (input)="aplicarFiltros()">
+</div>
+
   <table  class="tabla-sugerencias">
     <thead>
       <tr>

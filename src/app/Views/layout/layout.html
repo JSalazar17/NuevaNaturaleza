@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
 <div class="container">
   <!-- 🔹 Barra superior -->
@@ -13,6 +15,47 @@
     <div class="topbar-center">
       <h1>BIENVENIDOS LESTOMA</h1>
     </div>
+
+    <!-- contenedor derecho de iconos -->
+      <div class="topbar-right">
+    <!-- 🔔 Ícono de notificaciones -->
+     <div class="campana" (click)="toggleNotificaciones()">
+    <i class="fa fa-bell"></i>
+    <span *ngIf="noLeidasCount" class="badge"></span>
+  </div>
+
+  <!-- 👤 Ícono Usuario -->
+    <div class="usuario-icon" (click)="togglePerfil()">
+      <i class="fa fa-user"></i>
+  </div>
+  </div>
+
+  <!-- 🔽 Panel de notificaciones -->
+  <div *ngIf="mostrarNotis" class="panel-notis">
+    <h4>Notificaciones</h4>
+    
+    <div *ngIf="notificaciones.length === 0" class="sin-noti">No hay notificaciones</div>
+
+    <div *ngFor="let n of notificaciones" class="noti" [class.leida]="!n.leido" [class.no-leida]="n.leido">
+      <p>{{n.mensaje}}</p>
+      <div class="btns">
+        <button (click)="eliminarNoti(n)">🗑</button>
+        @if(!n.leido){
+        <button (click)="marcarLeida(n)">✔</button>}
+      </div>
+    </div>
+  </div>
+
+  <!-- 📌 Panel usuario -->
+<div *ngIf="mostrarPerfil" class="panel-usuario">
+  <p><b>Usuario:</b> {{usuario?.nombre}}</p>
+  <p><b>Correo:</b> {{usuario?.correo}}</p>
+
+  <button class="btn-editar-usuario" (click)="abrirEditarUsuario(); mostrarPerfil=false">
+    ✏ Editar Usuario
+  </button>
+</div>
+
   </header>
 
   <!-- 🔹 Barra lateral -->

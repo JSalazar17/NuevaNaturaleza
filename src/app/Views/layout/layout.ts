@@ -14,6 +14,8 @@ import { SignalRService } from '../../services/signalr.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ToggleService } from '../../services/toggle.service';
 import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
+import { CRUsuariosComponent } from '../usuarios/crusuarios/crusuarios';
+
 
 @Component({
   selector: 'app-layout',
@@ -31,6 +33,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
   hayNotificacionNueva = false;
   rol: string | null = null;
   isAdmin = signal<boolean>(false);
+  notificaciones: Notificacion[] = [];
+  mostrarNotis = false;
+  mostrarPerfil = false;
   private sub!: Subscription;
 
   constructor(
@@ -83,14 +88,34 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.submenuOpen = this.submenuOpen === menu ? null : menu;
   }
 
+  togglePerfil() {
+    this.mostrarPerfil = !this.mostrarPerfil;
+  }
 
-  cargarNotificaciones() {
+  abrirEditarUsuario() {
+  if (!this.usuario) return;
+
+  const dialogRef = this.matDialog.open(CRUsuariosComponent, {
+    width: "600px",
+    data: { usuario: this.usuario, roles: this.rol } // roles necesarios 👉
+  });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.toggleSvc.show('Perfil actualizado');
+        this.usuario = this.authService.getFullUser();
+      }
+    });
+  } 
+
+
+  /*cargarNotificaciones() {
     this.notifService.getNotificaciones().subscribe(data => {
       this.notificacionSubject.next(data);
     });
-  }
+  }*/
 
-  nuevaNotificacion() {
+  //nuevaNotificacion() {
     // this.notifService.iniciarConexion();
 
     /*this.sub = this.signalRService.eventoGeneral$.subscribe(data => {
@@ -108,14 +133,48 @@ export class LayoutComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     });*/
-  }
+  //}
 
-  nuevaNotificacion1() {
+  nuevaNotificacion() {
     this.hayNotificacionNueva = true;
     setTimeout(() => {
       this.hayNotificacionNueva = false;
     }, 1000);
   }
+
+  toggleNotificaciones(){
+  this.mostrarNotis = !this.mostrarNotis;
+}
+
+// getter sencillo para contar no-leídas
+get noLeidasCount(){
+  return (this.notificaciones || []).some(n => !n.leido);
+}
+
+marcarLeida(noti: Notificacion){
+  noti.leido = true;
+  this.notifService.marcarComoLeida(noti.idNotificacion as string).subscribe(()=>{});
+}
+
+eliminarNoti(noti: Notificacion){
+  this.notifService.deleteNotificacion(noti.idNotificacion as string).subscribe(()=>{
+    this.notificaciones = this.notificaciones.filter(x=>x.idNotificacion as string !== noti.idNotificacion as string);
+  });
+}
+
+// Sobrescribe cargarNotificaciones() para guardar en el arreglo
+cargarNotificaciones(){
+  this.notifService.getNotificaciones().subscribe(data=>{
+    this.notificaciones = data;
+  });
+}
+
+// Aquí puedes activar cuando recibas por SignalR
+nuevaNotificacion1(){
+  this.hayNotificacionNueva = true;
+  setTimeout(()=> this.hayNotificacionNueva=false,1000);
+}
+
 
   logout() {
     const dialogRef = this.matDialog.open(ConfirmDialogComponent, {
