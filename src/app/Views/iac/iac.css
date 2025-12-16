@@ -146,3 +146,10 @@ button:hover:not(:disabled) {
     padding-top: 100px;
   }
 }
+.print-btn {
+  background: #28a745;
+}
+
+.print-btn:hover {
+  background: #1e7e34;
+}
