@@ -116,7 +116,7 @@ export class AgregarDispositivo implements OnInit {
 
   form = this.fb.group({
 
-    idArea: ['' as string | Area | null, Validators.required],
+    idArea: ['' as string | Area | null],
     idDispositivo: [''],
     nombre: ['', Validators.required],
     sn: ['', Validators.required],
@@ -405,8 +405,8 @@ export class AgregarDispositivo implements OnInit {
     console.log(idArea)
     console.log(typeof idArea === 'string')
 
-    console.log("fue string")
     if (typeof idArea === 'string') {
+    console.log("fue string")
       // caso: escribió una marca nueva
       payload['idAreaNavigation'] = { idArea: undefined, nombre: idArea.trim() } as Area;
     } else if (idArea && typeof idArea === 'object') {
@@ -468,17 +468,6 @@ export class AgregarDispositivo implements OnInit {
             this.loading = false;
 
           }
-
-        });
-        this.dispSvc.createDispositivo(payload).subscribe((data) => {
-          // si estamos en un dialog, cerrarlo con resultado
-          this.dialogRef?.close(true);
-          // si no, limpiar form
-          this.form.reset();
-          this.clearArrays();
-          console.log(data)
-
-          this.loading = false;
 
         });
       }
