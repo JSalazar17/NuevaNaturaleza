@@ -41,8 +41,13 @@ min-width: 200px;min-height: 100%;">
 
 
     <mat-form-field  appearance="outline" class="third w100">
-      <input type="text" #areaInput placeholder="Selecciona un elemento" aria-label="Elemento" matInput
-        [formControl]="control" [matAutocomplete]="auto1" (click)="filtrar()" (input)="filtrar()"
+      <input type="text" 
+      #areaInput 
+      placeholder="Selecciona un elemento" 
+      aria-label="Elemento" 
+      matInput
+      [matAutocomplete]="auto1" 
+      (click)="filtrar()" (input)="filtrar()"
         [formControlName]="'idArea'" />
 
       <mat-autocomplete #auto1="matAutocomplete" class="mat-autocomplete-panel" [displayWith]="displayAreaFn.bind(this)">
