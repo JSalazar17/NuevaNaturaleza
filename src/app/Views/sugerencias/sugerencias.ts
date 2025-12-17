@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SugerenciasService } from '../../services/sugerencias.service';
 import { Sugerencia } from '../../models/sugerencia.model';
+import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ToggleService } from '../../services/toggle.service';
@@ -11,15 +12,16 @@ import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 @Component({
   selector: 'app-sugerencias',
   standalone: true,
-  imports: [CommonModule,NgxPaginationModule],
+  imports: [CommonModule, FormsModule,NgxPaginationModule],
   templateUrl: './sugerencias.html',
   styleUrls: ['./sugerencias.css']
 })
 export class SugerenciasComponent implements OnInit, OnDestroy {
   sugerencias: Sugerencia[] = [];
+  sugerenciasFiltradas: Sugerencia[] = [];
+  terminoBusqueda: string = "";
     private sugerenciasSubject = new BehaviorSubject<Sugerencia[]>([]);
     sugerencias$: Observable<Sugerencia[]> = this.sugerenciasSubject.asObservable();
-  
   paginaActual: number = 1;
   private intervaloActualizacion: any;
 
@@ -47,12 +49,24 @@ export class SugerenciasComponent implements OnInit, OnDestroy {
   obtenerSugerencias(): void {
     this.sugerenciasService.obtenerSugerencias().subscribe({
       next: (data) => {
-        this.sugerenciasSubject.next(data)
+        this.sugerencias = data;
+        this.sugerenciasSubject.next(data);
+        this.sugerenciasFiltradas = [...data];
       },
       error: (err) => {
         console.error('Error al cargar sugerencias:', err);
       }
     });
+  }
+
+  aplicarFiltros() {
+    const t = this.terminoBusqueda.toLowerCase();
+
+    this.sugerenciasFiltradas = this.sugerencias.filter(s =>
+      (s.usuario?.toLowerCase().includes(t)) ||
+      (s.mensaje?.toLowerCase().includes(t)) ||
+      (s.fecha && new Date(s.fecha).toLocaleDateString().includes(t))
+    );
   }
 
   eliminarSugerencia(id: string | undefined): void {

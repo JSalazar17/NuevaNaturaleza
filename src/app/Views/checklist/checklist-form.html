@@ -1,45 +1,36 @@
 <div class="center">
   <div class="checklist-container">
 
-@if(isAdmin()){
-    <button mat-icon-button [matMenuTriggerFor]="menupdf">
-
-      <mat-icon>cloud_download</mat-icon>
-
-    </button>
-
-    <!-- Panel de filtros como menú -->
-    <mat-menu #menupdf="matMenu" class="filters-panel-menu">
-      <div class="filters-panel" (click)="$event.stopPropagation()">
-
-        <form [formGroup]="rango">
-          <mat-form-field appearance="fill">
-            <mat-label>Rango de fechas</mat-label>
-            <mat-date-range-input [rangePicker]="picker">
-              <input matStartDate formControlName="start" placeholder="Desde">
-              <input matEndDate formControlName="end" placeholder="Hasta">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-          </mat-form-field>
-        </form>
-
-      </div>
-      <button mat-icon-button (click)="exportarCSV()" title="descargar csv">
-
-        <mat-icon>sim_card_download</mat-icon>
-
+    @if(isAdmin()){
+      <button mat-icon-button [matMenuTriggerFor]="menupdf">
+        <mat-icon>cloud_download</mat-icon>
       </button>
-    </mat-menu>
 
-  }
+      <mat-menu #menupdf="matMenu" class="filters-panel-menu">
+        <div class="filters-panel" (click)="$event.stopPropagation()">
+          <form [formGroup]="rango">
+            <mat-form-field appearance="fill">
+              <mat-label>Rango de fechas</mat-label>
+              <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate formControlName="start" placeholder="Desde">
+                <input matEndDate formControlName="end" placeholder="Hasta">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+          </form>
+        </div>
+
+        <button mat-icon-button (click)="exportarCSV()" title="descargar csv">
+          <mat-icon>sim_card_download</mat-icon>
+        </button>
+      </mat-menu>
+    }
+
     <h2 class="titulo">📋 Nuevo Checklist</h2>
 
-    <!-- 🔹 Filtro por rango de fechas -->
-    <!-- 🔹 Filtro por rango de fechas -->
-
-
     <form #formChecklist="ngForm" (ngSubmit)="guardarChecklist()" validate>
+
       <table mat-table class="checklist-tabla">
         <thead>
           <tr>
@@ -48,25 +39,33 @@
             <th class="w80px">Observación</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr *ngFor="let d of dispositivos(); let i = index">
+          <tr *ngFor="let d of dispositivos() | paginate: { itemsPerPage: 4, currentPage: paginaActual }; let i = index">
+
+            
+
             <td>{{ d.nombre }}</td>
             <td><span class="ultimo-valor">{{ d.valorActual }}</span></td>
 
-            <!-- 🧩 Campo para sensores -->
-            <ng-container  class="w80px" *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Sensor'">
+            <!-- 🧩 Campo Sensor -->
+            <ng-container *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Sensor'">
               <mat-form-field appearance="outline" class="input-sensor sinborde">
                 <mat-label>Valor medido</mat-label>
-                <input matInput type="text" [(ngModel)]="checklist.detalles[i].valorRegistrado"
-                  [attr.name]="'valor-' + i" [ngModelOptions]="{standalone: true}" required />
+                <input matInput type="text"
+                  [(ngModel)]="checklist.detalles[indexReal(i)].valorRegistrado"
+                  [attr.name]="'valor-' + indexReal(i)"
+                  [ngModelOptions]="{standalone: true}" required />
               </mat-form-field>
             </ng-container>
 
-            <!-- ⚙️ Campo para actuadores -->
+            <!-- ⚙️ Campo Actuador -->
             <ng-container *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Actuador'">
               <mat-form-field appearance="outline" class="select-actuador sinborde">
                 <mat-label>Estado</mat-label>
-                <mat-select [(ngModel)]="checklist.detalles[i].estadoActuador" [attr.name]="'estado-' + i"
+                <mat-select
+                  [(ngModel)]="checklist.detalles[indexReal(i)].estadoActuador"
+                  [attr.name]="'estado-' + indexReal(i)"
                   [ngModelOptions]="{standalone: true}" required>
                   <mat-option [value]="" aria-selected="true" disabled>--</mat-option>
                   <mat-option [value]="true">Encendido</mat-option>
@@ -79,14 +78,25 @@
         </tbody>
       </table>
 
-      <div class="observacion-general">
+      <!-- 🔽 Paginador -->
+      <pagination-controls
+        (pageChange)="paginaActual = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        class="paginador">
+      </pagination-controls>
+
+      <!-- Observación y Guardado SOLO en la última página -->
+      <div class="observacion-general" *ngIf="paginaActual === totalPaginas">
         <label>📝 Observación General:</label>
         <textarea [(ngModel)]="checklist.observacionGeneral" name="observacion"
           placeholder="Escribe una observación general sobre los dispositivos..."></textarea>
-      <button type="submit" class="btn-guardar">💾 Guardar Checklist</button>
+
+        <button type="submit" class="btn-guardar">💾 Guardar Checklist</button>
       </div>
 
       <p *ngIf="mensajeExito" class="mensaje-exito">{{ mensajeExito }}</p>
+
     </form>
   </div>
 </div>

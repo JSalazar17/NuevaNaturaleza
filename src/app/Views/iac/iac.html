@@ -63,4 +63,12 @@
     </div>
   }
   }
+  @if (recommendations().length > 0 && outputImage()) {
+  <div class="controls">
+    <button class="print-btn" (click)="imprimirDiagnostico()">
+      🖨️ Imprimir diagnóstico
+    </button>
+  </div>
+}
+
 </div>
