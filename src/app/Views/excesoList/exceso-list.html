@@ -1,10 +1,10 @@
 
   <mat-card class="card-root dialog-container w100 h100">
     <div class="m2">
-    <h2>Configurar Excesos</h2>
+    <h2>Rangos de activación</h2>
 
     <div class="form-actions margingd">
-      <button mat-raised-button color="primary" (click)="addExceso()">Añadir exceso</button>
+      <button mat-raised-button color="primary" (click)="addExceso()">Añadir elemento</button>
     </div>
     <form [formGroup]="form">
       <div formArrayName="excesos">
@@ -19,7 +19,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="third w100">
-            <mat-label>Tipo Exceso</mat-label>
+            <mat-label>Tipo de activación</mat-label>
             <mat-select formControlName="idTipoExceso">
               <mat-option value="">--</mat-option>
               <mat-option *ngFor="let t of tiposExceso()" [value]="t.idTipoExceso">{{ t.nombre }}</mat-option>

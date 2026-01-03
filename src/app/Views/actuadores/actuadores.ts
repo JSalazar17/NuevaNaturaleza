@@ -26,6 +26,7 @@ import { SignalRService } from '../../services/signalr.service';
 import { AuthService } from '../../services/auth.service';
 import { ToggleService } from '../../services/toggle.service';
 import { Response } from '../../models/response.model';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-actuadores',
@@ -33,7 +34,7 @@ import { Response } from '../../models/response.model';
   templateUrl: './actuadores.html',
   imports: [CommonModule,
     FormsModule, ReactiveFormsModule, MatSidenavModule,
-    MatIconModule, MatSelectModule, MatMenuModule, MatSlideToggleModule],
+    MatIconModule, MatSelectModule, MatMenuModule, MatSlideToggleModule,NgxPaginationModule],
   styleUrls: ['./actuadores.css']
 })
 export class ActuadoresComponent implements OnInit, OnDestroy {
@@ -49,6 +50,8 @@ export class ActuadoresComponent implements OnInit, OnDestroy {
   selectedDeviceType = signal<string>('');
   selectedMeasurementType = signal<string>('');
   isDescending = signal<boolean>(false);
+  
+  paginaActual: number = 1;
 
   tipoAcciones = signal<Accion[]>([]);
 

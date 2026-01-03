@@ -15,12 +15,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToggleService } from '../../services/toggle.service';
 import { ConfirmDialogComponent } from '../ConfirmDialog/confirmDialog';
 import { CRUsuariosComponent } from '../usuarios/crusuarios/crusuarios';
+import { UsuarioService } from '../../services/usuario.service';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule, MatIconModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule, MatIconModule,
+      NgxPaginationModule],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css']
 })
@@ -28,7 +31,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private notificacionSubject = new BehaviorSubject<Notificacion[]>([]);
   notificacionaes$ = this.notificacionSubject.asObservable();
   isCollapsed = false;
-  usuario: Usuario | null = null;
+  usuario=signal<Usuario> ({cedula:"",correo:"",idRol:"",nombre:""});
   mostrarPanel = false;
   hayNotificacionNueva = false;
   rol: string | null = null;
@@ -37,6 +40,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
   mostrarNotis = false;
   mostrarPerfil = false;
   private sub!: Subscription;
+  
+  paginaActual = 1;
+  itemsPorPagina = 6;
+  totalPaginas = 1;
 
   constructor(
     private sugerenciasService: SugerenciasService,
@@ -47,7 +54,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private signalRService: SignalRService,
     private matDialog: MatDialog,
-    private toggleSvc: ToggleService
+    private toggleSvc: ToggleService,
+    private usuarioService:UsuarioService
   ) {
     this.cargarNotificaciones();
     this.nuevaNotificacion();
@@ -55,11 +63,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
     console.log("this.authService.getUserRole()")
     console.log(this.authService.getUserRole())
     this.rol = this.authService.getUserRole()
+    if (usuarioGuardado) {
+      usuarioService.getUsuarioPorId(usuarioGuardado?.idUsuario as string).subscribe(x=>{
+        this.usuario.set(x);
+      });
+    }
     this.isAdmin.set(this.rol?.toString() === "Administrador")
     console.log(this.isAdmin())
-    if (usuarioGuardado) {
-      this.usuario = (usuarioGuardado);
-    }
+    
+   
   }
 
   toggleSidebar(turste:boolean=!this.isCollapsed) {
@@ -81,6 +93,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.signalRService.detenerConexion();
   }
+  ngOnChanges() {
+  this.totalPaginas = Math.ceil(
+    this.notificaciones.length / this.itemsPorPagina
+  );
+}
 
   submenuOpen: string | null = null;
 
@@ -88,22 +105,32 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.submenuOpen = this.submenuOpen === menu ? null : menu;
   }
 
-  togglePerfil() {
-    this.mostrarPerfil = !this.mostrarPerfil;
+  togglePerfil(t=!this.mostrarPerfil) {
+    this.mostrarPerfil = t;
+  }
+
+  cerrarToggles(){
+   this.toggleSidebar(true);
+    
+   this.toggleNotificaciones(false);
+   this.togglePerfil(false);
   }
 
   abrirEditarUsuario() {
   if (!this.usuario) return;
 
   const dialogRef = this.matDialog.open(CRUsuariosComponent, {
-    width: "600px",
-    data: { usuario: this.usuario, roles: this.rol } // roles necesarios 👉
+    width: '800px',
+    data: { usuario: this.usuario()} // roles necesarios 👉
   });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.toggleSvc.show('Perfil actualizado');
-        this.usuario = this.authService.getFullUser();
+        
+      this.usuarioService.getUsuarioPorId(this.usuario().idUsuario as string).subscribe(x=>{
+        this.usuario.set(x);
+      });
       }
     });
   } 
@@ -142,8 +169,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  toggleNotificaciones(){
-  this.mostrarNotis = !this.mostrarNotis;
+  toggleNotificaciones(t = !this.mostrarNotis){
+  this.mostrarNotis = t;
 }
 
 // getter sencillo para contar no-leídas
@@ -173,6 +200,13 @@ cargarNotificaciones(){
 nuevaNotificacion1(){
   this.hayNotificacionNueva = true;
   setTimeout(()=> this.hayNotificacionNueva=false,1000);
+}
+onWheel(event: WheelEvent) {
+  if (event.deltaY > 0) {
+    this.paginaActual++;
+  } else {
+    this.paginaActual--;
+  }
 }
 
 

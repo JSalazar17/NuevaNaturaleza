@@ -4,9 +4,9 @@
 }
 
 .acciones-superiores {
-    gap: 10px;
-    flex-direction: column;
-display: flex;
+  gap: 10px;
+  flex-direction: column;
+  display: flex;
 
 }
 
@@ -265,17 +265,14 @@ mat-form-field{
   padding: 5px 10px;
 }
 .dispflex{
+  justify-content: center;
   display: flex;
-gap: 10%;
-padding: 0 10em;
+  gap: 10%;
+  padding: 0 10em;
 }
 
-@media (max-width: 1175px) {
-    .dispflex{
-padding: 0 ;
-}
-}
-@media (max-width: 970px) {
+
+@media (max-width: 980px) {
   .dispflex{
     gap: 0;
   }

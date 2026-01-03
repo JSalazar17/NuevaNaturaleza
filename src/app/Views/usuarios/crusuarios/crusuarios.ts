@@ -126,18 +126,22 @@ export class CRUsuariosComponent implements OnInit {
       return;
     }
 
-    const formData = this.usuarioForm.value;
+    let formData = this.usuarioForm.value;
 
     if (!this.cambiarClave && this.usuarioEditando) {
-      delete formData.clave;
+       formData.clave = null;
     }
 
     if (this.usuarioEditando) {
+      console.log(formData);
       this.usuarioService.updateUsuario(formData.idUsuario, formData)
         .subscribe(() => this.dialogRef.close(true));
     } else {
       this.usuarioService.createUsuario(formData)
         .subscribe(() => this.dialogRef.close(true));
     }
+  }
+  changePass(){
+    this.cambiarClave=!this.cambiarClave;
   }
 }

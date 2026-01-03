@@ -3,7 +3,8 @@
 <main class="content" id="actuadores">
   <h2>Actuadores</h2>
   <div class="devices">
-    <div class="device-card" *ngFor="let dispositivo of dispositivosFiltrados()">
+    @for(dispositivo of dispositivosFiltrados() | paginate: { itemsPerPage: 5, currentPage: paginaActual };let i = $index; track dispositivo.idDispositivo){
+    <div class="device-card" >
       <div class="actuador-card">
         <div class="actuador-info">
           <h3>{{ dispositivo.nombre }}</h3>
@@ -24,5 +25,13 @@
       </div>
 
     </div>
+  }
   </div>
+  
+<pagination-controls
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
 </main>

@@ -105,8 +105,8 @@
   <div class="devices">
 
   <!-- PAGINADO: solo 3 por página -->
-  <div class="device-card"
-       *ngFor="let dispositivo of dispositivosPaginados | slice:(paginaActual-1)*itemsPorPagina:(paginaActual*itemsPorPagina)">
+   @for(dispositivo of dispositivosFiltrados() | paginate: { itemsPerPage: 5, currentPage: paginaActual };   let i = $index; track dispositivo.idDispositivo){
+  <div class="device-card">
 
       <div class="sensor-card">
         <div class="sensor-info">
@@ -162,10 +162,14 @@
         </div>
       </div>
     </div>
-    <div class="paginacion">
-        <button mat-button (click)="paginaAnterior()" [disabled]="paginaActual===1">◀ Anterior</button>
-        <span>Página {{paginaActual}} / {{totalPaginas}}</span>
-        <button mat-button (click)="paginaSiguiente()" [disabled]="paginaActual===totalPaginas">Siguiente ▶</button>
-      </div>
+  }
+  
+
+<pagination-controls
+  (pageChange)="paginaActual = $event"
+  previousLabel="Anterior"
+  nextLabel="Siguiente"
+  class="paginador">
+</pagination-controls>
   </div>
 </main>}
