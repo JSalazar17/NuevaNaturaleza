@@ -114,14 +114,14 @@ export class ChecklistFormComponent implements OnInit {
   }
 
   guardarChecklist(): void {
-    let valido = false;
-    if ((!this.checklist.detalles || !this.checklist.detalles[0]))
-      valido = true;
+    let valido = true;
     this.checklist.detalles.forEach((d, i) => {
-      if (!d.valorRegistrado)
+      if (!d.valorRegistrado && !d.ultimoValorMedido)
+      {
         valido = false;
+      }
     });
-    if ((!this.checklist.observacionGeneral) || (!this.checklist.detalles || !this.checklist.detalles[0]) || !valido) {
+    if ((!this.checklist.observacionGeneral) || !valido) {
       this.togleSvc.show('Por favor completa todos los campos antes de guardar', 'warning');
       return;
     }
