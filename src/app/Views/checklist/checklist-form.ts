@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal,  AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Checklist, ChecklistDetalle } from '../../models/checklist.model';
 import { ChecklistService } from '../../services/checklist.service';
@@ -16,12 +16,27 @@ import { MatMenu, MatMenuModule } from "@angular/material/menu";
 import { AuthService } from '../../services/auth.service';
 import { ToggleService } from '../../services/toggle.service';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { Chart, ChartConfiguration, ChartType } from 'chart.js';
+import {jsPDF} from 'jspdf';
+
+
+interface SerieGrafica {
+  label: string;
+  data: number[];
+}
+
+interface GraficaComparativa {
+  idDispositivo: string;
+  nombreDispositivo: string;
+  fechas: string[];
+  series: SerieGrafica[]; // Usuario vs Sistema
+}
 
 @Component({
   selector: 'app-checklist-form',
   standalone: true,
   imports: [CommonModule, FormsModule, MatFormField, MatLabel, MatOptionModule,
-    MatFormFieldModule,
+    MatFormFieldModule, 
     MatInputModule,
     MatSelectModule,
     MatButtonModule, MatIcon, MatDateRangePicker, MatDateRangeInput, MatMenu,
@@ -34,18 +49,23 @@ import { NgxPaginationModule } from 'ngx-pagination';
   templateUrl: './checklist-form.html',
   styleUrls: ['./checklist-form.css']
 })
-export class ChecklistFormComponent implements OnInit {
+export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy {
   dispositivos = signal<Dispositivo[]>([]);
+  
   checklist: Checklist = {
     fecha: new Date(),
     observacionGeneral: '',
     detalles: []
   };
+  charts: Chart[] = [];
   mensajeExito = '';
   fechaDesde: string = '';
   fechaHasta: string = '';
   itemsPorPagina = 4;
   paginaActual = 1;
+  // 📊 Datos para gráficas comparativas
+  graficasPorSensor = signal<GraficaComparativa[]>([]);
+  checklistsFiltrados: Checklist[] = [];
 
   rango = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -69,6 +89,14 @@ export class ChecklistFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarDispositivos();
+  }
+
+  ngAfterViewInit(): void {
+    // necesario para cuando Angular termina de pintar los canvas
+  }
+
+  ngOnDestroy(): void {
+    this.charts.forEach(c => c.destroy());
   }
 
   // totalPaginas para el paginador
@@ -156,6 +184,128 @@ export class ChecklistFormComponent implements OnInit {
       link.download = `checklist_${this.rango.value.start?.toLocaleDateString()}_a_${this.rango.value.end?.toLocaleDateString()}.csv`;
       link.click();
     });
+  }
+
+  cargarDatosGraficas(): void {
+    if (!this.rango.value.start || !this.rango.value.end) {
+      this.togleSvc.show('Selecciona un rango de fechas', 'warning');
+      return;
+    }
+
+    this.togleSvc.show('Cargando gráficas...', 'loading');
+
+    this.checklistService
+      .getChecklistsPorFechas(
+        this.rango.value.start.toUTCString(),
+        this.rango.value.end.toUTCString()
+      )
+      .subscribe(data => {
+        this.construirGraficasPorSensor(data);
+        this.togleSvc.show('Gráficas cargadas', 'success');
+      });
+  }
+
+  private construirGraficasPorSensor(data: Checklist[]): void {
+    const mapa = new Map<string, GraficaComparativa>();
+
+    data.forEach(checklist => {
+      const fecha = new Date(checklist.fecha as Date).toLocaleString();
+
+      checklist.detalles.forEach(d => {
+        if (
+          !d.idDispositivoNavigation ||
+          d.idDispositivoNavigation.idTipoDispositivoNavigation?.nombre !== 'Sensor'
+        ) return;
+
+        const id = d.idDispositivo;
+        if (!id) return;
+
+        if (!mapa.has(id)) {
+          mapa.set(id, {
+            idDispositivo: id,
+            nombreDispositivo: d.nombreDispositivo ?? 'Sensor',
+            fechas: [],
+            series: [
+              { label: 'Valor Sistema', data: [] },
+              { label: 'Valor Usuario', data: [] }
+            ]
+          });
+        }
+
+        const g = mapa.get(id)!;
+        g.fechas.push(fecha);
+        g.series[0].data.push(Number(d.ultimoValorMedido));
+        g.series[1].data.push(Number(d.valorRegistrado));
+      });
+    });
+
+    this.graficasPorSensor.set([...mapa.values()]);
+    this.renderizarGraficas();
+  }
+
+  private renderizarGraficas(): void {
+    // destruir anteriores
+    this.charts.forEach(c => c.destroy());
+    this.charts = [];
+
+    // esperar a que Angular pinte los canvas del *ngFor
+    setTimeout(() => {
+      this.graficasPorSensor().forEach((g, i) => {
+        const canvas = document.getElementById(`chart-${i}`) as HTMLCanvasElement;
+        if (!canvas) return;
+
+        const config: ChartConfiguration = {
+          type: 'line' as ChartType,
+          data: {
+            labels: g.fechas,
+            datasets: g.series.map(s => ({
+              label: s.label,
+              data: s.data,
+              tension: 0.3
+            }))
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              zoom: {
+                zoom: {
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
+                  mode: 'x'
+                },
+                pan: {
+                  enabled: true,
+                  mode: 'x'
+                }
+              }
+            }
+          }
+        };
+
+        this.charts.push(new Chart(canvas, config));
+      });
+    }, 0);
+  }
+
+  exportarGraficaPDF(index: number, nombre: string): void {
+    const canvas = document.getElementById(`chart-${index}`) as HTMLCanvasElement;
+    if (!canvas) {
+      this.togleSvc.show('No se encontró la gráfica', 'error');
+      return;
+    }
+
+    const img = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'px',
+      format: [canvas.width, canvas.height + 60]
+    });
+
+    pdf.setFontSize(16);
+    pdf.text(`Gráfica: ${nombre}`, 20, 30);
+    pdf.addImage(img, 'PNG', 20, 50, canvas.width - 40, canvas.height - 20);
+    pdf.save(`grafica_${nombre}.pdf`);
   }
 
   private convertToCSV(objArray: Checklist[]): string {
