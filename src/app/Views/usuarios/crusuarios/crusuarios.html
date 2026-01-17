@@ -3,7 +3,7 @@
 
   <form [formGroup]="usuarioForm" (ngSubmit)="guardarUsuario()">
 
-   
+   @if(roles.length>0){
       <mat-form-field appearance="outline" class="filter-item dnones">
       <mat-label>Seleccione un rol</mat-label>
       <mat-select  formControlName="idRol" >
@@ -12,7 +12,7 @@
         <mat-option [value]="m.idRol">{{ m.nombre }}</mat-option>
         }
       </mat-select>
-    </mat-form-field>
+    </mat-form-field>}
     <input formControlName="cedula" placeholder="Cédula">
     <input formControlName="nombre" placeholder="Nombre">
     <input formControlName="correo" placeholder="Correo">
@@ -20,7 +20,7 @@
     @if(usuarioEditando){
       
     <label class="checkbox-container">
-      <input type="checkbox" (click)="cambiarClave=!cambiarClave">
+      <input type="checkbox" (click)="changePass()">
       <span class="checkmark"></span>
       Cambiar contraseña
     </label>

@@ -145,8 +145,8 @@ export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy 
 
   guardarChecklist(): void {
     let valido = true;
+
     if ((!this.checklist.detalles || !this.checklist.detalles[0]))
-      {console.log("hola");
       valido = false;}
     this.checklist.detalles.forEach((d, i) => {
       if (!d.valorRegistrado && !(null != d.estadoActuador) )
@@ -158,6 +158,7 @@ export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy 
     console.log((!this.checklist.detalles || !this.checklist.detalles[0]))
     console.log(!valido)
     if ((!this.checklist.observacionGeneral) || (!this.checklist.detalles || !this.checklist.detalles[0]) || !valido) {
+
       this.togleSvc.show('Por favor completa todos los campos antes de guardar', 'warning');
       return;
     }

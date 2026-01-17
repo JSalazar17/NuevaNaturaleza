@@ -30,29 +30,41 @@
   </div>
   </div>
 
-  <!-- 🔽 Panel de notificaciones -->
-  <div *ngIf="mostrarNotis" class="panel-notis">
-    <h4>Notificaciones</h4>
-    
-    <div *ngIf="notificaciones.length === 0" class="sin-noti">No hay notificaciones</div>
+<div *ngIf="mostrarNotis" class="panel-notis">
+  <h4>Notificaciones</h4>
 
-    <div *ngFor="let n of notificaciones" class="noti" [class.leida]="!n.leido" [class.no-leida]="n.leido">
-      <p>{{n.mensaje}}</p>
-      <div class="btns">
-        <button (click)="eliminarNoti(n)">🗑</button>
-        @if(!n.leido){
-        <button (click)="marcarLeida(n)">✔</button>}
-      </div>
+  <div class="lista-notis">
+    <div *ngIf="notificaciones.length === 0" class="sin-noti">
+      No hay notificaciones
     </div>
+
+    @for (n of notificaciones; track n.idNotificacion) {
+      <div
+        class="noti"
+        [class.leida]="!n.leido"
+        [class.no-leida]="n.leido"
+      >
+        <p>{{ n.mensaje }}</p>
+        <div class="btns">
+          <button (click)="eliminarNoti(n)">🗑</button>
+          @if (!n.leido) {
+            <button (click)="marcarLeida(n)">✔</button>
+          }
+        </div>
+      </div>
+    }
   </div>
+</div>
+
+
 
   <!-- 📌 Panel usuario -->
 <div *ngIf="mostrarPerfil" class="panel-usuario">
-  <p><b>Usuario:</b> {{usuario?.nombre}}</p>
-  <p><b>Correo:</b> {{usuario?.correo}}</p>
+  <p><b>Usuario:</b> {{usuario().nombre}}</p>
+  <p><b>Correo:</b> {{usuario().correo}}</p>
 
   <button class="btn-editar-usuario" (click)="abrirEditarUsuario(); mostrarPerfil=false">
-    ✏ Editar Usuario
+    <mat-icon>edit</mat-icon> Editar Usuario
   </button>
 </div>
 
@@ -137,7 +149,7 @@
   </div>
 
   <!-- 🔹 Contenido principal -->
-  <div class="content" [class.collapsed-content]="isCollapsed"  (click)="toggleSidebar(true)">
+  <div class="content" [class.collapsed-content]="isCollapsed"  (click)="cerrarToggles()">
     <div class="rcontent">
     <router-outlet></router-outlet></div>
      <div _ngcontent-ng-c1968843830="" class="buzon-flotante"  (click)="toggleBuzon()">

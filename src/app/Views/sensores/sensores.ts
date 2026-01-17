@@ -287,26 +287,10 @@ private _zoomPanDelay = 150; // ms, ajuste fino: 100-300 ms suele ir bien
 }
 
 // Devuelve solo los sensores que se muestran en la página actual
-get dispositivosPaginados() {
-  const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
-  const fin = inicio + this.itemsPorPagina;
-  return this.dispositivosFiltrados().slice(inicio, fin);
-}
+
 
 // Cambiar página
-paginaAnterior() {
-  if (this.paginaActual > 1) {
-    this.paginaActual--;
-    setTimeout(() => this.refrescarGraficas(), 100);
-  }
-}
 
-paginaSiguiente() {
-  if (this.paginaActual < this.totalPaginas) {
-    this.paginaActual++;
-    setTimeout(() => this.refrescarGraficas(), 100);
-  }
-}
 
 refrescarGraficas() {
   if (this.charts) {
