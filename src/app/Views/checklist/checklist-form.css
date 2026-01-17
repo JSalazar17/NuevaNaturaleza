@@ -211,3 +211,73 @@
 .w100{
   width: 90%;
 }
+
+.hidden {
+  position: absolute;
+  left: -9999px; /* mejor usar negativo que 10000px */
+  top: -9999px;
+  width: 800px;
+  height: 600px;
+  visibility: hidden; /* opcional, por si alguien usa inspección */
+}
+
+/* =========================
+   📊 GRÁFICAS COMPARATIVAS
+   ========================= */
+
+.graficas-container {
+  margin-top: 40px;
+  padding: 20px;
+  border-top: 2px dashed #c8e6c9;
+}
+
+.grafica-wrapper {
+  width: 100%;
+  height: 300px;
+}
+
+.grafica-card {
+  background: #fdfdfd;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grafica-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.grafica-titulo {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+.grafica-canvas {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .grafica-canvas {
+    height: 240px !important;
+  }
+
+  .grafica-titulo {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grafica-canvas {
+    height: 200px !important;
+  }
+}

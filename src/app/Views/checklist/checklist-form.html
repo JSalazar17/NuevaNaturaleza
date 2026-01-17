@@ -1,5 +1,9 @@
+<div class="hidden">
+  <canvas #chartCanvas0></canvas>
+</div>
 <div class="center">
   <div class="checklist-container">
+    
 
     @if(isAdmin()){
       <button mat-icon-button [matMenuTriggerFor]="menupdf">
@@ -23,6 +27,9 @@
 
         <button mat-icon-button (click)="exportarCSV()" title="descargar csv">
           <mat-icon>sim_card_download</mat-icon>
+        </button>
+        <button mat-icon-button (click)="cargarDatosGraficas()" title="ver gráficas">
+          <mat-icon>show_chart</mat-icon>
         </button>
       </mat-menu>
     }
@@ -93,10 +100,31 @@
           placeholder="Escribe una observación general sobre los dispositivos..."></textarea>
 
         <button type="submit" class="btn-guardar">💾 Guardar Checklist</button>
-      </div>
-
+      </div>      
       <p *ngIf="mensajeExito" class="mensaje-exito">{{ mensajeExito }}</p>
 
     </form>
+    <!-- 📊 GRÁFICAS COMPARATIVAS POR SENSOR -->
+     <button
+      mat-raised-button
+      color="primary"
+      style="margin-bottom: 16px;"
+      (click)="exportarTodasGraficasPDF()">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exportar todas las gráficas
+    </button>
+
+    <div class="grafica-card" *ngFor="let g of graficasPorSensor(); let i = index">
+    <div class="dispflex">
+    <h3 class="grafica-titulo">{{ g.nombreDispositivo }}</h3>
+  </div>
+  <div style="height: 200px;">
+  <canvas
+    #chartCanvas
+    class="grafica-canvas">
+  </canvas>
+  </div>
+</div>
+
   </div>
 </div>

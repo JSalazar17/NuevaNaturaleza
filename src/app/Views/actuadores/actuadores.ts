@@ -161,11 +161,12 @@ export class ActuadoresComponent implements OnInit, OnDestroy {
 
             let act = x.actuadores[0]
             if (x.idDispositivo === audi.idDispositivo) {
+              if (act.idAccionAct != audi.idAccion)
+              turste = true
               act.idAccionAct = audi.idAccion
               console.log("actualizacion por signalr")
               console.log(audi)
               console.log(x)
-              turste = true
             }
           }
             if (turste)
