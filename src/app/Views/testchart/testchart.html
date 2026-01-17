@@ -1,13 +1,129 @@
-<!-- el *ngIf evita que el canvas se cree en SSR/domino -->
-<div *ngIf="isBrowser" style="max-width: 800px; margin: 24px auto;">
-  <canvas
-    baseChart
-    [data]="chartData()"
-    [options]="chartOptions"
-    [type]="lineChartType">
-  </canvas>
+<div class="hidden">
+  <canvas #chartCanvas0></canvas>
+</div>
+<div class="center">
+  <div class="checklist-container">
+    
 
-  <button (click)="addPoint()" style="margin-top:16px">
-    Añadir punto manualmente
-  </button>
+    @if(isAdmin()){
+      <button mat-icon-button [matMenuTriggerFor]="menupdf">
+        <mat-icon>cloud_download</mat-icon>
+      </button>
+
+      <mat-menu #menupdf="matMenu" class="filters-panel-menu">
+        <div class="filters-panel" (click)="$event.stopPropagation()">
+          <form [formGroup]="rango">
+            <mat-form-field appearance="fill">
+              <mat-label>Rango de fechas</mat-label>
+              <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate formControlName="start" placeholder="Desde">
+                <input matEndDate formControlName="end" placeholder="Hasta">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+          </form>
+        </div>
+
+        <button mat-icon-button (click)="exportarCSV()" title="descargar csv">
+          <mat-icon>sim_card_download</mat-icon>
+        </button>
+        <button mat-icon-button (click)="cargarDatosGraficas()" title="ver gráficas">
+          <mat-icon>show_chart</mat-icon>
+        </button>
+      </mat-menu>
+    }
+
+    <h2 class="titulo">📋 Nuevo Checklist</h2>
+
+    <form #formChecklist="ngForm" (ngSubmit)="guardarChecklist()" validate>
+
+      <table mat-table class="checklist-tabla">
+        <thead>
+          <tr>
+            <th>Dispositivo</th>
+            <th>Último Valor</th>
+            <th class="w80px">Observación</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let d of dispositivos() | paginate: { itemsPerPage: 4, currentPage: paginaActual }; let i = index">
+
+            
+
+            <td>{{ d.nombre }}</td>
+            <td><span class="ultimo-valor">{{ d.valorActual }}</span></td>
+
+            <!-- 🧩 Campo Sensor -->
+            <ng-container *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Sensor'">
+              <mat-form-field appearance="outline" class="input-sensor sinborde">
+                <mat-label>Valor medido</mat-label>
+                <input matInput type="text"
+                  [(ngModel)]="checklist.detalles[indexReal(i)].valorRegistrado"
+                  [attr.name]="'valor-' + indexReal(i)"
+                  [ngModelOptions]="{standalone: true}" required />
+              </mat-form-field>
+            </ng-container>
+
+            <!-- ⚙️ Campo Actuador -->
+            <ng-container *ngIf="d.idTipoDispositivoNavigation?.nombre === 'Actuador'">
+              <mat-form-field appearance="outline" class="select-actuador sinborde">
+                <mat-label>Estado</mat-label>
+                <mat-select
+                  [(ngModel)]="checklist.detalles[indexReal(i)].estadoActuador"
+                  [attr.name]="'estado-' + indexReal(i)"
+                  [ngModelOptions]="{standalone: true}" required>
+                  <mat-option [value]="" aria-selected="true" disabled>--</mat-option>
+                  <mat-option [value]="true">Encendido</mat-option>
+                  <mat-option [value]="false">Apagado</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ng-container>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 🔽 Paginador -->
+      <pagination-controls
+        (pageChange)="paginaActual = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        class="paginador">
+      </pagination-controls>
+
+      <!-- Observación y Guardado SOLO en la última página -->
+      <div class="observacion-general" *ngIf="paginaActual === totalPaginas">
+        <label>📝 Observación General:</label>
+        <textarea [(ngModel)]="checklist.observacionGeneral" name="observacion"
+          placeholder="Escribe una observación general sobre los dispositivos..."></textarea>
+
+        <button type="submit" class="btn-guardar">💾 Guardar Checklist</button>
+      </div>      
+      <p *ngIf="mensajeExito" class="mensaje-exito">{{ mensajeExito }}</p>
+
+    </form>
+    <!-- 📊 GRÁFICAS COMPARATIVAS POR SENSOR -->
+        <div class="grafica-card" *ngFor="let g of graficasPorSensor(); let i = index">
+
+      <div class="dispflex">
+        <h3 class="grafica-titulo">{{ g.nombreDispositivo }}</h3>
+
+        <button mat-icon-button
+          (click)="exportarGraficaPDF(i, g.nombreDispositivo)"
+          title="Exportar PDF">
+          <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+      </div>
+
+      <canvas
+        [id]="'chart-' + i"
+        class="grafica-canvas">
+      </canvas>
+
+
+    </div>
+
+  </div>
 </div>
