@@ -147,7 +147,7 @@ export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy 
     let valido = true;
 
     if ((!this.checklist.detalles || !this.checklist.detalles[0]))
-      valido = false;}
+      valido = false;
     this.checklist.detalles.forEach((d, i) => {
       if (!d.valorRegistrado && !(null != d.estadoActuador) )
         {console.log("hola1")
