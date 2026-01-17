@@ -105,25 +105,25 @@
 
     </form>
     <!-- 📊 GRÁFICAS COMPARATIVAS POR SENSOR -->
-        <div class="grafica-card" *ngFor="let g of graficasPorSensor(); let i = index">
+     <button
+      mat-raised-button
+      color="primary"
+      style="margin-bottom: 16px;"
+      (click)="exportarTodasGraficasPDF()">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exportar todas las gráficas
+    </button>
 
-      <div class="dispflex">
-        <h3 class="grafica-titulo">{{ g.nombreDispositivo }}</h3>
+    <div class="grafica-card" *ngFor="let g of graficasPorSensor(); let i = index">
+    <div class="dispflex">
+    <h3 class="grafica-titulo">{{ g.nombreDispositivo }}</h3>
+  </div>
 
-        <button mat-icon-button
-          (click)="exportarGraficaPDF(i, g.nombreDispositivo)"
-          title="Exportar PDF">
-          <mat-icon>picture_as_pdf</mat-icon>
-        </button>
-      </div>
-
-      <div class="grafica-wrapper">
-        <canvas [id]="'chart-' + i" class="grafica-canvas"></canvas>
-      </div>
-
-
-
-    </div>
+  <canvas
+    #chartCanvas
+    class="grafica-canvas">
+  </canvas>
+</div>
 
   </div>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, signal,  AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, signal,  AfterViewInit, OnDestroy, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Checklist, ChecklistDetalle } from '../../models/checklist.model';
 import { ChecklistService } from '../../services/checklist.service';
@@ -16,7 +16,7 @@ import { MatMenu, MatMenuModule } from "@angular/material/menu";
 import { AuthService } from '../../services/auth.service';
 import { ToggleService } from '../../services/toggle.service';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { Chart, ChartConfiguration, ChartType } from 'chart.js';
+import { Chart, registerables, ChartConfiguration, ChartType } from 'chart.js';
 import {jsPDF} from 'jspdf';
 
 
@@ -31,6 +31,8 @@ interface GraficaComparativa {
   fechas: string[];
   series: SerieGrafica[]; // Usuario vs Sistema
 }
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-checklist-form',
@@ -142,13 +144,19 @@ export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   guardarChecklist(): void {
-    let valido = false;
+    let valido = true;
     if ((!this.checklist.detalles || !this.checklist.detalles[0]))
-      valido = true;
+      {console.log("hola");
+      valido = false;}
     this.checklist.detalles.forEach((d, i) => {
-      if (!d.valorRegistrado)
-        valido = false;
+      if (!d.valorRegistrado && !(null != d.estadoActuador) )
+        {console.log("hola1")
+        console.log(d)
+        valido = false;}
     });
+    console.log((!this.checklist.observacionGeneral))
+    console.log((!this.checklist.detalles || !this.checklist.detalles[0]))
+    console.log(!valido)
     if ((!this.checklist.observacionGeneral) || (!this.checklist.detalles || !this.checklist.detalles[0]) || !valido) {
       this.togleSvc.show('Por favor completa todos los campos antes de guardar', 'warning');
       return;
@@ -212,10 +220,7 @@ export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy 
       const fecha = new Date(checklist.fecha as Date).toLocaleString();
 
       checklist.detalles.forEach(d => {
-        if (
-          !d.idDispositivoNavigation ||
-          d.idDispositivoNavigation.idTipoDispositivoNavigation?.nombre !== 'Sensor'
-        ) return;
+        if (d.estadoActuador !== null) return; // sensores no tienen estadoActuador
 
         const id = d.idDispositivo;
         if (!id) return;
@@ -240,73 +245,224 @@ export class ChecklistFormComponent implements OnInit, AfterViewInit, OnDestroy 
     });
 
     this.graficasPorSensor.set([...mapa.values()]);
-    this.renderizarGraficas();
+        setTimeout(() => {
+      this.renderizarGraficas();
+    }, 0);
   }
 
+  @ViewChildren('chartCanvas') chartCanvases!: QueryList<ElementRef<HTMLCanvasElement>>;
+
   private renderizarGraficas(): void {
-    // destruir anteriores
-    this.charts.forEach(c => c.destroy());
-    this.charts = [];
+  this.charts.forEach(c => c.destroy());
+  this.charts = [];
 
-    // esperar a que Angular pinte los canvas del *ngFor
-    setTimeout(() => {
-      this.graficasPorSensor().forEach((g, i) => {
-        const canvas = document.getElementById(`chart-${i}`) as HTMLCanvasElement;
-        if (!canvas) return;
+  // ⏳ esperar a que Angular pinte el *ngFor
+  setTimeout(() => {
+    this.chartCanvases.forEach((canvasRef, index) => {
 
-        const config: ChartConfiguration = {
-          type: 'line' as ChartType,
-          data: {
-            labels: g.fechas,
-            datasets: g.series.map(s => ({
-              label: s.label,
-              data: s.data,
-              tension: 0.3
-            }))
+      const g = this.graficasPorSensor()[index];
+      if (!g) return;
+
+      const canvas = canvasRef.nativeElement;
+
+      // 🔹 1️⃣ AUMENTAR RESOLUCIÓN INTERNA (CLAVE PARA PDF)
+      canvas.width = 800;
+      canvas.height = 450;
+
+      const chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: g.fechas,
+          datasets: g.series.map(s => ({
+            label: s.label,
+            data: s.data,
+            tension: 0.3,
+            borderWidth: 3,     // líneas más gruesas
+            pointRadius: 4,     // puntos visibles
+            pointHoverRadius: 6
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                }
+              }
+            }
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              zoom: {
-                zoom: {
-                  wheel: { enabled: true },
-                  pinch: { enabled: true },
-                  mode: 'x'
+          scales: {
+            x: {
+              ticks: {
+                font: {
+                  size: 12
                 },
-                pan: {
-                  enabled: true,
-                  mode: 'x'
+                maxRotation: 45,
+                minRotation: 30
+              }
+            },
+            y: {
+              ticks: {
+                font: {
+                  size: 13
                 }
               }
             }
           }
-        };
-
-        this.charts.push(new Chart(canvas, config));
+        }
       });
-    }, 0);
+
+      this.charts.push(chart);
+    });
+  }, 0);
+}
+
+
+/*
+  exportarGraficaPDF(index: number, nombre: string): void {
+  const chart = this.charts[index];
+  if (!chart) {
+    this.togleSvc.show('No se encontró la gráfica', 'error');
+    return;
   }
 
-  exportarGraficaPDF(index: number, nombre: string): void {
-    const canvas = document.getElementById(`chart-${index}`) as HTMLCanvasElement;
-    if (!canvas) {
-      this.togleSvc.show('No se encontró la gráfica', 'error');
-      return;
+  const canvas = chart.canvas as HTMLCanvasElement;
+  const img = canvas.toDataURL('image/png', 1.0);
+
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'px',
+    format: [canvas.width, canvas.height + 80]
+  });
+
+  pdf.setFontSize(16);
+  pdf.text(`Gráfica: ${nombre}`, 20, 30);
+  pdf.addImage(
+    img,
+    'PNG',
+    20,
+    50,
+    canvas.width - 40,
+    canvas.height - 20
+  );
+
+  pdf.save(`grafica_${nombre}.pdf`);
+}
+*/
+exportarTodasGraficasPDF(): void {
+  if (!this.charts.length) {
+    this.togleSvc.show('No hay gráficas para exportar', 'warning');
+    return;
+  }
+
+  const pdf = new jsPDF('portrait', 'mm', 'a4');
+
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+  const marginX = 15;
+  const marginTop = 20;
+
+  this.charts.forEach((chart, index) => {
+
+    if (index > 0) {
+      pdf.addPage();
     }
 
-    const img = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({
-      orientation: 'landscape',
-      unit: 'px',
-      format: [canvas.width, canvas.height + 60]
-    });
+    const canvas = chart.canvas as HTMLCanvasElement;
+    const imgData = canvas.toDataURL('image/png', 1.0);
 
+    // 🔹 TÍTULO
     pdf.setFontSize(16);
-    pdf.text(`Gráfica: ${nombre}`, 20, 30);
-    pdf.addImage(img, 'PNG', 20, 50, canvas.width - 40, canvas.height - 20);
-    pdf.save(`grafica_${nombre}.pdf`);
-  }
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(
+      'Reporte de Gráficas de Sensores',
+      pageWidth / 2,
+      marginTop,
+      { align: 'center' }
+    );
+
+    // 🔹 SUBTÍTULO (nombre del sensor)
+    pdf.setFontSize(13);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(
+      this.graficasPorSensor()[index]?.nombreDispositivo ?? `Sensor ${index + 1}`,
+      marginX,
+      marginTop + 12
+    );
+
+    // 🔹 LÍNEA DIVISORIA
+    pdf.setDrawColor(150);
+    pdf.line(
+      marginX,
+      marginTop + 15,
+      pageWidth - marginX,
+      marginTop + 15
+    );
+
+    // 🔹 TAMAÑO GRANDE DE GRÁFICA
+    const imgWidth = pageWidth - marginX * 2;
+
+    // 🔹 reducir altura al 75% (ajustable)
+    const heightFactor = 0.75;
+    const imgHeight = ((canvas.height * imgWidth) / canvas.width) * heightFactor;
+
+    let imgY = marginTop + 20;
+
+    // 🔹 Si la gráfica es muy alta, la ajustamos
+    if (imgY + imgHeight > pageHeight - 20) {
+      const maxHeight = pageHeight - imgY - 20;
+      const scale = maxHeight / imgHeight;
+      pdf.addImage(
+        imgData,
+        'PNG',
+        marginX,
+        imgY,
+        imgWidth * scale,
+        imgHeight * scale
+      );
+    } else {
+      pdf.addImage(
+        imgData,
+        'PNG',
+        marginX,
+        imgY,
+        imgWidth,
+        imgHeight
+      );
+    }
+
+    // 🔹 BLOQUE DE FECHA (como tu ejemplo)
+    pdf.setFillColor(90, 90, 90);
+    pdf.rect(
+      marginX,
+      pageHeight - 25,
+      pageWidth - marginX * 2,
+      10,
+      'F'
+    );
+
+    pdf.setTextColor(255);
+    pdf.setFontSize(10);
+    pdf.text(
+      `Fecha de generación: ${new Date().toLocaleDateString()}`,
+      pageWidth / 2,
+      pageHeight - 18,
+      { align: 'center' }
+    );
+
+    pdf.setTextColor(0);
+  });
+
+  pdf.save('reporte_checklist_graficas.pdf');
+}
+
+
+
 
   private convertToCSV(objArray: Checklist[]): string {
     let headers = ["Usuario", "Fecha", "Observacion", "Dispositivo", "Ultimo Valor Medido", "Valor Registrado"].join(",");
